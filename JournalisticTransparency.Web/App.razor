@@ -1,0 +1,8 @@
+﻿@using JournalisticTransparency.Web.Pages
+
+<Router AppAssembly="@typeof(App).Assembly" NotFoundPage="@typeof(NotFound)">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData"/> @* DefaultLayout="@typeof(Disclaimer) *@
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+</Router>
