@@ -1,0 +1,27 @@
+@page "/article"
+@using System.Diagnostics
+<h3>Article</h3>
+
+<Button Clicked="SurveyButton">
+    Naar de enquête
+</Button>
+
+@code {
+    private Guid _userId = Guid.NewGuid();
+    private Stopwatch _articleStopwatch = new();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        
+        _articleStopwatch.Start();
+    }
+
+    private void SurveyButton()
+    {
+        _articleStopwatch.Stop();
+        
+        // Hier alle data naar json en uploaden naar Azure blob
+    }
+
+}
