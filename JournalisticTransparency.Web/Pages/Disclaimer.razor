@@ -1,0 +1,67 @@
+﻿@page "/disclaimer"
+@inject NavigationManager NavigationManager
+
+<PageTitle>Info expirement</PageTitle>
+
+<Layout Flex="Flex.AlignItems.Start">
+    <LayoutHeader Width="Width.Is100">
+        <Div Flex="Flex.AlignItems.Center">
+            <Figure Style="width:250px" Margin="Margin.Is0">
+                <FigureImage Source="vub_rgb.png" Style="display:block" Margin="Margin.Is0"/>
+            </Figure>
+            <DisplayHeading TextSize="TextSize.Heading1.OnDesktop.Heading6.OnMobile" TextOverflow="TextOverflow.NoWrap" Margin="Margin.Is3.FromStart.Is0.FromBottom">Experiment journalistiek vertrouwen</DisplayHeading>
+        </Div>
+        <Divider/>
+    </LayoutHeader>
+    <LayoutContent Padding="Padding.Is5" Flex="Flex.AlignSelf.Center" Width="Width.Is66.OnDesktop.Is100.OnMobile">
+        <Lead>
+            Lead.
+        </Lead>
+        <Paragraph>
+            Paragraph 1.
+        </Paragraph>
+        <Paragraph>
+            Paragraph 2.
+        </Paragraph>
+        <Paragraph>
+            Paragraph 3.
+        </Paragraph>
+        <Alert Color="Color.Info"   @ref="_conditionsAlert">
+            <AlertMessage>
+                U moet akkoord gaan met de voorwaarden om te kunnen beginnen.
+            </AlertMessage>
+            <CloseButton/>
+        </Alert>
+        <Check TValue="bool" @bind-Checked="_agreedConditions">Ik ga akkoord</Check>
+        <Button Color="Color.Primary" Clicked="@StartButton" Loading="@_isLoading">
+            Naar het artikel
+        </Button>
+    </LayoutContent>
+    <LayoutFooter Width="Width.Is100">
+        <Divider/>
+        <Text Padding="Padding.Is5" >
+            Contactinformatie enz.
+        </Text>
+    </LayoutFooter>
+</Layout>
+
+@code {
+    private bool _isLoading;
+    private bool _agreedConditions;
+    
+    private Alert _conditionsAlert = null!;
+    
+    private void StartButton()
+    {
+        if (!_agreedConditions)
+        {
+            _conditionsAlert.Show();
+            return;
+        }
+        
+        _isLoading = true;
+        
+        NavigationManager.NavigateTo("/article");
+    }
+}
+
