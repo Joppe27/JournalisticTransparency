@@ -1,14 +1,195 @@
 @page "/article"
 @using System.Diagnostics
-<h3>Article</h3>
 
-<Button Clicked="SurveyButton">
-    Naar de enquête
-</Button>
+<Div>
+    <Layout >
+        <LayoutHeader Position="Position.Sticky" Width="Width.Is100" Style="border-bottom: 1px solid rgb(224,224,224)">
+            <Row Width="Width.Is75.OnDesktop.Is100.OnMobile" Margin="Margin.IsAuto.OnX">
+                <Column Flex="Flex.JustifyContent.Start.Grow.Is1.AlignItems.Center" Margin="Margin.Is2.OnY" Gap="Gap.Is2">
+                    <Button Background="Background.Primary" Clicked="@(() => toastVisible = true)">
+                        <Icon Style="color: white" Name="IconName.User" IconSize="IconSize.Large" IconStyle="IconStyle.Light"/>
+                        <Text Style="white-space: pre" TextColor="TextColor.White"> Account </Text>
+                    </Button>
+                    <Button Clicked="@(() => toastVisible = true)">
+                        <Icon Name="IconName.List" IconSize="IconSize.Large"/>
+                        <Text Style="white-space: pre"> Thema's </Text>
+                    </Button>
+                </Column>
+                <Column Flex="Flex.JustifyContent.Center.Grow.Is1.AlignItems.Center">
+                    <Anchor Clicked="@(() => toastVisible = true)" Flex="Flex.AlignItems.Center">
+                        <Figure Style="width:100px" Margin="Margin.Is0">
+                            <FigureImage Source="Resources/vub_rgb.png" Style="display:block" Margin="Margin.Is0"/>
+                        </Figure>
+                    </Anchor>
+                </Column>
+                <Column Flex="Flex.JustifyContent.End.Grow.Is1.AlignItems.Center" Margin="Margin.Is2.OnY" Gap="Gap.Is5">
+                    <Column Flex="Flex.AlignContent.End" ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
+                        <Icon Name="IconName.Cloud" IconSize="IconSize.Large"/>
+                        <Strong Style="white-space: pre">  7°C</Strong> 
+                    </Column>
+                    <Column Flex="Flex.AlignContent.End" ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
+                        <Icon Name="IconName.Car" IconSize="IconSize.Large"/>
+                        <Strong Style="white-space: pre">  74 km</Strong>
+                    </Column>
+                    <Button Clicked="@(() => toastVisible = true)">
+                        <Icon Name="IconName.Search" IconSize="IconSize.Large"/>
+                        <Text Style="white-space: pre"> Zoeken </Text>
+                    </Button>
+                </Column>
+            </Row>
+        </LayoutHeader>
+        <Layout Sider Width="Width.Is75.OnDesktop.Is100.OnMobile" Margin="Margin.IsAuto.OnX">
+            <LayoutSider Background="Background.White">
+                <LayoutSiderContent Flex="Flex.Column" Padding="Padding.Is3.FromStart.Is5.OnY.Is5.FromEnd" Style="border-right: 1px solid rgb(224,224,224)">
+                    <Card>
+                        <ListGroup Flush>
+                            <ListGroupItem><Anchor Clicked="@(() => toastVisible = true)"><Strong TextColor="TextColor.Dark">Hoofdpunten</Strong></Anchor></ListGroupItem>
+                            <ListGroupItem><Anchor Clicked="@(() => toastVisible = true)"><Strong TextColor="TextColor.Dark">Sport</Strong></Anchor></ListGroupItem>
+                            <ListGroupItem><Anchor Clicked="@(() => toastVisible = true)"><Strong TextColor="TextColor.Dark">Regio</Strong></Anchor></ListGroupItem>
+                            <ListGroupItem><Anchor Clicked="@(() => toastVisible = true)"><Strong TextColor="TextColor.Dark">Recent</Strong></Anchor></ListGroupItem>
+                            <ListGroupItem><Anchor Clicked="@(() => toastVisible = true)"><Strong TextColor="TextColor.Dark">Podcasts</Strong></Anchor></ListGroupItem>
+                            <ListGroupItem><Anchor Clicked="@(() => toastVisible = true)"><Strong TextColor="TextColor.Dark">Televisie</Strong></Anchor></ListGroupItem>
+                        </ListGroup>
+                    </Card>
+                    <Div Flex="Flex.Grow.Is1"></Div>
+                    <Card Padding="Padding.Is3">
+                        <Column Flex="Flex.Column" Gap="Gap.Is4">
+                            <Row Flex="Flex.Row.NoWrap">
+                                <Icon Name="IconName.ShareAlt" Flex="Flex.Default.AlignItems.Center"></Icon>
+                                <Strong TextAlignment="TextAlignment.Center" Style="white-space: pre"> Deel artikel </Strong>
+                            </Row>
+                            <Row Flex="Flex.JustifyContent.Around">
+                                <Anchor Clicked="@(() => toastVisible = true)"><FigureImage Source="Resources/bluesky-brands-solid-full.svg" Width="Width.Px(19)"/></Anchor>
+                                <Anchor Clicked="@(() => toastVisible = true)"><FigureImage Source="Resources/x-twitter-brands-solid-full.svg" Width="Width.Px(19)"/></Anchor>
+                            </Row>
+                            <Row Flex="Flex.JustifyContent.Around">
+                                <Anchor Clicked="@(() => toastVisible = true)"><FigureImage Source="Resources/facebook-brands-solid-full.svg" Width="Width.Px(19)"/></Anchor>
+                                <Anchor Clicked="@(() => toastVisible = true)"><FigureImage Source="Resources/threads-brands-solid-full.svg" Width="Width.Px(19)"/></Anchor>
+                            </Row>
+                            <Row Flex="Flex.JustifyContent.Around">
+                                <Anchor Clicked="@(() => toastVisible = true)" TextDecoration="TextDecoration.None"><Icon Name="IconName.Mail" IconSize="IconSize.Large" TextColor="TextColor.Dark"/></Anchor>
+                                <Anchor Clicked="@(() => toastVisible = true)" TextDecoration="TextDecoration.None"><Icon Name="IconName.ExternalLinkSquareAlt" IconSize="IconSize.Large" TextColor="TextColor.Dark"/></Anchor>
+                            </Row>
+                        </Column>
+                    </Card>
+                </LayoutSiderContent>
+            </LayoutSider>
+            <Layout>
+                <LayoutContent>
+                    <Row Padding="Padding.Is5.OnY.Is5.FromStart.Is3.FromEnd">
+                        <Column>
+                            @* TODO: fix scrollbar *@
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is3">
+                            <Strong TextSize="TextSize.Large" Margin="Margin.Is3.FromBottom" Display="Display.Block">Meest gelezen</Strong> 
+                            <Card>
+                                <ListGroup>
+                                    <ListGroupItem>
+                                        <Anchor Clicked="@(() => toastVisible = true)">
+                                            <Card Overflow="Overflow.Hidden">
+                                                <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                                                <CardBody>
+                                                    <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">1</Strong>
+                                                    <CardTitle Style="z-index: 1;">
+                                                        <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                                            <SkeletonItem/>
+                                                        </Skeleton>
+                                                    </CardTitle>
+                                                </CardBody>
+                                            </Card>
+                                        </Anchor>
+                                    </ListGroupItem>
+                                    <ListGroupItem>
+                                        <Anchor Clicked="@(() => toastVisible = true)">
+                                            <Card Overflow="Overflow.Hidden">
+                                                <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                                                <CardBody>
+                                                    <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">2</Strong>
+                                                    <CardTitle Style="z-index: 1;">
+                                                        <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                                            <SkeletonItem/>
+                                                        </Skeleton>
+                                                    </CardTitle>
+                                                </CardBody>
+                                            </Card>
+                                        </Anchor>
+                                    </ListGroupItem>
+                                    <ListGroupItem>
+                                        <Anchor Clicked="@(() => toastVisible = true)">
+                                            <Card Overflow="Overflow.Hidden">
+                                                <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                                                <CardBody>
+                                                    <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">3</Strong>
+                                                    <CardTitle Style="z-index: 1;">
+                                                        <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                                            <SkeletonItem/>
+                                                        </Skeleton>
+                                                    </CardTitle>
+                                                </CardBody>
+                                            </Card>
+                                        </Anchor>
+                                    </ListGroupItem>
+                                    <ListGroupItem>
+                                        <Anchor Clicked="@(() => toastVisible = true)">
+                                            <Card Overflow="Overflow.Hidden">
+                                                <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                                                <CardBody>
+                                                    <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">4</Strong>
+                                                    <CardTitle Style="z-index: 1;">
+                                                        <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                                            <SkeletonItem/>
+                                                        </Skeleton>
+                                                    </CardTitle>
+                                                </CardBody>
+                                            </Card>
+                                        </Anchor>
+                                    </ListGroupItem>
+                                    <ListGroupItem>
+                                        <Anchor Clicked="@(() => toastVisible = true)">
+                                            <Card Overflow="Overflow.Hidden">
+                                                <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                                                <CardBody>
+                                                    <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">5</Strong>
+                                                    <CardTitle Style="z-index: 1;">
+                                                        <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                                            <SkeletonItem/>
+                                                        </Skeleton>
+                                                    </CardTitle>
+                                                </CardBody>
+                                            </Card>
+                                        </Anchor>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Card>
+                        </Column>
+                    </Row>
+                </LayoutContent>
+            </Layout>
+        </Layout>
+    </Layout>
+    
+    <Toaster>
+        <Toast @bind-Visible="@toastVisible">
+            <ToastBody Padding="Padding.Is0" Flex="Flex.AlignItems.Center" Gap="Gap.Is2">
+                <Strong>Die functie is uitgeschakeld tijdens het experiment.</Strong>
+                <CloseButton/>
+            </ToastBody>
+        </Toast>
+    </Toaster>
+</Div>
+
+
+@* <Button Clicked="SurveyButton"> *@
+@*     Naar de enquête *@
+@* </Button> *@
 
 @code {
     private Guid _userId = Guid.NewGuid();
     private Stopwatch _articleStopwatch = new();
+
+    private IFluentSpacingWithSize _margin = new FluentMargin().Is("10");
+
+    private bool toastVisible;
 
     protected override void OnInitialized()
     {

@@ -4,12 +4,12 @@
 <PageTitle>Info expirement</PageTitle>
 
 <Layout Flex="Flex.AlignItems.Start">
-    <LayoutHeader Width="Width.Is100">
+    <LayoutHeader Style="position: sticky" Width="Width.Is100">
         <Div Flex="Flex.AlignItems.Center">
             <Figure Style="width:250px" Margin="Margin.Is0">
-                <FigureImage Source="vub_rgb.png" Style="display:block" Margin="Margin.Is0"/>
+                <FigureImage Source="Resources/vub_rgb.png" Style="display:block" Margin="Margin.Is0"/>
             </Figure>
-            <DisplayHeading TextSize="TextSize.Heading1.OnDesktop.Heading6.OnMobile" TextOverflow="TextOverflow.NoWrap" Margin="Margin.Is3.FromStart.Is0.FromBottom">Experiment journalistiek vertrouwen</DisplayHeading>
+            <DisplayHeading TextSize="TextSize.Heading1.OnDesktop.Heading6.OnMobile" TextOverflow="TextOverflow.NoWrap" Margin="Margin.Is3.OnX.Is0.FromBottom">Experiment journalistiek vertrouwen</DisplayHeading>
         </Div>
         <Divider/>
     </LayoutHeader>
@@ -26,20 +26,22 @@
         <Paragraph>
             Paragraph 3.
         </Paragraph>
-        <Alert Color="Color.Info"   @ref="_conditionsAlert">
+        <Alert Color="Color.Info"  @ref="_conditionsAlert">
             <AlertMessage>
                 U moet akkoord gaan met de voorwaarden om te kunnen beginnen.
             </AlertMessage>
             <CloseButton/>
         </Alert>
-        <Check TValue="bool" @bind-Checked="_agreedConditions">Ik ga akkoord</Check>
-        <Button Color="Color.Primary" Clicked="@StartButton" Loading="@_isLoading">
-            Naar het artikel
-        </Button>
+        <Div Flex="Flex.JustifyContent.End">
+            <Check TValue="bool" @bind-Checked="_agreedConditions">Ik ga akkoord</Check>
+            <Button Color="Color.Primary" Clicked="@StartButton" Loading="@_isLoading">
+                Naar het artikel
+            </Button>
+        </Div>
     </LayoutContent>
-    <LayoutFooter Width="Width.Is100">
+    <LayoutFooter Fixed Width="Width.Is100">
         <Divider/>
-        <Text Padding="Padding.Is5" >
+        <Text Style="display: block" Margin="Margin.Is5.OnAll" >
             Contactinformatie enz.
         </Text>
     </LayoutFooter>
@@ -50,7 +52,7 @@
     private bool _agreedConditions;
     
     private Alert _conditionsAlert = null!;
-    
+
     private void StartButton()
     {
         if (!_agreedConditions)
