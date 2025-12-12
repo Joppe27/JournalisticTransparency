@@ -1,5 +1,6 @@
 @page "/article"
 @using System.Diagnostics
+@using JournalisticTransparency.Web.Components
 
 <Div>
     <Layout >
@@ -74,13 +75,13 @@
                     </Card>
                 </LayoutSiderContent>
             </LayoutSider>
-            <Layout>
+            <Layout Style="scrollbar-width: thin">
                 <LayoutContent>
                     <Row Padding="Padding.Is5.OnY.Is5.FromStart.Is3.FromEnd">
-                        <Column>
-                            @* TODO: fix scrollbar *@
+                        <Column ColumnSize="ColumnSize.Is9">
+                            <ArticleContent/>
                         </Column>
-                        <Column ColumnSize="ColumnSize.Is3">
+                        <Column ColumnSize="ColumnSize.Is3" Padding="Padding.Is0.FromEnd">
                             <Strong TextSize="TextSize.Large" Margin="Margin.Is3.FromBottom" Display="Display.Block">Meest gelezen</Strong> 
                             <Card>
                                 <ListGroup>
