@@ -10,9 +10,8 @@
     <ItemGroup>
         <PackageReference Include="Blazorise.FluentUI2" Version="1.8.1" />
         <PackageReference Include="Blazorise.Icons.FluentUI" Version="1.8.1" />
-        <PackageReference Include="LiquidTechnologies.XmlObjects.NITF3-6" Version="18.0.8" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
@@ -63,5 +62,5 @@
       <_ContentIncludedByDefault Remove="Layout\MainLayout.razor" />
       <_ContentIncludedByDefault Remove="Layout\NavMenu.razor" />
     </ItemGroup>
-
+    
 </Project>
