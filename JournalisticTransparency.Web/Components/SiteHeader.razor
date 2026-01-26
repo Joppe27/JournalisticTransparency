@@ -1,0 +1,41 @@
+<LayoutHeader Position="Position.Sticky" Width="Width.Is100" Style="border-bottom: 1px solid rgb(224,224,224)">
+    <Row Width="Width.Is75.OnDesktop.Is100.OnMobile" Margin="Margin.IsAuto.OnX">
+        <Column Display="Display.Block.OnDesktop.None.OnMobile">
+            <Div Flex="Flex.JustifyContent.Start.Grow.Is1.AlignItems.Center" Margin="Margin.Is2.OnY" Gap="Gap.Is2">
+                <Button Background="Background.Primary" Clicked="@(() => DisplayToast.InvokeAsync())">
+                    <Icon Style="color: white" Name="IconName.User" IconSize="IconSize.Large" IconStyle="IconStyle.Light"/>
+                    <Text Style="white-space: pre" TextColor="TextColor.White"> Account </Text>
+                </Button>
+                <Button Clicked="@(() => DisplayToast.InvokeAsync())">
+                    <Icon Name="IconName.List" IconSize="IconSize.Large"/>
+                    <Text Style="white-space: pre"> Thema's </Text>
+                </Button>
+            </Div>
+        </Column>
+        <Column Flex="Flex.JustifyContent.Center.OnDesktop.JustifyContent.Start.OnMobile.Grow.Is1.AlignItems.Center">
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())" Flex="Flex.AlignItems.Center">
+                <Figure Style="width:100px" Margin="Margin.Is0">
+                    <FigureImage Source="Resources/vub_rgb.png" Style="display:block" Margin="Margin.Is0"/>
+                </Figure>
+            </Anchor>
+        </Column>
+        <Column Flex="Flex.JustifyContent.End.Grow.Is1.AlignItems.Center" Margin="Margin.Is2.OnY" Gap="Gap.Is5">
+            <Column Flex="Flex.AlignContent.End" ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
+                <Icon Name="IconName.Cloud" IconSize="IconSize.Large"/>
+                <Strong Style="white-space: pre"> 7°C</Strong>
+            </Column>
+            <Column Flex="Flex.AlignContent.End" ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
+                <Icon Name="IconName.Car" IconSize="IconSize.Large"/>
+                <Strong Style="white-space: pre"> 74 km</Strong>
+            </Column>
+            <Button Clicked="@(() => DisplayToast.InvokeAsync())">
+                <Icon Name="IconName.Search" IconSize="IconSize.Large"/>
+                <Text Style="white-space: pre"> Zoeken </Text>
+            </Button>
+        </Column>
+    </Row>
+</LayoutHeader>
+
+@code {
+    [Parameter] public EventCallback DisplayToast { get; set; }
+}

@@ -1,0 +1,85 @@
+@using JournalisticTransparency.Web.Pages
+<Strong TextSize="TextSize.Large" Margin="Margin.Is3.FromBottom" Display="Display.Block">Meest gelezen</Strong> 
+<Card>
+    <ListGroup>
+        <ListGroupItem>
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+                <Card Overflow="Overflow.Hidden">
+                    <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                    <CardBody>
+                        <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">1</Strong>
+                        <CardTitle Style="z-index: 1;">
+                            <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                <SkeletonItem/>
+                            </Skeleton>
+                        </CardTitle>
+                    </CardBody>
+                </Card>
+            </Anchor>
+        </ListGroupItem>
+        <ListGroupItem>
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+                <Card Overflow="Overflow.Hidden">
+                    <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                    <CardBody>
+                        <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">2</Strong>
+                        <CardTitle Style="z-index: 1;">
+                            <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                <SkeletonItem/>
+                            </Skeleton>
+                        </CardTitle>
+                    </CardBody>
+                </Card>
+            </Anchor>
+        </ListGroupItem>
+        <ListGroupItem>
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+                <Card Overflow="Overflow.Hidden">
+                    <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                    <CardBody>
+                        <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">3</Strong>
+                        <CardTitle Style="z-index: 1;">
+                            <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                <SkeletonItem/>
+                            </Skeleton>
+                        </CardTitle>
+                    </CardBody>
+                </Card>
+            </Anchor>
+        </ListGroupItem>
+        <ListGroupItem>
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+                <Card Overflow="Overflow.Hidden">
+                    <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                    <CardBody>
+                        <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">4</Strong>
+                        <CardTitle Style="z-index: 1;">
+                            <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                <SkeletonItem/>
+                            </Skeleton>
+                        </CardTitle>
+                    </CardBody>
+                </Card>
+            </Anchor>
+        </ListGroupItem>
+        <ListGroupItem>
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+                <Card Overflow="Overflow.Hidden">
+                    <CardImage Source="Resources/placeholder-image.png" Height="Height.Is50" Style="z-index: 2"/>
+                    <CardBody>
+                        <Strong Display="Display.Block" Position="Position.Absolute" Style="font-size:48pt; bottom: 18px; left: 5px; z-index: 0">5</Strong>
+                        <CardTitle Style="z-index: 1;">
+                            <Skeleton Animation="SkeletonAnimation.Wave" Style="margin-left: 40px">
+                                <SkeletonItem/>
+                            </Skeleton>
+                        </CardTitle>
+                    </CardBody>
+                </Card>
+            </Anchor>
+        </ListGroupItem>
+    </ListGroup>
+</Card>
+
+@code {
+    [Parameter] public EventCallback DisplayToast { get; set; }
+}

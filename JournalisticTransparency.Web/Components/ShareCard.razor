@@ -1,0 +1,24 @@
+<Card Padding="Padding.Is3">
+    <Column Flex="Flex.Column" Gap="Gap.Is4">
+        <Row Flex="Flex.Row.NoWrap">
+            <Icon Name="IconName.ShareAlt" Flex="Flex.Default.AlignItems.Center"></Icon>
+            <Strong TextAlignment="TextAlignment.Center" Style="white-space: pre"> Deel artikel </Strong>
+        </Row>
+        <Row Flex="Flex.JustifyContent.Around">
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())"><FigureImage Source="Resources/bluesky-brands-solid-full.svg" Width="Width.Px(19)"/></Anchor>
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())"><FigureImage Source="Resources/x-twitter-brands-solid-full.svg" Width="Width.Px(19)"/></Anchor>
+        </Row>
+        <Row Flex="Flex.JustifyContent.Around">
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())"><FigureImage Source="Resources/facebook-brands-solid-full.svg" Width="Width.Px(19)"/></Anchor>
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())"><FigureImage Source="Resources/threads-brands-solid-full.svg" Width="Width.Px(19)"/></Anchor>
+        </Row>
+        <Row Flex="Flex.JustifyContent.Around">
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())" TextDecoration="TextDecoration.None"><Icon Name="IconName.Mail" IconSize="IconSize.Large" TextColor="TextColor.Dark"/></Anchor>
+            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())" TextDecoration="TextDecoration.None"><Icon Name="IconName.ExternalLinkSquareAlt" IconSize="IconSize.Large" TextColor="TextColor.Dark"/></Anchor>
+        </Row>
+    </Column>
+</Card>
+
+@code {
+    [Parameter] public EventCallback DisplayToast { get; set; } 
+}
