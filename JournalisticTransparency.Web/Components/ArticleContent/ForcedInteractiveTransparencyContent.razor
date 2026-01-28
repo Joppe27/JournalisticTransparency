@@ -1,3 +1,6 @@
+@using JournalisticTransparency.Web.Components.Logging
+@using JournalisticTransparency.Web.Pages
+@implements IArticleContent
 
 <h1>Na medische vooruitgang en ethische debatten: James Watson hielp de code van ons DNA te ontcijferen</h1>
 <Row Margin="Margin.Is5.FromTop.Is3.FromBottom.OnMobile.Is5.FromTop.Is0.FromBottom.OnDesktop" Style="aspect-ratio: 10 / 4; overflow: hidden">
@@ -62,6 +65,6 @@
 
 
 @code {
-    // LxSerializer<NitfElm> _lxSerializer = new();
-
+    [Parameter] public EventCallback<LoggedStopwatch> OnStopwatchCreated { get; set; }
+    [Parameter] public EventCallback<LoggedIncrementor> OnIncrementorCreated { get; set; }
 }

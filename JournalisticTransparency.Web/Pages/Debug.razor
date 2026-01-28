@@ -1,0 +1,24 @@
+@page "/debug"
+<Div Margin="Margin.Is5">
+    <h1>Debug-menu</h1>
+    <Column Flex="Flex.Column" Gap="Gap.Is3" Padding="Padding.Is0" Width="Width.Is33.OnDesktop.Is100.OnMobile">
+        <Button>Versie "zichtbare transparantie" openen</Button>
+        <Button>Versie "interatieve transparantie (gewone elementen)" openen</Button>
+        <Button>Versie "interactieve transparantie (invasieve elementen)" openen</Button>
+        <Button>Versie "verplicht interactieve transparantie" openen</Button>
+        <Button>Versie "geïntegreerde transparantie" openen</Button>
+        <Div Flex="Flex.Row">
+            <Div Flex="Flex.Grow.Is1"></Div>
+            <Check TValue="bool" Checked="true">
+                <Text TextColor="TextColor.Dark">Met zichtbare logs en debug-info</Text>
+            </Check>
+        </Div>
+    </Column>
+</Div>
+
+
+
+
+@code {
+    
+}

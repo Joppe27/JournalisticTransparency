@@ -1,6 +1,9 @@
 @page "/article"
+@using System.Collections.ObjectModel
+@using System.Collections.Specialized
 @using System.Diagnostics
 @using JournalisticTransparency.Web.Components
+@using JournalisticTransparency.Web.Components.Logging
 
 <Div>
     <Layout >
@@ -17,10 +20,10 @@
                 <LayoutContent>
                     <Row Padding="Padding.Is5.OnY.Is5.FromStart.Is3.FromEnd" Height="Height.Is100">
                         <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile">
-                            <ArticleContent/>
+                            <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
                             <Div Flex="Flex.JustifyContent.End">
                                 <Button Display="Display.None.OnDesktop.Block.OnMobile" Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is5.OnY">
-                                    <Text Style="white-space: pre">Naar de enquête  </Text> 
+                                    <Text Style="white-space: pre">Naar de enquête </Text>
                                     <Icon Name="IconName.ArrowRight" IconSize="IconSize.Large"/>
                                 </Button>
                             </Div>
@@ -66,23 +69,82 @@
             </ModalFooter>
         </ModalContent>
     </Modal>
+    
+    @if (Debugging is true)
+    {
+        <Div Position="Position.Absolute.Top.Is0.End.Is0" Border="Border.Is3.Danger.OnAll" Background="Background.White" Style="z-index: 10">
+            <Column Flex="Flex.Column" Width="Width.Px(215)" Height="Height.Px(400)" Padding="Padding.Is0">
+                <Text Overflow="Overflow.Scroll" TextOverflow="TextOverflow.NoWrap" Width="Width.Is100" Height="Height.Is100">@_debuggerText</Text>
+            </Column>
+        </Div>
+    }
 </Div>
 
 
 
 
 @code {
-    private Guid _userId = Guid.NewGuid();
-    private Stopwatch _articleStopwatch = new();
+    [Parameter] [SupplyParameterFromQuery] public bool? Debugging { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public int TransparencyType { get; set; } //https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/navigation?view=aspnetcore-10.0&utm_source=chatgpt.com#query-strings
 
+    private Guid _userId = Guid.NewGuid();
+    private readonly Stopwatch _articleStopwatch = new();
+    private ObservableCollection<LoggedStopwatch> _trackedStopwatches = new();
+    private ObservableCollection<LoggedIncrementor> _trackedIncrementors = new();
+
+    private Dictionary<string, object> _articleContentParameters = null!;
+    
     private Modal _confirmSurveyModal = null!;
     private bool _toastVisible;
+    private Type _articleContentType = null!;
+    
+    private string _debuggerText = "";
+    
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        base.OnInitialized();
+        base.OnParametersSet();
+
+        _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
+        _articleContentParameters = new() { [nameof(IArticleContent.OnStopwatchCreated)] = EventCallback.Factory.Create<LoggedStopwatch>(this, HandleCallback),  [nameof(IArticleContent.OnIncrementorCreated)] = EventCallback.Factory.Create<LoggedIncrementor>(this, HandleCallback)};
+
+        _trackedStopwatches.CollectionChanged += UpdateDebugger;
+        _trackedIncrementors.CollectionChanged += UpdateDebugger;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
         
         _articleStopwatch.Start();
+    }
+
+    private void HandleCallback(object loggedObject)
+    {
+        if (loggedObject is LoggedStopwatch stopwatch)
+            _trackedStopwatches.Add(stopwatch);
+        else if (loggedObject is LoggedIncrementor incrementor)
+            _trackedIncrementors.Add(incrementor);
+        else
+            throw new InvalidOperationException();
+    }
+
+    private void UpdateDebugger(object? obj, NotifyCollectionChangedEventArgs args)
+    {
+        if (obj == _trackedStopwatches)
+            foreach (LoggedStopwatch stopwatch in _trackedStopwatches)
+            {
+                _debuggerText += stopwatch.Name + "---" + stopwatch.Owner;
+            }
+        else if (obj == _trackedIncrementors)
+            foreach (LoggedIncrementor incrementor in _trackedIncrementors)
+            {
+                _debuggerText += incrementor.Name + "---" + incrementor.Owner;
+            }
+        else
+            throw new InvalidOperationException();
+        
+        StateHasChanged();
     }
 
     private void StartSurvey()
@@ -92,4 +154,5 @@
         // Hier alle data naar json en uploaden naar Azure blob
     }
 
+    
 }
