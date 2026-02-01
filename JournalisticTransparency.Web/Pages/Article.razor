@@ -13,7 +13,7 @@
                                     Style="border-right: 1px solid rgb(224,224,224)">
                     <SiteSectionCard DisplayToast="@(() => _toastVisible = true)"/>
                     <Div Flex="Flex.Grow.Is1"></Div>
-                    <ShareCard DisplayToast="@(() => _toastVisible = true)"/>
+                    <ShareCard DisplayFunctionDisabledToast="@(() => _toastVisible = true)"/>
                 </LayoutSiderContent>
             </LayoutSider>
             <Layout Style="scrollbar-width: thin">
@@ -106,7 +106,7 @@
         base.OnParametersSet();
 
         _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
-        _articleContentParameters = new() { [nameof(IArticleContent.OnLoggedObjectCreated)] = EventCallback.Factory.Create<ITrackedObject>(this, HandleCallback) };
+        _articleContentParameters = new() { [nameof(IArticleContent.OnLoggedObjectCreated)] = EventCallback.Factory.Create<ITrackedObject>(this, HandleCallback), [nameof(IArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
 
         if (Debugging is false)
             return;

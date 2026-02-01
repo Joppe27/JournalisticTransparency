@@ -5,26 +5,26 @@
             <Strong TextAlignment="TextAlignment.Center" Style="white-space: pre"> Deel artikel </Strong>
         </Row>
         <Row Flex="Flex.JustifyContent.Around">
-            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+            <Anchor Clicked="@(() => DisplayFunctionDisabledToast.InvokeAsync())">
                 <FigureImage Source="Resources/bluesky-brands-solid-full.svg" Width="Width.Px(19)"/>
             </Anchor>
-            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+            <Anchor Clicked="@(() => DisplayFunctionDisabledToast.InvokeAsync())">
                 <FigureImage Source="Resources/x-twitter-brands-solid-full.svg" Width="Width.Px(19)"/>
             </Anchor>
         </Row>
         <Row Flex="Flex.JustifyContent.Around">
-            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+            <Anchor Clicked="@(() => DisplayFunctionDisabledToast.InvokeAsync())">
                 <FigureImage Source="Resources/facebook-brands-solid-full.svg" Width="Width.Px(19)"/>
             </Anchor>
-            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())">
+            <Anchor Clicked="@(() => DisplayFunctionDisabledToast.InvokeAsync())">
                 <FigureImage Source="Resources/threads-brands-solid-full.svg" Width="Width.Px(19)"/>
             </Anchor>
         </Row>
         <Row Flex="Flex.JustifyContent.Around">
-            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())" TextDecoration="TextDecoration.None">
+            <Anchor Clicked="@(() => DisplayFunctionDisabledToast.InvokeAsync())" TextDecoration="TextDecoration.None">
                 <Icon Name="IconName.Mail" IconSize="IconSize.Large" TextColor="TextColor.Dark"/>
             </Anchor>
-            <Anchor Clicked="@(() => DisplayToast.InvokeAsync())" TextDecoration="TextDecoration.None">
+            <Anchor Clicked="@(() => DisplayFunctionDisabledToast.InvokeAsync())" TextDecoration="TextDecoration.None">
                 <Icon Name="IconName.ExternalLinkSquareAlt" IconSize="IconSize.Large" TextColor="TextColor.Dark"/>
             </Anchor>
         </Row>
@@ -32,5 +32,5 @@
 </Card>
 
 @code {
-    [Parameter] public EventCallback DisplayToast { get; set; }
+    [Parameter] public EventCallback DisplayFunctionDisabledToast { get; set; }
 }

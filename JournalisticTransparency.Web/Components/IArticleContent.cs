@@ -14,6 +14,8 @@ namespace JournalisticTransparency.Web.Components;
 public interface IArticleContent
 {
     public EventCallback<ITrackedObject> OnLoggedObjectCreated { get; set; }
+    
+    public EventCallback DisplayFunctionDisabledToast { get; set; }
 }
 
 public static class ArticleContentFactory
