@@ -1,0 +1,69 @@
+@using System.Diagnostics
+@using System.Timers
+@using Humanizer
+@using JournalisticTransparency.Web.Components.Logging
+<Div Position="Position.Absolute.Top.Is0.End.Is0" Border="Border.Is3.Danger.OnAll" Background="Background.White"
+     Style="z-index: 10" Width="Width.Max100" Height="Height.Max100">
+    <Button Color="Color.Danger" Clicked="@(() => _tableVisible = !_tableVisible)" Style="z-index: 10"
+            Position="Position.Absolute.Top.Is0.End.Is0" Margin="Margin.Is1.FromTop.Is4.FromEnd">
+        <Icon Name="IconName.EyeSlash" IconSize="IconSize.x2"/>
+    </Button>
+    <Div Display="@(_tableVisible ? Display.Always : Display.None)" Overflow="Overflow.Scroll">
+        <Table Striped>
+            <TableHeader>
+                <TableRow>
+                    <TableHeaderCell>⏯️</TableHeaderCell>
+                    <TableHeaderCell>Data</TableHeaderCell>
+                    <TableHeaderCell>Name</TableHeaderCell>
+                    <TableHeaderCell>Owner</TableHeaderCell>
+                    <TableHeaderCell>Type</TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                @foreach (ITrackedObject entry in DebuggerEntries)
+                {
+                    <TableRow>
+                        <TableRowCell>@(entry.Status == TrackedObjectStatus.Active ? "▶️" : "⏸️")</TableRowCell>
+                        <TableRowCell TextOverflow="TextOverflow.NoWrap">@GetTrackedObjectData(entry)</TableRowCell>
+                        <TableRowCell>@entry.Name</TableRowCell>
+                        <TableRowCell>@(entry.Owner.ToString()!.Split('.').Last())</TableRowCell>
+                        <TableRowCell>@entry.GetType().ToString()</TableRowCell>
+                    </TableRow>
+                }
+            </TableBody>
+        </Table>
+    </Div>
+
+</Div>
+
+@code {
+    [Parameter] public List<ITrackedObject> DebuggerEntries { get; set; } = new();
+
+    private bool _tableVisible = true;
+
+    private readonly Timer _refreshTimer = new() { AutoReset = true, Interval = 3000 };
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        _refreshTimer.Elapsed += (_, _) => StateHasChanged();
+
+        if (DebuggerEntries.Count > 0)
+            _refreshTimer.Start();
+        else
+            _refreshTimer.Stop();
+    }
+
+    private string GetTrackedObjectData(ITrackedObject trackedObject)
+    {
+        if (trackedObject is TrackedObject<Stopwatch> trackedStopwatch)
+            return trackedStopwatch.Object.Elapsed.Humanize();
+
+        if (trackedObject is TrackedObject<int> trackedCounter)
+            return trackedCounter.Object.ToString();
+
+        throw new NotSupportedException();
+    }
+
+}

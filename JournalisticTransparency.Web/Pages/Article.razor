@@ -1,16 +1,16 @@
 @page "/article"
 @using System.Collections.ObjectModel
-@using System.Collections.Specialized
-@using System.Diagnostics
 @using JournalisticTransparency.Web.Components
 @using JournalisticTransparency.Web.Components.Logging
 
 <Div>
-    <Layout >
+    <Layout>
         <SiteHeader DisplayToast="@(() => _toastVisible = true)"/>
         <Layout Sider Width="Width.Is75.OnDesktop.Is100.OnMobile" Margin="Margin.IsAuto.OnX">
             <LayoutSider Display="Display.Block.OnDesktop.None.OnMobile" Background="Background.White">
-                <LayoutSiderContent Display="Display.Flex.Column" Height="Height.Is100" Padding="Padding.Is3.FromStart.Is5.OnY.Is5.FromEnd" Style="border-right: 1px solid rgb(224,224,224)">
+                <LayoutSiderContent Display="Display.Flex.Column" Height="Height.Is100"
+                                    Padding="Padding.Is3.FromStart.Is5.OnY.Is5.FromEnd"
+                                    Style="border-right: 1px solid rgb(224,224,224)">
                     <SiteSectionCard DisplayToast="@(() => _toastVisible = true)"/>
                     <Div Flex="Flex.Grow.Is1"></Div>
                     <ShareCard DisplayToast="@(() => _toastVisible = true)"/>
@@ -22,19 +22,23 @@
                         <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile">
                             <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
                             <Div Flex="Flex.JustifyContent.End">
-                                <Button Display="Display.None.OnDesktop.Block.OnMobile" Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is5.OnY">
-                                    <Text Style="white-space: pre">Naar de enquête </Text>
+                                <Button Display="Display.None.OnDesktop.Block.OnMobile"
+                                        Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is5.OnY">
+                                    <Text Style="white-space: pre">Naar de enquête</Text>
                                     <Icon Name="IconName.ArrowRight" IconSize="IconSize.Large"/>
                                 </Button>
                             </Div>
                         </Column>
-                        <Column Display="Display.Block.OnDesktop.None.OnMobile" ColumnSize="ColumnSize.Is3" Padding="Padding.Is0.FromEnd">
+                        <Column Display="Display.Block.OnDesktop.None.OnMobile" ColumnSize="ColumnSize.Is3"
+                                Padding="Padding.Is0.FromEnd">
                             <Div Flex="Flex.Column" Height="Height.Is100">
                                 <MostReadCard DisplayToast="@(() => _toastVisible = true)"/>
                                 <Div Flex="Flex.Grow.Is1"></Div>
                                 <Div Flex="Flex.JustifyContent.Center">
-                                    <Button Flex="Flex.Column" Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is3.OnY">
-                                        <Text TextSize="TextSize.ExtraLarge" Margin="Margin.Is3" Style="white-space: pre">Naar de enquête</Text> 
+                                    <Button Flex="Flex.Column" Clicked="@(() => _confirmSurveyModal.Show())"
+                                            Margin="Margin.Is3.OnY">
+                                        <Text TextSize="TextSize.ExtraLarge" Margin="Margin.Is3"
+                                              Style="white-space: pre">Naar de enquête</Text>
                                         <Icon Name="IconName.ArrowRight" IconSize="IconSize.x3"/>
                                     </Button>
                                 </Div>
@@ -45,7 +49,7 @@
             </Layout>
         </Layout>
     </Layout>
-    
+
     <Toaster>
         <Toast @bind-Visible="@_toastVisible">
             <ToastBody Padding="Padding.Is0" Flex="Flex.AlignItems.Center" Gap="Gap.Is2">
@@ -54,7 +58,7 @@
             </ToastBody>
         </Toast>
     </Toaster>
-    
+
     <Modal @ref="_confirmSurveyModal">
         <ModalContent Centered>
             <ModalHeader>
@@ -64,19 +68,17 @@
                 <Text>U kunt het artikel hierna niet meer lezen. Dit kan niet ongedaan gemaakt worden.</Text>
             </ModalBody>
             <ModalFooter Margin="Margin.Is3.FromTop">
-                <Button Color="Color.Secondary" Clicked="@(() => _confirmSurveyModal.Close(CloseReason.UserClosing))">Annuleren</Button>
+                <Button Color="Color.Secondary" Clicked="@(() => _confirmSurveyModal.Close(CloseReason.UserClosing))">
+                    Annuleren
+                </Button>
                 <Button Color="Color.Primary" Clicked="StartSurvey">Doorgaan</Button>
             </ModalFooter>
         </ModalContent>
     </Modal>
-    
+
     @if (Debugging is true)
     {
-        <Div Position="Position.Absolute.Top.Is0.End.Is0" Border="Border.Is3.Danger.OnAll" Background="Background.White" Style="z-index: 10">
-            <Column Flex="Flex.Column" Width="Width.Px(215)" Height="Height.Px(400)" Padding="Padding.Is0">
-                <Text Overflow="Overflow.Scroll" TextOverflow="TextOverflow.NoWrap" Width="Width.Is100" Height="Height.Is100">@_debuggerText</Text>
-            </Column>
-        </Div>
+        <DebugWindow DebuggerEntries="@_debuggerEntries"/>
     }
 </Div>
 
@@ -88,71 +90,46 @@
     [Parameter] [SupplyParameterFromQuery] public int TransparencyType { get; set; } //https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/navigation?view=aspnetcore-10.0&utm_source=chatgpt.com#query-strings
 
     private Guid _userId = Guid.NewGuid();
-    private readonly Stopwatch _articleStopwatch = new();
-    private ObservableCollection<LoggedStopwatch> _trackedStopwatches = new();
-    private ObservableCollection<LoggedIncrementor> _trackedIncrementors = new();
+    private readonly ObservableCollection<ITrackedObject> _trackedObjects = new();
 
     private Dictionary<string, object> _articleContentParameters = null!;
-    
+
     private Modal _confirmSurveyModal = null!;
     private bool _toastVisible;
     private Type _articleContentType = null!;
-    
-    private string _debuggerText = "";
-    
+
+    private List<ITrackedObject> _debuggerEntries = new();
+
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
         _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
-        _articleContentParameters = new() { [nameof(IArticleContent.OnStopwatchCreated)] = EventCallback.Factory.Create<LoggedStopwatch>(this, HandleCallback),  [nameof(IArticleContent.OnIncrementorCreated)] = EventCallback.Factory.Create<LoggedIncrementor>(this, HandleCallback)};
+        _articleContentParameters = new() { [nameof(IArticleContent.OnLoggedObjectCreated)] = EventCallback.Factory.Create<ITrackedObject>(this, HandleCallback) };
 
-        _trackedStopwatches.CollectionChanged += UpdateDebugger;
-        _trackedIncrementors.CollectionChanged += UpdateDebugger;
+        if (Debugging is false)
+            return;
+
+        _trackedObjects.CollectionChanged += UpdateDebugger;
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    private void HandleCallback(ITrackedObject trackedObject)
     {
-        base.OnAfterRender(firstRender);
-        
-        _articleStopwatch.Start();
+        _trackedObjects.Add(trackedObject);
     }
 
-    private void HandleCallback(object loggedObject)
+    private void UpdateDebugger(object? obj, EventArgs args)
     {
-        if (loggedObject is LoggedStopwatch stopwatch)
-            _trackedStopwatches.Add(stopwatch);
-        else if (loggedObject is LoggedIncrementor incrementor)
-            _trackedIncrementors.Add(incrementor);
-        else
-            throw new InvalidOperationException();
-    }
+        _debuggerEntries = _trackedObjects.ToList();
 
-    private void UpdateDebugger(object? obj, NotifyCollectionChangedEventArgs args)
-    {
-        if (obj == _trackedStopwatches)
-            foreach (LoggedStopwatch stopwatch in _trackedStopwatches)
-            {
-                _debuggerText += stopwatch.Name + "---" + stopwatch.Owner;
-            }
-        else if (obj == _trackedIncrementors)
-            foreach (LoggedIncrementor incrementor in _trackedIncrementors)
-            {
-                _debuggerText += incrementor.Name + "---" + incrementor.Owner;
-            }
-        else
-            throw new InvalidOperationException();
-        
         StateHasChanged();
     }
 
     private void StartSurvey()
     {
-        _articleStopwatch.Stop();
-
         // Hier alle data naar json en uploaden naar Azure blob
     }
 
-    
+
 }

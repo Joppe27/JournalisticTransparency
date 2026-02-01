@@ -1,16 +1,19 @@
 // Copyright (c) Joppe27 <joppe27.be>. Licensed under the MIT License.
 // See LICENSE file in repository root for full license text.
 
+#region
+
 using JournalisticTransparency.Web.Components.ArticleContent;
 using JournalisticTransparency.Web.Components.Logging;
 using Microsoft.AspNetCore.Components;
+
+#endregion
 
 namespace JournalisticTransparency.Web.Components;
 
 public interface IArticleContent
 {
-    public EventCallback<LoggedStopwatch> OnStopwatchCreated { get; set; }
-    public EventCallback<LoggedIncrementor> OnIncrementorCreated { get; set; }
+    public EventCallback<ITrackedObject> OnLoggedObjectCreated { get; set; }
 }
 
 public static class ArticleContentFactory
@@ -62,4 +65,3 @@ public enum TransparencyType
     ForcedInteractive,
     Incorporated
 }
-

@@ -1,24 +1,8 @@
 ﻿@using JournalisticTransparency.Web.Pages
 
-<ThemeProvider Theme="@theme">
-    <Router AppAssembly="@typeof(App).Assembly" NotFoundPage="@typeof(NotFound)">
-        <Found Context="routeData">
-            <RouteView RouteData="@routeData"/> @* DefaultLayout="@typeof(Disclaimer) *@
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-        </Found>
-    </Router>
-</ThemeProvider>
-
-@code{
-
-    private Theme theme = new Theme()
-    {
-        BodyOptions = new ThemeBodyOptions()
-        {
-            FontOptions = new ThemeFontOptions()
-            {
-                //Size = "24pt",
-            }
-        }
-    };
-}
+<Router AppAssembly="@typeof(App).Assembly" NotFoundPage="@typeof(NotFound)">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData"/> @* DefaultLayout="@typeof(Disclaimer) *@
+        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+    </Found>
+</Router>

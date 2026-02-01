@@ -9,7 +9,9 @@
             <Figure Style="width:250px" Margin="Margin.Is0">
                 <FigureImage Source="Resources/vub_rgb.png" Style="display:block" Margin="Margin.Is0"/>
             </Figure>
-            <DisplayHeading TextSize="TextSize.Heading1.OnDesktop.Heading6.OnMobile" TextOverflow="TextOverflow.NoWrap" Margin="Margin.Is3.OnX.Is0.FromBottom">Experiment journalistiek vertrouwen</DisplayHeading>
+            <DisplayHeading TextSize="TextSize.Heading1.OnDesktop.Heading6.OnMobile" TextOverflow="TextOverflow.NoWrap"
+                            Margin="Margin.Is3.OnX.Is0.FromBottom">Experiment journalistiek vertrouwen
+            </DisplayHeading>
         </Div>
         <Divider/>
     </LayoutHeader>
@@ -26,7 +28,7 @@
         <Paragraph>
             Paragraph 3.
         </Paragraph>
-        <Alert Color="Color.Info"  @ref="_conditionsAlert">
+        <Alert Color="Color.Info" @ref="_conditionsAlert">
             <AlertMessage>
                 U moet akkoord gaan met de voorwaarden om te kunnen beginnen.
             </AlertMessage>
@@ -41,7 +43,7 @@
     </LayoutContent>
     <LayoutFooter Fixed Width="Width.Is100">
         <Divider/>
-        <Text Style="display: block" Margin="Margin.Is5.OnAll" >
+        <Text Style="display: block" Margin="Margin.Is5.OnAll">
             Contactinformatie enz.
         </Text>
     </LayoutFooter>
@@ -50,7 +52,7 @@
 @code {
     private bool _isLoading;
     private bool _agreedConditions;
-    
+
     private Alert _conditionsAlert = null!;
 
     private void StartButton()
@@ -60,10 +62,11 @@
             _conditionsAlert.Show();
             return;
         }
-        
+
         _isLoading = true;
-        
+
         NavigationManager.NavigateTo("/article");
     }
+
 }
 
