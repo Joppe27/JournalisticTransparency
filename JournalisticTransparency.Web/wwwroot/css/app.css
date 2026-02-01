@@ -74,3 +74,8 @@
     font-family: "Segoe UI", "-apple-system", "BlinkMacSystemFont", sans-serif !important;
     line-height: 25px !important;
 }
+
+:focus,
+:focus-visible {
+    outline: none;
+}
