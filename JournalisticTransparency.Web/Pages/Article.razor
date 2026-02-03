@@ -2,6 +2,7 @@
 @using System.Collections.ObjectModel
 @using JournalisticTransparency.Web.Components
 @using JournalisticTransparency.Web.Components.Logging
+@inject IJSRuntime JS
 
 <Div>
     <Layout>
@@ -112,6 +113,13 @@
             return;
 
         _trackedObjects.CollectionChanged += UpdateDebugger;
+    }
+    
+    protected override Task OnInitializedAsync()
+    {
+        JS.InvokeVoidAsync("enableBeforeUnload");
+        
+        return base.OnInitializedAsync();
     }
 
     private void HandleCallback(ITrackedObject trackedObject)
