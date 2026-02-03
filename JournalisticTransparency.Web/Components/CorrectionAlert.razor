@@ -1,0 +1,46 @@
+@using DiffPlex
+@inject HttpClient HttpClient
+
+@if (Interactive)
+{
+    <Alert Color="Color.Info" Visible>
+        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => _modalRef.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
+    </Alert>
+
+    <Modal @ref="_modalRef">
+        <ModalContent Size="ModalSize.Fullscreen">
+            <ModalBody Margin="Margin.Is3.FromBottom">
+                <InlineDiffViewer IgnoreUnchanged="false" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="@(() => _modalRef.Hide())">Sluiten</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
+else
+{
+    <Alert Color="Color.Info" Style="max-height: 250px" Flex="Flex.Column.AlignItems.Start" Visible>
+        <AlertMessage Margin="Margin.Is2.FromBottom">De huidige versie van dit arikel verschilt van de oorspronkelijke. Bekijk hieronder welke veranderingen werden aangebracht.</AlertMessage>
+        <InlineDiffViewer IgnoreUnchanged="true" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
+    </Alert>
+}
+
+
+
+@code {
+    [Parameter] public bool Interactive { get; set; }
+    
+    private Modal _modalRef = null!;
+    private string _oldText = null!;
+    private string _newText = null!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        
+        _oldText = await HttpClient.GetStringAsync("Resources/OldText.txt");
+        _newText = await HttpClient.GetStringAsync("Resources/NewText.txt");
+    }
+
+}
