@@ -1,0 +1,57 @@
+<Card Margin="Margin.Is3.OnY">
+    <Accordion>
+        <AccordionItem @bind-Visible="@_accordionItemVisible">
+            <AccordionHeader>
+                <AccordionToggle>Lees meer over MEDIUM</AccordionToggle>
+            </AccordionHeader>
+            <AccordionBody Margin="Margin.Is0">
+                <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
+                    <Column ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
+                        <Image Source="Resources/vub_rgb.png" Style="border-radius: 16px" Display="Display.Block" Width="Width.Px(70)"/>
+                    </Column>
+                    <Column Margin="Margin.Is3.OnX">
+                        <Row Style="column-gap: 12px; row-gap: 4px" Margin="Margin.Is2.FromBottom">
+                            <Strong TextOverflow="TextOverflow.NoWrap">MEDIUM</Strong>
+                            <Div Flex="Flex.Row.AlignContent.Center.JustifyContent.Center">
+                                <Icon Name="IconName.LocationArrow" IconSize="IconSize.Large" IconStyle="IconStyle.Regular"/>
+                                <Text Style="white-space: pre"> Nieuwstraat 124, 1000 Brussel</Text>
+                            </Div>
+                            <Anchor Clicked="@(() => DisplayFunctionDisabledToast.InvokeAsync())" Flex="Flex.Row.AlignContent.Center.JustifyContent.Center" TextDecoration="TextDecoration.None">
+                                <Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>
+                                <Text Style="white-space: pre" TextColor="TextColor.Dark"> Contacteer de nieuwsombudspersoon</Text>
+                            </Anchor>
+                        </Row>
+                        <Row Style="row-gap: 8px">
+                            <Text>
+                                De gezondheidsredactie van MEDIUM wordt ondersteund door het deperatement voor wetenschapsonderwijs van het Howard Hughes Medical Institute. Enkel MEDIUM is verantwoordelijk voor de inhoud van het artikel.
+                            </Text>
+                            <Text>
+                                Onze missie is het bereik vergroten van betrouwbare, apolitieke en accurate berichtgeving op basis van feiten. Dit terwijl we bouwen aan een duurzame toekomst voor onafhankelijke journalisten.
+                            </Text>
+                            <Text>
+                                Het fundament van onze journalistiek is de <Anchor Target="Target.Blank" To="/Resources/Code 2026.pdf">Code van de Vlaamse Raad voor Journalistiek</Anchor>, een verzameling van regels en routines die feitelijkheid en onpartijdigheid waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden verslaggevers en leiden personeel op.
+                            </Text>
+                            <Text>
+                                MEDIUM is een onafhankelijke nieuwscoöperatief zonder winstoogmerk. Onze omzet wordt voornamelijk gegenereerd door het verkopen van onze journalistiek aan andere nieuwsorganisaties en klanten (79%). MEDIUM verkrijgt ook inkomsten uit advertenties en donaties van lezers (13%), en door het aanbieden van diensten (8%).
+                            </Text>
+                        </Row>
+                    </Column>
+                </Row>
+            </AccordionBody>
+        </AccordionItem>
+    </Accordion>
+</Card>
+
+@code {
+    [Parameter] public bool Interactive { get; set; }
+    [Parameter] public EventCallback DisplayFunctionDisabledToast { get; set; }
+
+    private bool _accordionItemVisible;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        _accordionItemVisible = !Interactive;
+    }
+}
