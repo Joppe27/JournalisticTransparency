@@ -13,6 +13,8 @@
         <FigureCaption>James Watson. Moskou, 17 juni 2015.</FigureCaption>
     </Column>
 </Row>
+<AuthorCard DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())" Interactive="@Interactive"/>
+<CorrectionAlert Interactive="@Interactive"/>
 <Paragraph>
     Op een mistige zaterdagochtend in 1953, zit een tengere 24-jarige te prutsen met wat vormen die hij uit karton heeft
     geknipt. Ze staan voor de delen van een DNA-molecule, en de jonge James Watson probeert uit te vissen hoe ze in
@@ -97,10 +99,13 @@
     Harbor Laboratory. Een week later ging hij met pensioen. Hij werkte toen bijna veertig jaar voor het instituut en
     bekleedde verschillende leidinggevende functies.
 </Paragraph>
-
+<ProcessInfoCard Interactive="@Interactive"/>
+<BestPracticesCard Interactive="@Interactive" DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())"/>
 
 
 @code {
     [Parameter] public EventCallback<ITrackedObject> OnLoggedObjectCreated { get; set; }
     [Parameter] public EventCallback DisplayFunctionDisabledToast { get; set; }
+    
+    private const bool Interactive = true;
 }

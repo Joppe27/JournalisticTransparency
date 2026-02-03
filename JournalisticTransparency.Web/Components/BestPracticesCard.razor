@@ -29,7 +29,7 @@
                                 Onze missie is het bereik vergroten van betrouwbare, apolitieke en accurate berichtgeving op basis van feiten. Dit terwijl we bouwen aan een duurzame toekomst voor onafhankelijke journalisten.
                             </Text>
                             <Text>
-                                Het fundament van onze journalistiek is de <Anchor Target="Target.Blank" To="/Resources/Code 2026.pdf">Code van de Vlaamse Raad voor Journalistiek</Anchor>, een verzameling van regels en routines die feitelijkheid en onpartijdigheid waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden verslaggevers en leiden personeel op.
+                                Het fundament van onze journalistiek is de <Anchor Clicked="@(() => _modalRef.Show())" >Code van de Vlaamse Raad voor Journalistiek</Anchor>, een verzameling van regels en routines die feitelijkheid en onpartijdigheid waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden verslaggevers en leiden personeel op.
                             </Text>
                             <Text>
                                 MEDIUM is een onafhankelijke nieuwscoöperatief zonder winstoogmerk. Onze omzet wordt voornamelijk gegenereerd door het verkopen van onze journalistiek aan andere nieuwsorganisaties en klanten (79%). MEDIUM verkrijgt ook inkomsten uit advertenties en donaties van lezers (13%), en door het aanbieden van diensten (8%).
@@ -42,11 +42,26 @@
     </Accordion>
 </Card>
 
+<Modal @ref="_modalRef">
+    <ModalContent Size="ModalSize.Fullscreen">
+        <ModalBody Margin="Margin.Is3.FromBottom">
+            <PdfViewerContainer>
+                <PdfViewerToolbar ShowPaging="true"/>
+                <PdfViewer Source="/Resources/Code 2026.pdf" Scale="1.25"/>
+            </PdfViewerContainer>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@(() => _modalRef.Hide())">Sluiten</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
 @code {
     [Parameter] public bool Interactive { get; set; }
     [Parameter] public EventCallback DisplayFunctionDisabledToast { get; set; }
 
     private bool _accordionItemVisible;
+    private Modal _modalRef = null!;
 
     protected override void OnParametersSet()
     {
