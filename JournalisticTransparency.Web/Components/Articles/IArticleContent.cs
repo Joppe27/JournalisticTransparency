@@ -31,7 +31,7 @@ public static class ArticleContentFactory
             case TransparencyType.InvasiveInteractive:
                 return new InvasiveInteractiveTransparencyContent();
             case TransparencyType.ForcedInteractive:
-                return new ForcedInteractiveTransparencyContent();
+                return new ForcedTransparencyContent();
             case TransparencyType.Incorporated:
                 return new IncorporatedTransparencyContent();
             default:
@@ -50,7 +50,7 @@ public static class ArticleContentFactory
             case TransparencyType.InvasiveInteractive:
                 return typeof(InvasiveInteractiveTransparencyContent);
             case TransparencyType.ForcedInteractive:
-                return typeof(ForcedInteractiveTransparencyContent);
+                return typeof(ForcedTransparencyContent);
             case TransparencyType.Incorporated:
                 return typeof(IncorporatedTransparencyContent);
             default:
