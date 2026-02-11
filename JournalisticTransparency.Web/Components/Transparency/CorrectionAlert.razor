@@ -1,9 +1,9 @@
-@using DiffPlex
+@inherits TransparencyElement
 @inject HttpClient HttpClient
 
 @if (Interactive)
 {
-    <Alert Color="Color.Info" Visible>
+    <Alert Style="@Style" Color="Color.Info" Visible>
         <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => _modalRef.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
     </Alert>
 
@@ -20,7 +20,7 @@
 }
 else
 {
-    <Alert Color="Color.Info" Style="max-height: 250px" Flex="Flex.Column.AlignItems.Start" Visible>
+    <Alert Style="@(Style + "max-height: 250px;")" Color="Color.Info" Flex="Flex.Column.AlignItems.Start" Visible>
         <AlertMessage Margin="Margin.Is2.FromBottom">De huidige versie van dit arikel verschilt van de oorspronkelijke. Bekijk hieronder welke veranderingen werden aangebracht.</AlertMessage>
         <InlineDiffViewer IgnoreUnchanged="true" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
     </Alert>
@@ -29,8 +29,6 @@ else
 
 
 @code {
-    [Parameter] public bool Interactive { get; set; }
-    
     private Modal _modalRef = null!;
     private string _oldText = null!;
     private string _newText = null!;

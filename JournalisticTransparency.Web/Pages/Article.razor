@@ -1,6 +1,7 @@
 @page "/article"
 @using System.Collections.ObjectModel
-@using JournalisticTransparency.Web.Components
+@using JournalisticTransparency.Web.Components.Articles
+@using JournalisticTransparency.Web.Components.Layout
 @using JournalisticTransparency.Web.Components.Logging
 @inject IJSRuntime JS
 
@@ -107,7 +108,7 @@
         base.OnParametersSet();
 
         _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
-        _articleContentParameters = new() { [nameof(IArticleContent.OnLoggedObjectCreated)] = EventCallback.Factory.Create<ITrackedObject>(this, HandleCallback), [nameof(IArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
+        _articleContentParameters = new() { [nameof(ArticleContent.OnLoggedObjectCreated)] = EventCallback.Factory.Create<ITrackedObject>(this, HandleCallback), [nameof(ArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
 
         if (Debugging is false)
             return;

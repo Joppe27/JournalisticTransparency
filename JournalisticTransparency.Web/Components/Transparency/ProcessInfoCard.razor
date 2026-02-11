@@ -1,8 +1,10 @@
-<Card>
+@inherits TransparencyElement
+
+<Card Style="@Style">
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <AccordionToggle>Lees meer over hoe het artikel tot stand is gekomen</AccordionToggle>
+                <AccordionToggle Clicked="@(() => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible)))">Lees meer over hoe het artikel tot stand is gekomen</AccordionToggle>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
@@ -53,8 +55,6 @@
 </Modal>
 
 @code {
-    [Parameter] public bool Interactive { get; set; }
-    
     private bool _accordionItemVisible;
     private Modal _modalRef = null!;
 

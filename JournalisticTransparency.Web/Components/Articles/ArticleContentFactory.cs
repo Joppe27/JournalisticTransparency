@@ -1,26 +1,11 @@
-// Copyright (c) Joppe27 <joppe27.be>. Licensed under the MIT License.
+// Copyright (c) Joppe27 <joppe27.be>.Licensed under the MIT License.
 // See LICENSE file in repository root for full license text.
 
-#region
-
-using JournalisticTransparency.Web.Components.ArticleContent;
-using JournalisticTransparency.Web.Components.Logging;
-using Microsoft.AspNetCore.Components;
-
-#endregion
-
-namespace JournalisticTransparency.Web.Components;
-
-public interface IArticleContent
-{
-    public EventCallback<ITrackedObject> OnLoggedObjectCreated { get; set; }
-    
-    public EventCallback DisplayFunctionDisabledToast { get; set; }
-}
+namespace JournalisticTransparency.Web.Components.Articles;
 
 public static class ArticleContentFactory
 {
-    public static IArticleContent Create(TransparencyType type)
+    public static ArticleContent Create(TransparencyType type)
     {
         switch (type)
         {
