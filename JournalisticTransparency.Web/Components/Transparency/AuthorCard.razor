@@ -1,10 +1,11 @@
+@using JournalisticTransparency.Web.Components.Logging
 @inherits TransparencyElement
 
 <Card Style="@Style" Margin="Margin.Is3.OnY">
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <AccordionToggle Clicked="@(() => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible)))">Lees meer over de auteur</AccordionToggle>
+                <TrackedComponent T="AccordionToggle" Attributes="@_trackedComponentParameters"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
@@ -35,10 +36,32 @@
 @code {
     private bool _accordionItemVisible;
 
+    private Dictionary<string, object> _trackedComponentParameters = null!;
+
+    private bool _initialized;
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        
+        RenderFragment toggleContent = builder => builder.AddContent(0, @<Text>Lees meer over de auteur</Text>);
+
+        _trackedComponentParameters = new()
+        {
+            { nameof(AccordionToggle.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible))) },
+            { nameof(AccordionToggle.ChildContent), toggleContent }
+        };
+    }
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        _accordionItemVisible = !Interactive;
+        if (!_initialized)
+        {
+            _accordionItemVisible = !Interactive;
+            _initialized = true;
+        }
     }
+
 }

@@ -3,25 +3,27 @@
 
 #region
 
+using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Components;
+using ObservableCollections;
 
 #endregion
 
 namespace JournalisticTransparency.Web.Components.Logging;
 
-public class TrackedObject<T> : ITrackedObject where T : notnull, new()
+public class TrackedObject<T> : ITracked where T : notnull, new()
 {
-    public T Object { get; } = new();
-
-    public TrackedObjectStatus Status { get; set; }
+    public object Object { get; set; } = new T();
 
     public required string Name { get; init; }
 
     public required IComponent Owner { get; init; }
-}
+    
+    public TrackedStatus Status { get; set; }
+    
+    public EventCallback<TrackedStatus> OnStatusChanged { get; set; }
 
-public enum TrackedObjectStatus
-{
-    Active,
-    Paused
+    public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
+
+    public EventCallback<ITracked> OnInteractionsChanged { get; set; }
 }

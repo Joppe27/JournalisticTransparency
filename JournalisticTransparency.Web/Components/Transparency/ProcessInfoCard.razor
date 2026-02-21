@@ -58,10 +58,16 @@
     private bool _accordionItemVisible;
     private Modal _modalRef = null!;
 
+    private bool _initialized;
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        _accordionItemVisible = !Interactive;
+        if (!_initialized)
+        {
+            _accordionItemVisible = !Interactive;
+            _initialized = true;
+        }
     }
 }

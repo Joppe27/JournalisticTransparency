@@ -1,9 +1,12 @@
 @page "/article"
 @using System.Collections.ObjectModel
+@using System.Diagnostics
 @using JournalisticTransparency.Web.Components.Articles
 @using JournalisticTransparency.Web.Components.Layout
 @using JournalisticTransparency.Web.Components.Logging
+@using ObservableCollections
 @inject IJSRuntime JS
+@inject Stopwatch SessionTimer
 
 <Div>
     <Layout>
@@ -22,7 +25,11 @@
                 <LayoutContent>
                     <Row Padding="Padding.Is5.OnY.Is5.FromStart.Is3.FromEnd" Height="Height.Is100">
                         <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile">
-                            <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
+                            <CascadingValue Value="_trackedComponentsChangedCallback">
+                                <CascadingValue Value="_interactionsChangedCallback">
+                                    <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
+                                </CascadingValue>
+                            </CascadingValue>
                             <Div Flex="Flex.JustifyContent.End">
                                 <Button Display="Display.None.OnDesktop.Block.OnMobile"
                                         Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is5.OnY">
@@ -80,7 +87,7 @@
 
     @if (Debugging is true)
     {
-        <DebugOverlay DebuggerEntries="@_debuggerEntries"/>
+        <DebugOverlay DebuggerEntries="@_trackedComponents"/>
     }
 </Div>
 
@@ -92,7 +99,6 @@
     [Parameter] [SupplyParameterFromQuery] public int TransparencyType { get; set; } //https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/navigation?view=aspnetcore-10.0&utm_source=chatgpt.com#query-strings
 
     private Guid _userId = Guid.NewGuid();
-    private readonly ObservableCollection<ITrackedObject> _trackedObjects = new();
 
     private Dictionary<string, object> _articleContentParameters = null!;
 
@@ -100,20 +106,32 @@
     private bool _toastVisible;
     private Type _articleContentType = null!;
 
-    private List<ITrackedObject> _debuggerEntries = new();
+    private readonly List<ITracked> _trackedComponents = new();
 
+    private EventCallback<ITracked> _trackedComponentsChangedCallback;
+    private EventCallback<ITracked> _interactionsChangedCallback;
+
+    private bool _initialized;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
-        _articleContentParameters = new() { [nameof(ArticleContent.OnLoggedObjectCreated)] = EventCallback.Factory.Create<ITrackedObject>(this, HandleCallback), [nameof(ArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
+        if (!_initialized)
+        {
+            _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
+            _articleContentParameters = new() { [nameof(ArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
 
-        if (Debugging is false)
-            return;
+            SessionTimer.Start();
+        
+            if (Debugging is false)
+                return;
 
-        _trackedObjects.CollectionChanged += UpdateDebugger;
+            _trackedComponentsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
+            _interactionsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
+
+            _initialized = true;
+        }
     }
     
     protected override Task OnInitializedAsync()
@@ -123,22 +141,14 @@
         return base.OnInitializedAsync();
     }
 
-    private void HandleCallback(ITrackedObject trackedObject)
+    private void UpdateDebugger(ITracked trackedComponent)
     {
-        _trackedObjects.Add(trackedObject);
-    }
-
-    private void UpdateDebugger(object? obj, EventArgs args)
-    {
-        _debuggerEntries = _trackedObjects.ToList();
-
-        StateHasChanged();
+        if (!_trackedComponents.Contains(trackedComponent))
+            _trackedComponents.Add(trackedComponent);
     }
 
     private void StartSurvey()
     {
         // Hier alle data naar json en uploaden naar Azure blob
     }
-
-
 }

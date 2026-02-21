@@ -3,6 +3,7 @@
 
 #region
 
+using System.Diagnostics;
 using Blazorise;
 using Blazorise.FluentUI2;
 using Blazorise.Icons.FluentUI;
@@ -18,6 +19,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services
     .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) })
+    .AddScoped(_ => new Stopwatch())
     .AddOptions()
     .AddBlazorise()
     .AddFluentUI2Providers()

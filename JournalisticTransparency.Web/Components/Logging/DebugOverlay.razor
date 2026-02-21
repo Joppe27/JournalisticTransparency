@@ -4,66 +4,56 @@
 @using JournalisticTransparency.Web.Components.Logging
 <Div Position="Position.Absolute.Top.Is0.End.Is0" Border="Border.Is3.Danger.OnAll" Background="Background.White"
      Style="z-index: 9999" Width="Width.Max100" Height="Height.Max100">
-    <Button Color="Color.Danger" Clicked="@(() => _tableVisible = !_tableVisible)" Style="z-index: 10"
+    <Button Color="Color.Danger" Clicked="@(() => _debuggerVisible = !_debuggerVisible)" Style="z-index: 10; opacity: 0.5"
             Position="Position.Absolute.Top.Is0.End.Is0" Margin="Margin.Is1.FromTop.Is4.FromEnd">
         <Icon Name="IconName.EyeSlash" IconSize="IconSize.x2"/>
     </Button>
-    <Div Display="@(_tableVisible ? Display.Always : Display.None)" Overflow="Overflow.Scroll">
-        <Table Striped>
-            <TableHeader>
-                <TableRow>
-                    <TableHeaderCell>⏯️</TableHeaderCell>
-                    <TableHeaderCell>Data</TableHeaderCell>
-                    <TableHeaderCell>Name</TableHeaderCell>
-                    <TableHeaderCell>Owner</TableHeaderCell>
-                    <TableHeaderCell>Type</TableHeaderCell>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                @foreach (ITrackedObject entry in DebuggerEntries)
-                {
-                    <TableRow>
-                        <TableRowCell>@(entry.Status == TrackedObjectStatus.Active ? "▶️" : "⏸️")</TableRowCell>
-                        <TableRowCell TextOverflow="TextOverflow.NoWrap">@GetTrackedObjectData(entry)</TableRowCell>
-                        <TableRowCell>@entry.Name</TableRowCell>
-                        <TableRowCell>@(entry.Owner.ToString()!.Split('.').Last())</TableRowCell>
-                        <TableRowCell>@entry.GetType().ToString()</TableRowCell>
-                    </TableRow>
-                }
-            </TableBody>
-        </Table>
+    <Div Display="@(_debuggerVisible ? Display.Always : Display.None)" Overflow="Overflow.Scroll">
+        <Accordion>
+            @foreach (ITracked trackedObject in DebuggerEntries)
+            {
+                <AccordionItem>
+                    <AccordionHeader>
+                        <AccordionToggle>
+                            <Table Margin="Margin.Is0">
+                                <TableBody>
+                                    <TableRow>
+                                        <TableRowCell>@(trackedObject.Status == TrackedStatus.Active ? "▶️" : "⏸️")</TableRowCell>
+                                        <TableRowCell><Strong>@trackedObject.Name</Strong></TableRowCell>
+                                        <TableRowCell>@trackedObject.GetType().ToString()</TableRowCell>
+                                        <TableRowCell>@(trackedObject.Owner.ToString()!.Split('.').Last())</TableRowCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </AccordionToggle>
+                    </AccordionHeader>
+                    <AccordionBody>
+                        <Table Striped Margin="Margin.Is0">
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHeaderCell>Interaction</TableHeaderCell>
+                                    <TableHeaderCell>Time</TableHeaderCell>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                @foreach (TrackedInteraction interaction in trackedObject.Interactions)
+                                {
+                                    <TableRow>
+                                        <TableRowCell>@interaction.Event</TableRowCell>
+                                        <TableRowCell>@interaction.Time</TableRowCell>
+                                    </TableRow>
+                                }
+                            </TableBody>
+                        </Table>
+                    </AccordionBody>
+                </AccordionItem>
+            }
+        </Accordion>
     </Div>
-
 </Div>
 
 @code {
-    [Parameter] public List<ITrackedObject> DebuggerEntries { get; set; } = new();
+    [Parameter] public List<ITracked> DebuggerEntries { get; set; } = null!;
 
-    private bool _tableVisible = true;
-
-    private readonly Timer _refreshTimer = new() { AutoReset = true, Interval = 3000 };
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        _refreshTimer.Elapsed += (_, _) => StateHasChanged();
-
-        if (DebuggerEntries.Count > 0)
-            _refreshTimer.Start();
-        else
-            _refreshTimer.Stop();
-    }
-
-    private string GetTrackedObjectData(ITrackedObject trackedObject)
-    {
-        if (trackedObject is TrackedObject<Stopwatch> trackedStopwatch)
-            return trackedStopwatch.Object.Elapsed.Humanize();
-
-        if (trackedObject is TrackedObject<int> trackedCounter)
-            return trackedCounter.Object.ToString();
-
-        throw new NotSupportedException();
-    }
-
+    private bool _debuggerVisible = true;
 }

@@ -1,22 +1,14 @@
+@using JournalisticTransparency.Web.Components.Logging
 @inherits TransparencyElement
 @inject HttpClient HttpClient
 
 @if (Interactive)
 {
     <Alert Style="@Style" Color="Color.Info" Visible>
-        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => _modalRef.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
+        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
     </Alert>
-
-    <Modal @ref="_modalRef">
-        <ModalContent Size="ModalSize.Fullscreen">
-            <ModalBody Margin="Margin.Is3.FromBottom">
-                <InlineDiffViewer IgnoreUnchanged="false" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Primary" Clicked="@(() => _modalRef.Hide())">Sluiten</Button>
-            </ModalFooter>
-        </ModalContent>
-    </Modal>
+    
+    <TrackedComponent @ref="_modalRef" T="Modal" Attributes="_trackedComponentParameters" Owner="@this" Name="correctienotificatie"/>
 }
 else
 {
@@ -29,15 +21,43 @@ else
 
 
 @code {
-    private Modal _modalRef = null!;
+    private TrackedComponent<Modal> _modalRef = null!;
     private string _oldText = null!;
     private string _newText = null!;
 
-    protected override async Task OnParametersSetAsync()
+    private Dictionary<string, object> _trackedComponentParameters = null!;
+
+    protected override async Task OnInitializedAsync()
     {
-        await base.OnParametersSetAsync();
+        await base.OnInitializedAsync();
         
         _oldText = await HttpClient.GetStringAsync("Resources/OldText.txt");
         _newText = await HttpClient.GetStringAsync("Resources/NewText.txt");
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender)
+            return;
+        
+        RenderFragment modalContent = builder => builder.AddContent(0, 
+            @<ModalContent Size="ModalSize.Fullscreen">
+                <ModalBody Margin="Margin.Is3.FromBottom">
+                    <InlineDiffViewer IgnoreUnchanged="false" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten</Button>
+                </ModalFooter>
+            </ModalContent>);
+        
+        _trackedComponentParameters = new()
+        {
+            { nameof(Modal.ChildContent), modalContent }
+        };
+
+        await OnLoggedObjectCreated.InvokeAsync(_modalRef);
+    }
+
 }

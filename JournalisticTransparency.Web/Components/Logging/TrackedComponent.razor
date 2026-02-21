@@ -1,0 +1,110 @@
+@using System.Collections.ObjectModel
+@using System.Collections.Specialized
+@using ObservableCollections
+@using System.Diagnostics
+@inherits ComponentBase
+@implements ITracked
+@typeparam T where T : notnull, new()
+@inject Stopwatch SessionTimer
+
+<DynamicComponent @ref="@_dynamicComponent" Type="@_dynamicType" Parameters="@Attributes"/>
+
+@code {
+    [Parameter] public Dictionary<string, object>? Attributes { get; set; }
+    [Parameter] public EventCallback<TrackedStatus> OnStatusChanged { get; set; }
+    [CascadingParameter] public EventCallback<ITracked> OnInteractionsChanged { get; set; }
+    
+    [Parameter] [EditorRequired] public required string Name { get; init; }
+    [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
+
+    private DynamicComponent _dynamicComponent = null!;
+    public object Object { get; private set; } = null!;
+    private readonly Type _dynamicType = typeof(T);
+    
+    public TrackedStatus Status { get; } = TrackedStatus.Paused;
+    public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
+
+    private bool _initialized;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (!_initialized)
+        {
+            Interactions.CollectionChanged += (_, _) => OnInteractionsChanged.InvokeAsync(this);
+            _initialized = true;
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (!firstRender)
+            return;
+        
+        Object = _dynamicComponent.Instance ?? throw new NullReferenceException();
+        
+        if (Object is Modal)
+        {
+            EventCallbackWrapper trackInteractionCallback = new(EventCallback.Factory.Create(this, TrackInteraction));
+            
+            AddCallbackToChild(nameof(Modal.Opened), trackInteractionCallback);
+            AddCallbackToChild(nameof(Modal.Closed), trackInteractionCallback);
+            StateHasChanged();
+        }
+
+        if (Object is AccordionToggle)
+        {
+            EventCallbackWrapper<MouseEventArgs> trackInteractionCallback = new(EventCallback.Factory.Create<MouseEventArgs>(this, TrackInteraction));
+            
+            AddCallbackToChild(nameof(AccordionToggle.Clicked), trackInteractionCallback);
+            StateHasChanged();
+        }
+    }
+
+    private async Task InvokeNestedCallback(List<IEventCallback> callbacks)
+    {
+        foreach (IEventCallback callback in callbacks)
+        {
+            await callback.InvokeAsync();
+        }
+    }
+
+    private void TrackInteraction()
+    {
+        Interactions.Add(new TrackedInteraction("AAAAAA", SessionTimer.Elapsed));
+    }
+
+    private void AddCallbackToChild(string eventName, IEventCallback callback)
+    {
+        Attributes ??= new();
+        
+        Attributes.TryGetValue(eventName, out var value);
+
+        if (value is null)
+        {
+            Attributes[eventName] = callback.Object;
+            return;
+        }
+
+        if (value is { } parentCallback)
+        {
+            // GARBAGE CODE ALERT!
+            if (parentCallback is EventCallback parentEventCallback)
+            {
+                Attributes[eventName] = EventCallback.Factory.Create(this, () => InvokeNestedCallback([callback, new EventCallbackWrapper(parentEventCallback)]));
+                return;
+            }
+
+            if (parentCallback is EventCallback<MouseEventArgs> parentMouseCallback)
+            {
+                Attributes[eventName] = EventCallback.Factory.Create<MouseEventArgs>(this, () => InvokeNestedCallback([callback, new EventCallbackWrapper<MouseEventArgs>(parentMouseCallback)]));
+                return;
+            }
+        }
+        
+        throw new NotSupportedException();
+    }
+}

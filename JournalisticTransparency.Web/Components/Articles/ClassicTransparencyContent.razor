@@ -113,9 +113,9 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-
+        
         _masterStopwatch = CreateStopwatch("master", this);
-        _masterStopwatch.Object.Start();
+        (_masterStopwatch.Object as Stopwatch).Start();
     }
 
     private TrackedObject<Stopwatch> CreateStopwatch(string name, IComponent owner)
