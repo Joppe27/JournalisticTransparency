@@ -107,22 +107,4 @@
 
 @code {
     protected override bool Interactive => false;
-    
-    private TrackedObject<Stopwatch> _masterStopwatch = null!;
-    
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        
-        _masterStopwatch = CreateStopwatch("master", this);
-        (_masterStopwatch.Object as Stopwatch).Start();
-    }
-
-    private TrackedObject<Stopwatch> CreateStopwatch(string name, IComponent owner)
-    {
-        TrackedObject<Stopwatch> stopwatch = new() { Name = name, Owner = owner };
-        OnLoggedObjectCreated.InvokeAsync(stopwatch);
-        return stopwatch;
-    }
-
 }

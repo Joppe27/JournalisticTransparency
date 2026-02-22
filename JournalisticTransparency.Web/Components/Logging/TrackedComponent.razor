@@ -11,7 +11,7 @@
 
 @code {
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
-    [Parameter] public EventCallback<TrackedStatus> OnStatusChanged { get; set; }
+    [CascadingParameter] public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
     [CascadingParameter] public EventCallback<ITracked> OnInteractionsChanged { get; set; }
     
     [Parameter] [EditorRequired] public required string Name { get; init; }
@@ -20,8 +20,8 @@
     private DynamicComponent _dynamicComponent = null!;
     public object Object { get; private set; } = null!;
     private readonly Type _dynamicType = typeof(T);
-    
-    public TrackedStatus Status { get; } = TrackedStatus.Paused;
+
+    public TrackedStatus Status => DetermineStatus();
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
 
     private bool _initialized;
@@ -45,21 +45,27 @@
             return;
         
         Object = _dynamicComponent.Instance ?? throw new NullReferenceException();
+        OnTrackedElementCreated.InvokeAsync(this);
         
         if (Object is Modal)
         {
-            EventCallbackWrapper trackInteractionCallback = new(EventCallback.Factory.Create(this, TrackInteraction));
-            
-            AddCallbackToChild(nameof(Modal.Opened), trackInteractionCallback);
-            AddCallbackToChild(nameof(Modal.Closed), trackInteractionCallback);
+            AddCallbackToChild(nameof(Modal.Opened), new EventCallbackWrapper(EventCallback.Factory.Create(this, () => TrackInteraction(Interaction.Opened))));
+            AddCallbackToChild(nameof(Modal.Closed), new EventCallbackWrapper(EventCallback.Factory.Create(this, () => TrackInteraction(Interaction.Closed))));
             StateHasChanged();
         }
 
-        if (Object is AccordionToggle)
+        if (Object is AccordionToggle toggle)
         {
-            EventCallbackWrapper<MouseEventArgs> trackInteractionCallback = new(EventCallback.Factory.Create<MouseEventArgs>(this, TrackInteraction));
-            
-            AddCallbackToChild(nameof(AccordionToggle.Clicked), trackInteractionCallback);
+            AddCallbackToChild(nameof(AccordionToggle.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) =>
+            {
+                TrackInteraction(!toggle.AccordionItemVisible ? Interaction.Opened : Interaction.Closed);
+            })));
+            StateHasChanged();
+        }
+
+        if (Object is Anchor)
+        {
+            AddCallbackToChild(nameof(Anchor.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) => TrackInteraction(Interaction.Clicked))));
             StateHasChanged();
         }
     }
@@ -72,10 +78,7 @@
         }
     }
 
-    private void TrackInteraction()
-    {
-        Interactions.Add(new TrackedInteraction("AAAAAA", SessionTimer.Elapsed));
-    }
+    private void TrackInteraction(Interaction interaction) => Interactions.Add(new TrackedInteraction(interaction, SessionTimer.Elapsed));
 
     private void AddCallbackToChild(string eventName, IEventCallback callback)
     {
@@ -106,5 +109,20 @@
         }
         
         throw new NotSupportedException();
+    }
+
+    private TrackedStatus DetermineStatus()
+    {
+        switch (Interactions.LastOrDefault()?.Interaction)
+        {
+            case Interaction.Opened:
+                return TrackedStatus.Active;
+            case Interaction.Closed:
+                return TrackedStatus.Paused;
+            case Interaction.Clicked:
+                return TrackedStatus.Incremented;
+            default:
+                return TrackedStatus.Paused;
+        }
     }
 }

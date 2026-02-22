@@ -8,7 +8,7 @@
         <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
     </Alert>
     
-    <TrackedComponent @ref="_modalRef" T="Modal" Attributes="_trackedComponentParameters" Owner="@this" Name="correctienotificatie"/>
+    <TrackedComponent @ref="_modalRef" T="Modal" Attributes="_trackedComponentParameters" Owner="@this" Name="aangebrachte wijzigingen"/>
 }
 else
 {
@@ -56,8 +56,6 @@ else
         {
             { nameof(Modal.ChildContent), modalContent }
         };
-
-        await OnLoggedObjectCreated.InvokeAsync(_modalRef);
     }
 
 }

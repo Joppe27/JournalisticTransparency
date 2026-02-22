@@ -21,7 +21,7 @@ public class TrackedObject<T> : ITracked where T : notnull, new()
     
     public TrackedStatus Status { get; set; }
     
-    public EventCallback<TrackedStatus> OnStatusChanged { get; set; }
+    public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
 
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
 

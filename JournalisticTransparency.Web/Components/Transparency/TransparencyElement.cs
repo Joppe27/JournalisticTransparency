@@ -11,6 +11,5 @@ public class TransparencyElement : ComponentBase
     [Parameter] public string Style { get; set; } = "";
     [Parameter] public bool Interactive { get; set; }
     [Parameter] public EventCallback DisplayFunctionDisabledToast { get; set; }
-    [CascadingParameter] public EventCallback<ITracked> OnLoggedObjectCreated { get; set; }
     [Parameter] public EventCallback<KeyValuePair<TransparencyElement, bool>> OnOpenStateChanged { get; set; }
 }

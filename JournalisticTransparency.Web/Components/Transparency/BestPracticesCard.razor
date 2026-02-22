@@ -5,7 +5,7 @@
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <TrackedComponent T="AccordionToggle" Attributes="@_trackedComponentParameters"/>
+                <TrackedComponent T="AccordionToggle" Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="best practices"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
@@ -19,10 +19,7 @@
                                 <Icon Name="IconName.LocationArrow" IconSize="IconSize.Large" IconStyle="IconStyle.Regular"/>
                                 <Text Style="white-space: pre"> Nieuwstraat 124, 1000 Brussel</Text>
                             </Div>
-                            <Anchor Target="Target.Blank" To="mailto:joppe.rombouts@vub.be?subject=Experiment VUB: contact ombuds&body=Typ hieronder uw bericht voor de ombudspersoon:" Flex="Flex.Row.AlignContent.Center.JustifyContent.Center" TextDecoration="TextDecoration.None">
-                                <Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>
-                                <Text Style="white-space: pre" TextColor="TextColor.Dark"> Contacteer de nieuwsombudspersoon</Text>
-                            </Anchor>
+                            <TrackedComponent T="Anchor" Attributes="_trackedAnchorParameters" Owner="@this" Name="mail ombuds"/>
                         </Row>
                         <Row Style="row-gap: 8px">
                             <Text>
@@ -32,7 +29,7 @@
                                 Onze missie is het bereik vergroten van betrouwbare, apolitieke en accurate berichtgeving op basis van feiten. Dit terwijl we bouwen aan een duurzame toekomst voor onafhankelijke journalisten.
                             </Text>
                             <Text>
-                                Het fundament van onze journalistiek is de <Anchor Clicked="@(() => _modalRef.Show())" >Code van de Vlaamse Raad voor Journalistiek</Anchor>, een verzameling van regels en routines die feitelijkheid en onpartijdigheid waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden verslaggevers en leiden personeel op.
+                                Het fundament van onze journalistiek is de <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())" >Code van de Vlaamse Raad voor Journalistiek</Anchor>, een verzameling van regels en routines die feitelijkheid en onpartijdigheid waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden verslaggevers en leiden personeel op.
                             </Text>
                             <Text>
                                 MEDIUM is een onafhankelijke nieuwscoöperatief zonder winstoogmerk. Onze omzet wordt voornamelijk gegenereerd door het verkopen van onze journalistiek aan andere nieuwsorganisaties en klanten (79%). MEDIUM verkrijgt ook inkomsten uit advertenties en donaties van lezers (13%), en door het aanbieden van diensten (8%).
@@ -45,25 +42,15 @@
     </Accordion>
 </Card>
 
-<Modal @ref="_modalRef">
-    <ModalContent Size="ModalSize.Fullscreen">
-        <ModalBody Margin="Margin.Is3.FromBottom">
-            <PdfViewerContainer>
-                <PdfViewerToolbar ShowPaging="true"/>
-                <PdfViewer Source="/Resources/Code 2026.pdf" Scale="1.25"/>
-            </PdfViewerContainer>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@(() => _modalRef.Hide())">Sluiten</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+<TrackedComponent @ref="_modalRef" T="Modal" Attributes="_trackedModalParameters" Owner="@this" Name="code journalistiek"/>
 
 @code {
     private bool _accordionItemVisible;
-    private Modal _modalRef = null!;
+    private TrackedComponent<Modal> _modalRef = null!;
 
-    private Dictionary<string, object> _trackedComponentParameters = null!;
+    private Dictionary<string, object> _trackedAccordionToggleParameters = null!;
+    private Dictionary<string, object> _trackedAnchorParameters = null!;
+    private Dictionary<string, object> _trackedModalParameters = null!;
 
     private bool _initialized;
     
@@ -73,10 +60,43 @@
         
         RenderFragment toggleContent = builder => builder.AddContent(0, @<Text>Lees meer over MEDIUM</Text>);
 
-        _trackedComponentParameters = new()
+        _trackedAccordionToggleParameters = new()
         {
             { nameof(AccordionToggle.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible))) },
             { nameof(AccordionToggle.ChildContent), toggleContent }
+        };
+
+        RenderFragment anchorContent = builder => builder.AddContent(0,
+            @<Div Flex="Flex.AlignItems.Center">
+                <Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>
+                <Text Style="white-space: pre" TextColor="TextColor.Dark"> Contacteer de nieuwsombudspersoon</Text>
+            </Div>);
+        
+        _trackedAnchorParameters = new()
+        {
+            { nameof(Anchor.To), "mailto:joppe.rombouts@vub.be?subject=Experiment VUB: contact ombuds&body=Typ hieronder uw bericht voor de ombudspersoon:" },
+            { nameof(Anchor.Target), Target.Blank },
+            { nameof(Anchor.TextDecoration), TextDecoration.None },
+            { nameof(Anchor.Flex), Flex.Row.AlignContent.Center.JustifyContent.Center },
+            { nameof(Anchor.ChildContent), anchorContent }
+        };
+
+        RenderFragment modalContent = builder => builder.AddContent(0,
+            @<ModalContent Size="ModalSize.Fullscreen">
+                <ModalBody Margin="Margin.Is3.FromBottom">
+                    <PdfViewerContainer>
+                        <PdfViewerToolbar ShowPaging="true"/>
+                        <PdfViewer Source="/Resources/Code 2026.pdf" Scale="1.25"/>
+                    </PdfViewerContainer>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten</Button>
+                </ModalFooter>
+            </ModalContent>);
+        
+        _trackedModalParameters = new()
+        {
+            { nameof(Modal.ChildContent), modalContent },
         };
     }
 

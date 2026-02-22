@@ -21,17 +21,25 @@ public interface ITracked
     
     public TrackedStatus Status { get; }
     
-    public EventCallback<TrackedStatus> OnStatusChanged { get; set; }
+    public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
     
     public ObservableCollection<TrackedInteraction> Interactions { get; }
     
     public EventCallback<ITracked> OnInteractionsChanged { get; set; }
 }
 
-public record TrackedInteraction(string Event, TimeSpan Time);
+public record TrackedInteraction(Interaction Interaction, TimeSpan Time);
+
+public enum Interaction
+{
+    Opened,
+    Closed,
+    Clicked,
+}
 
 public enum TrackedStatus
 {
     Active,
-    Paused
+    Paused,
+    Incremented,
 }

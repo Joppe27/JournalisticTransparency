@@ -8,7 +8,6 @@ namespace JournalisticTransparency.Web.Components.Articles;
 
 public abstract class ArticleContent : ComponentBase
 {
-    [Parameter] public EventCallback<ITracked> OnLoggedObjectCreated { get; set; }
     [Parameter] public EventCallback DisplayFunctionDisabledToast { get; set; }
     
     protected abstract bool Interactive { get; } 

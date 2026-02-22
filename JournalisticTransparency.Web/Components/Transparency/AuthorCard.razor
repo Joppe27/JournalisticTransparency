@@ -5,7 +5,7 @@
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <TrackedComponent T="AccordionToggle" Attributes="@_trackedComponentParameters"/>
+                <TrackedComponent T="AccordionToggle" Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="uitleg auteur"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
@@ -15,9 +15,7 @@
                     <Column Margin="Margin.Is3.OnX">
                         <Row Style="column-gap: 12px; row-gap: 4px" Margin="Margin.Is2.FromBottom">
                             <Strong TextOverflow="TextOverflow.NoWrap">door Jan Van Genechten</Strong>
-                            <Anchor Target="Target.Blank" To="mailto:joppe.rombouts@vub.be?subject=Experiment VUB: contact auteur &body=Typ hieronder uw bericht voor Jan Van Genechten:" TextDecoration="TextDecoration.None">
-                                <Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>
-                            </Anchor>
+                            <TrackedComponent T="Anchor" Attributes="_trackedAnchorParameters" Owner="@this" Name="mail auteur"/>
                             <Div Flex="Flex.Row.AlignContent.Center.JustifyContent.Center">
                                 <Icon Name="IconName.LocationArrow" IconSize="IconSize.Large" IconStyle="IconStyle.Regular"/>
                                 <Text Style="white-space: pre"> Brussel</Text>
@@ -36,8 +34,9 @@
 @code {
     private bool _accordionItemVisible;
 
-    private Dictionary<string, object> _trackedComponentParameters = null!;
-
+    private Dictionary<string, object> _trackedAccordionToggleParameters = null!;
+    private Dictionary<string, object> _trackedAnchorParameters = null!;
+    
     private bool _initialized;
     
     protected override void OnInitialized()
@@ -46,10 +45,20 @@
         
         RenderFragment toggleContent = builder => builder.AddContent(0, @<Text>Lees meer over de auteur</Text>);
 
-        _trackedComponentParameters = new()
+        _trackedAccordionToggleParameters = new()
         {
             { nameof(AccordionToggle.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible))) },
             { nameof(AccordionToggle.ChildContent), toggleContent }
+        };
+
+        RenderFragment anchorContent = builder => builder.AddContent(0, @<Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>);
+
+        _trackedAnchorParameters = new()
+        {
+            { nameof(Anchor.To), "mailto:joppe.rombouts@vub.be?subject=Experiment VUB: contact auteur &body=Typ hieronder uw bericht voor Jan Van Genechten:" },
+            { nameof(Anchor.Target), Target.Blank },
+            { nameof(Anchor.TextDecoration), TextDecoration.None },
+            { nameof(AccordionToggle.ChildContent), anchorContent }
         };
     }
 
@@ -62,6 +71,11 @@
             _accordionItemVisible = !Interactive;
             _initialized = true;
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 }

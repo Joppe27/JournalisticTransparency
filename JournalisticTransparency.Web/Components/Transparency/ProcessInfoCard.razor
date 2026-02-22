@@ -1,10 +1,11 @@
+@using JournalisticTransparency.Web.Components.Logging
 @inherits TransparencyElement
 
 <Card Style="@Style">
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <AccordionToggle Clicked="@(() => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible)))">Lees meer over hoe het artikel tot stand is gekomen</AccordionToggle>
+                <TrackedComponent T="AccordionToggle" Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="info totstandkoming"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
@@ -15,7 +16,7 @@
                         </Div>
                         <Div>
                             <Heading Size="HeadingSize.Is6">Onderzoeksproces</Heading>
-                            <Text>De meeste bronnen die voor het maken van dit artikel werden aangewend zijn <Anchor Clicked="@(() => _modalRef.Show())">vrij consulteerbaar</Anchor>. Interviews zijn niet integraal raadpleegbaar, omdat MEDIUM geen toestemming verkreeg van de geïnterviewden om de geprekken in zijn geheel vrij te geven. De inhoud van het artikel weerspiegelt de inhoud van de interviews op een waarheidsgetrouwe basis.</Text>
+                            <Text>De meeste bronnen die voor het maken van dit artikel werden aangewend zijn <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())">vrij consulteerbaar</Anchor>. Interviews zijn niet integraal raadpleegbaar, omdat MEDIUM geen toestemming verkreeg van de geïnterviewden om de geprekken in zijn geheel vrij te geven. De inhoud van het artikel weerspiegelt de inhoud van de interviews op een waarheidsgetrouwe basis.</Text>
                         </Div>
                         <Div>
                             <Heading Size="HeadingSize.Is6">Methodologie</Heading>
@@ -40,25 +41,47 @@
     </Accordion>
 </Card>
 
-<Modal @ref="_modalRef">
-    <ModalContent Size="ModalSize.Fullscreen">
-        <ModalBody Margin="Margin.Is3.FromBottom">
-            <PdfViewerContainer>
-                <PdfViewerToolbar ShowPaging="false"/>
-                <PdfViewer Source="/Resources/james_watson.pdf" Scale="1.25"/>
-            </PdfViewerContainer>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@(() => _modalRef.Hide())">Sluiten</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+<TrackedComponent @ref="_modalRef" T="Modal" Attributes="_trackedModalParameters" Owner="@this" Name="bronnen artikel"/>
 
 @code {
     private bool _accordionItemVisible;
-    private Modal _modalRef = null!;
+    private TrackedComponent<Modal> _modalRef = null!;
+    
+    private Dictionary<string, object> _trackedAccordionToggleParameters = null!;
+    private Dictionary<string, object> _trackedModalParameters = null!;
 
     private bool _initialized;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        RenderFragment toggleContent = builder => builder.AddContent(0, @<Text>Lees meer over hoe het artikel tot stand is gekomen</Text>);
+        
+        _trackedAccordionToggleParameters = new Dictionary<string, object>()
+        {
+            { nameof(AccordionToggle.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible))) },
+            { nameof(AccordionToggle.ChildContent), toggleContent }
+        };
+
+        RenderFragment modalContent = builder => builder.AddContent(0, 
+            @<ModalContent Size="ModalSize.Fullscreen">
+                <ModalBody Margin="Margin.Is3.FromBottom">
+                    <PdfViewerContainer>
+                        <PdfViewerToolbar ShowPaging="false"/>
+                        <PdfViewer Source="/Resources/james_watson.pdf" Scale="1.25"/>
+                    </PdfViewerContainer>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten</Button>
+                </ModalFooter>
+            </ModalContent>);
+        
+        _trackedModalParameters = new()
+        {
+            { nameof(Modal.ChildContent), modalContent },
+        };
+    }
 
     protected override void OnParametersSet()
     {

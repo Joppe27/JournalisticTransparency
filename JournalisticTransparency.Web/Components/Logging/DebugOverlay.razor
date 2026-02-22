@@ -10,7 +10,7 @@
     </Button>
     <Div Display="@(_debuggerVisible ? Display.Always : Display.None)" Overflow="Overflow.Scroll">
         <Accordion>
-            @foreach (ITracked trackedObject in DebuggerEntries)
+            @foreach (ITracked trackedObject in DebuggerEntries.OrderBy(entry => FormatOwnerString(entry.Owner.ToString())))
             {
                 <AccordionItem>
                     <AccordionHeader>
@@ -18,10 +18,10 @@
                             <Table Margin="Margin.Is0">
                                 <TableBody>
                                     <TableRow>
-                                        <TableRowCell>@(trackedObject.Status == TrackedStatus.Active ? "▶️" : "⏸️")</TableRowCell>
+                                        <TableRowCell>@GetInteractionIcon(trackedObject.Status)</TableRowCell>
+                                        <TableRowCell>@FormatOwnerString(trackedObject.Owner.ToString())</TableRowCell>
                                         <TableRowCell><Strong>@trackedObject.Name</Strong></TableRowCell>
                                         <TableRowCell>@trackedObject.GetType().ToString()</TableRowCell>
-                                        <TableRowCell>@(trackedObject.Owner.ToString()!.Split('.').Last())</TableRowCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -39,7 +39,7 @@
                                 @foreach (TrackedInteraction interaction in trackedObject.Interactions)
                                 {
                                     <TableRow>
-                                        <TableRowCell>@interaction.Event</TableRowCell>
+                                        <TableRowCell>@interaction.Interaction.ToString()</TableRowCell>
                                         <TableRowCell>@interaction.Time</TableRowCell>
                                     </TableRow>
                                 }
@@ -56,4 +56,21 @@
     [Parameter] public List<ITracked> DebuggerEntries { get; set; } = null!;
 
     private bool _debuggerVisible = true;
+
+    private string GetInteractionIcon(TrackedStatus status)
+    {
+        switch (status)
+        {
+            case TrackedStatus.Active:
+                return "❇️";
+            case TrackedStatus.Paused:
+                return "⏸️";
+            case TrackedStatus.Incremented:
+                return "✴️";
+            default:
+                throw new NotSupportedException();
+        }
+    }
+
+    private string FormatOwnerString(string owner) => owner.Split('.').Last();
 }
