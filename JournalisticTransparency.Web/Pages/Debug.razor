@@ -1,0 +1,39 @@
+@page "/debug"
+@using JournalisticTransparency.Web.Components
+@using JournalisticTransparency.Web.Components.Articles
+@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager NavigationManager
+<Div Margin="Margin.Is5">
+    <h1>Debug-menu</h1>
+    <Column Flex="Flex.Column" Gap="Gap.Is3" Padding="Padding.Is0" Width="Width.Is33.OnDesktop.Is100.OnMobile">
+        <Button Clicked="@(() => RedirectToArticle(TransparencyType.Classic))">Versie "zichtbare transparantie" openen</Button>
+        <Button Clicked="@(() => RedirectToArticle(TransparencyType.Interactive))">Versie "interactieve transparantie (gewone elementen)" openen</Button>
+        <Button Clicked="@(() => RedirectToArticle(TransparencyType.InvasiveInteractive))">Versie "interactieve transparantie (invasieve elementen)" openen</Button>
+        <Button Clicked="@(() => RedirectToArticle(TransparencyType.ForcedInteractive))">Versie "verplicht interactieve transparantie" openen</Button>
+        <Button Clicked="@(() => RedirectToArticle(TransparencyType.Incorporated))">Versie "geïntegreerde transparantie" openen</Button>
+        <Div Flex="Flex.Row">
+            <Div Flex="Flex.Grow.Is1"></Div>
+            <Check TValue="bool" Checked="@_showDebugInfo">
+                <Text TextColor="TextColor.Dark">Debugger tonen</Text>
+            </Check>
+        </Div>
+    </Column>
+</Div>
+
+@code {
+    private readonly bool _showDebugInfo = true;
+
+    private void RedirectToArticle(TransparencyType transparencyType)
+    {
+        const string baseUri = "/article";
+        Dictionary<string, string?> queryParameters = new()
+        {
+            { "transparencytype", ((int)transparencyType).ToString() },
+            { "debugging", _showDebugInfo ? "true" : "false" }
+        };
+
+        string uri = QueryHelpers.AddQueryString(baseUri, queryParameters);
+        
+        NavigationManager.NavigateTo(uri);
+    }
+}

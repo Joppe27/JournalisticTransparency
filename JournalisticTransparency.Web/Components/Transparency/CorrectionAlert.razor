@@ -1,0 +1,61 @@
+@using JournalisticTransparency.Web.Components.Logging
+@inherits TransparencyElement
+@inject HttpClient HttpClient
+
+@if (Interactive)
+{
+    <Alert Style="@Style" Color="Color.Info" Visible>
+        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
+    </Alert>
+    
+    <TrackedComponent @ref="_modalRef" T="Modal" Attributes="_trackedComponentParameters" Owner="@this" Name="aangebrachte wijzigingen"/>
+}
+else
+{
+    <Alert Style="@(Style + "max-height: 250px;")" Color="Color.Info" Flex="Flex.Column.AlignItems.Start" Visible>
+        <AlertMessage Margin="Margin.Is2.FromBottom">De huidige versie van dit arikel verschilt van de oorspronkelijke. Bekijk hieronder welke veranderingen werden aangebracht.</AlertMessage>
+        <InlineDiffViewer IgnoreUnchanged="true" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
+    </Alert>
+}
+
+
+
+@code {
+    private TrackedComponent<Modal> _modalRef = null!;
+    private string _oldText = null!;
+    private string _newText = null!;
+
+    private Dictionary<string, object> _trackedComponentParameters = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        
+        _oldText = await HttpClient.GetStringAsync("Resources/OldText.txt");
+        _newText = await HttpClient.GetStringAsync("Resources/NewText.txt");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender)
+            return;
+        
+        RenderFragment modalContent = builder => builder.AddContent(0, 
+            @<ModalContent Size="ModalSize.Fullscreen">
+                <ModalBody Margin="Margin.Is3.FromBottom">
+                    <InlineDiffViewer IgnoreUnchanged="false" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten</Button>
+                </ModalFooter>
+            </ModalContent>);
+        
+        _trackedComponentParameters = new()
+        {
+            { nameof(Modal.ChildContent), modalContent }
+        };
+    }
+
+}

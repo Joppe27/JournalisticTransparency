@@ -1,0 +1,81 @@
+@using JournalisticTransparency.Web.Components.Logging
+@inherits TransparencyElement
+
+<Card Style="@Style" Margin="Margin.Is3.OnY">
+    <Accordion>
+        <AccordionItem @bind-Visible="@_accordionItemVisible">
+            <AccordionHeader>
+                <TrackedComponent T="AccordionToggle" Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="uitleg auteur"/>
+            </AccordionHeader>
+            <AccordionBody Margin="Margin.Is0">
+                <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
+                    <Column ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
+                        <Image Source="Resources/author.jpg" Style="border-radius: 16px" Display="Display.Block" Width="Width.Px(70)"/>
+                    </Column>
+                    <Column Margin="Margin.Is3.OnX">
+                        <Row Style="column-gap: 12px; row-gap: 4px" Margin="Margin.Is2.FromBottom">
+                            <Strong TextOverflow="TextOverflow.NoWrap">door Jan Van Genechten</Strong>
+                            <TrackedComponent T="Anchor" Attributes="_trackedAnchorParameters" Owner="@this" Name="mail auteur"/>
+                            <Div Flex="Flex.Row.AlignContent.Center.JustifyContent.Center">
+                                <Icon Name="IconName.LocationArrow" IconSize="IconSize.Large" IconStyle="IconStyle.Regular"/>
+                                <Text Style="white-space: pre"> Brussel</Text>
+                            </Div>
+                        </Row>
+                        <Row>
+                            <Text>Jan Van Genechten werkt sinds 1984 voor MEDIUM. Hij behaalde in 1976 een bachelordimploma journalistiek en economie aan de KU Leuven. Hij is gespecialiseerd in biologie en medische ontwikkelingen.</Text>
+                        </Row>
+                    </Column>
+                </Row>
+            </AccordionBody>
+        </AccordionItem>
+    </Accordion>
+</Card>
+
+@code {
+    private bool _accordionItemVisible;
+
+    private Dictionary<string, object> _trackedAccordionToggleParameters = null!;
+    private Dictionary<string, object> _trackedAnchorParameters = null!;
+    
+    private bool _initialized;
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        
+        RenderFragment toggleContent = builder => builder.AddContent(0, @<Text>Lees meer over de auteur</Text>);
+
+        _trackedAccordionToggleParameters = new()
+        {
+            { nameof(AccordionToggle.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible))) },
+            { nameof(AccordionToggle.ChildContent), toggleContent }
+        };
+
+        RenderFragment anchorContent = builder => builder.AddContent(0, @<Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>);
+
+        _trackedAnchorParameters = new()
+        {
+            { nameof(Anchor.To), "mailto:joppe.rombouts@vub.be?subject=Experiment VUB: contact auteur &body=Typ hieronder uw bericht voor Jan Van Genechten:" },
+            { nameof(Anchor.Target), Target.Blank },
+            { nameof(Anchor.TextDecoration), TextDecoration.None },
+            { nameof(AccordionToggle.ChildContent), anchorContent }
+        };
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (!_initialized)
+        {
+            _accordionItemVisible = !Interactive;
+            _initialized = true;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}
