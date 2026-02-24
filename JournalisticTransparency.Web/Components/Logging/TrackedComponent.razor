@@ -5,12 +5,14 @@
 @inherits ComponentBase
 @implements ITracked
 @typeparam T where T : notnull, new()
-@inject Stopwatch SessionTimer
 
 <DynamicComponent @ref="@_dynamicComponent" Type="@_dynamicType" Parameters="@Attributes"/>
 
 @code {
+    [Inject(Key = "SessionTimer")] private Stopwatch SessionTimer { get; set; } = null!;
+    
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
+    
     [CascadingParameter] public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
     [CascadingParameter] public EventCallback<ITracked> OnInteractionsChanged { get; set; }
     

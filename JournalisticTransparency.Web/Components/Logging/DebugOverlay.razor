@@ -9,6 +9,9 @@
         <Icon Name="IconName.EyeSlash" IconSize="IconSize.x2"/>
     </Button>
     <Div Display="@(_debuggerVisible ? Display.Always : Display.None)" Overflow="Overflow.Scroll">
+        <Div Margin="Margin.Is3.OnX.Is1.OnY">
+            <Text>Showing data for participant @ParticipantId:</Text>
+        </Div>
         <Accordion>
             @foreach (ITracked trackedObject in DebuggerEntries.OrderBy(entry => FormatOwnerString(entry.Owner.ToString())))
             {
@@ -53,6 +56,8 @@
 </Div>
 
 @code {
+    [Inject(Key = "ParticipantId")] private string ParticipantId { get; set; } = null!;
+    
     [Parameter] public List<ITracked> DebuggerEntries { get; set; } = null!;
 
     private bool _debuggerVisible = true;

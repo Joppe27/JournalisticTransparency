@@ -19,7 +19,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services
     .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) })
-    .AddScoped(_ => new Stopwatch())
+    .AddKeyedScoped<Stopwatch>("SessionTimer", (_, _) => new Stopwatch())
+    .AddKeyedScoped<string>("ParticipantId", (_, _) => Guid.NewGuid().ToString())
     .AddOptions()
     .AddBlazorise()
     .AddFluentUI2Providers()

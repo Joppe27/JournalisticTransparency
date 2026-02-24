@@ -6,7 +6,6 @@
 @using JournalisticTransparency.Web.Components.Logging
 @using ObservableCollections
 @inject IJSRuntime JS
-@inject Stopwatch SessionTimer
 
 <Div>
     <Layout>
@@ -95,6 +94,8 @@
 
 
 @code {
+    [Inject(Key = "SessionTimer")] private Stopwatch SessionTimer { get; set; } = null!;
+    
     [Parameter] [SupplyParameterFromQuery] public bool? Debugging { get; set; }
     [Parameter] [SupplyParameterFromQuery] public int TransparencyType { get; set; } //https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/navigation?view=aspnetcore-10.0&utm_source=chatgpt.com#query-strings
 
