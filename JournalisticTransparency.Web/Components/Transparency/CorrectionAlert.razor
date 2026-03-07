@@ -4,7 +4,7 @@
 
 @if (Interactive)
 {
-    <Alert Style="@Style" Color="Color.Info" Visible>
+    <Alert ElementId="@ElementId" Style="@Style" Color="Color.Info" Visible>
         <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
     </Alert>
     
@@ -12,7 +12,7 @@
 }
 else
 {
-    <Alert Style="@(Style + "max-height: 250px;")" Color="Color.Info" Flex="Flex.Column.AlignItems.Start" Visible>
+    <Alert ElementId="@ElementId" Style="@(Style + "max-height: 250px;")" Color="Color.Info" Flex="Flex.Column.AlignItems.Start" Visible>
         <AlertMessage Margin="Margin.Is2.FromBottom">De huidige versie van dit arikel verschilt van de oorspronkelijke. Bekijk hieronder welke veranderingen werden aangebracht.</AlertMessage>
         <InlineDiffViewer IgnoreUnchanged="true" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
     </Alert>

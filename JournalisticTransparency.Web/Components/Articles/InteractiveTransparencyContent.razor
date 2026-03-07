@@ -2,6 +2,7 @@
 @using JournalisticTransparency.Web.Components.Logging
 @using JournalisticTransparency.Web.Components.Transparency
 @inherits ArticleContent
+@inject IJSRuntime JS
 
 <h1>Na medische vooruitgang en ethische debatten: James Watson hielp de code van ons DNA te ontcijferen</h1>
 <Row Margin="Margin.Is5.FromTop.Is3.FromBottom.OnMobile.Is5.FromTop.Is0.FromBottom.OnDesktop"
@@ -15,8 +16,8 @@
         <FigureCaption>James Watson. Moskou, 17 juni 2015.</FigureCaption>
     </Column>
 </Row>
-<AuthorCard @ref="_authorCard" Style="@CheckTransparencyElementOpen(_authorCard)" OnOpenStateChanged="@(kvp => ChangeComponentDim(kvp))" DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())" Interactive="@Interactive"/>
-<CorrectionAlert @ref="_correctionAlert" Style="@CheckTransparencyElementOpen(_correctionAlert)" OnOpenStateChanged="@(kvp => ChangeComponentDim(kvp))" Interactive="@Interactive"/>
+<AuthorCard ElementId="authorCard" @ref="_authorCard" Style="@CheckTransparencyElementOpen(_authorCard)" OnOpenStateChanged="@(kvp => HandleOpenStateChanged(kvp))" DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())" Interactive="@Interactive"/>
+<CorrectionAlert @ref="_correctionAlert" Style="@CheckTransparencyElementOpen(_correctionAlert)" OnOpenStateChanged="@(kvp => HandleOpenStateChanged(kvp))" Interactive="@Interactive"/>
 <Div Style="@(_dimComponents ? DimmedStyle : "")">
     <Paragraph>
         Op een mistige zaterdagochtend in 1953, zit een tengere 24-jarige te prutsen met wat vormen die hij uit karton heeft
@@ -103,8 +104,8 @@
         bekleedde verschillende leidinggevende functies.
     </Paragraph>
 </Div>
-<ProcessInfoCard @ref="_processInfoCard" Style="@CheckTransparencyElementOpen(_processInfoCard)" OnOpenStateChanged="@(kvp => ChangeComponentDim(kvp))" Interactive="@Interactive"/>
-<BestPracticesCard @ref="_bestPracticesCard" Style="@CheckTransparencyElementOpen(_bestPracticesCard)" OnOpenStateChanged="@(kvp => ChangeComponentDim(kvp))" Interactive="@Interactive" DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())"/>
+<ProcessInfoCard ElementId="processInfoCard" @ref="_processInfoCard" Style="@CheckTransparencyElementOpen(_processInfoCard)" OnOpenStateChanged="@(kvp => HandleOpenStateChanged(kvp))" Interactive="@Interactive"/>
+<BestPracticesCard ElementId="bestPracticesCard" @ref="_bestPracticesCard" Style="@CheckTransparencyElementOpen(_bestPracticesCard)" OnOpenStateChanged="@(kvp => HandleOpenStateChanged(kvp))" Interactive="@Interactive" DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())"/>
 
 
 @code {
@@ -133,16 +134,21 @@
         return DimmedStyle;
     }
 
-    private void ChangeComponentDim(KeyValuePair<TransparencyElement, bool> callerOpenState)
+    private void HandleOpenStateChanged(KeyValuePair<TransparencyElement, bool> callerOpenState)
     {
         bool callerOpen = callerOpenState.Value;
         
         _transparencyElementOpenStates[callerOpenState.Key] = callerOpen;
-        
+
         if (callerOpen)
+        {
+            JS.InvokeVoidAsync("scrollElementIntoView", callerOpenState.Key.ElementId);
             DimComponents();
+        }
         else
+        {
             UndimComponents();
+        }
     }
 
     private void DimComponents()
