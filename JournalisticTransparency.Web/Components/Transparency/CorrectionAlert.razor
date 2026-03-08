@@ -42,7 +42,7 @@ else
         if (!firstRender)
             return;
         
-        RenderFragment modalContent = builder => builder.AddContent(0, 
+        RenderFragment modalContent = 
             @<ModalContent Size="ModalSize.Fullscreen">
                 <ModalBody Margin="Margin.Is3.FromBottom">
                     <InlineDiffViewer IgnoreUnchanged="false" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
@@ -50,7 +50,7 @@ else
                 <ModalFooter>
                     <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten</Button>
                 </ModalFooter>
-            </ModalContent>);
+            </ModalContent>;
         
         _trackedComponentParameters = new()
         {

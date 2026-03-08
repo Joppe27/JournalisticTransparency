@@ -43,7 +43,7 @@
     {
         base.OnInitialized();
         
-        RenderFragment toggleContent = builder => builder.AddContent(0, @<Text>Lees meer over de auteur</Text>);
+        RenderFragment toggleContent = @<Text>Lees meer over de auteur</Text>;
 
         _trackedAccordionToggleParameters = new()
         {
@@ -51,7 +51,7 @@
             { nameof(AccordionToggle.ChildContent), toggleContent }
         };
 
-        RenderFragment anchorContent = builder => builder.AddContent(0, @<Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>);
+        RenderFragment anchorContent = @<Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>;
 
         _trackedAnchorParameters = new()
         {

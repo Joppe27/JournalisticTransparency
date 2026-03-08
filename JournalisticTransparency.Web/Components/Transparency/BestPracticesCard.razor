@@ -58,7 +58,7 @@
     {
         base.OnInitialized();
         
-        RenderFragment toggleContent = builder => builder.AddContent(0, @<Text>Lees meer over MEDIUM</Text>);
+        RenderFragment toggleContent = @<Text>Lees meer over MEDIUM</Text>;
 
         _trackedAccordionToggleParameters = new()
         {
@@ -66,11 +66,11 @@
             { nameof(AccordionToggle.ChildContent), toggleContent }
         };
 
-        RenderFragment anchorContent = builder => builder.AddContent(0,
+        RenderFragment anchorContent = 
             @<Div Flex="Flex.AlignItems.Center">
                 <Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>
                 <Text Style="white-space: pre" TextColor="TextColor.Dark"> Contacteer de nieuwsombudspersoon</Text>
-            </Div>);
+            </Div>;
         
         _trackedAnchorParameters = new()
         {
@@ -81,7 +81,7 @@
             { nameof(Anchor.ChildContent), anchorContent }
         };
 
-        RenderFragment modalContent = builder => builder.AddContent(0,
+        RenderFragment modalContent = 
             @<ModalContent Size="ModalSize.Fullscreen">
                 <ModalBody Margin="Margin.Is3.FromBottom">
                     <PdfViewerContainer>
@@ -92,7 +92,7 @@
                 <ModalFooter>
                     <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten</Button>
                 </ModalFooter>
-            </ModalContent>);
+            </ModalContent>;
         
         _trackedModalParameters = new()
         {
