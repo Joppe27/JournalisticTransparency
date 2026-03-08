@@ -23,7 +23,6 @@
     public object Object { get; private set; } = null!;
     private readonly Type _dynamicType = typeof(T);
 
-    public TrackedStatus Status => DetermineStatus();
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
 
     private bool _initialized;
@@ -111,20 +110,5 @@
         }
         
         throw new NotSupportedException();
-    }
-
-    private TrackedStatus DetermineStatus()
-    {
-        switch (Interactions.LastOrDefault()?.Interaction)
-        {
-            case Interaction.Opened:
-                return TrackedStatus.Active;
-            case Interaction.Closed:
-                return TrackedStatus.Paused;
-            case Interaction.Clicked:
-                return TrackedStatus.Incremented;
-            default:
-                return TrackedStatus.Paused;
-        }
     }
 }

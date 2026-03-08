@@ -19,8 +19,6 @@ public class TrackedObject<T> : ITracked where T : notnull, new()
 
     public required IComponent Owner { get; init; }
     
-    public TrackedStatus Status { get; set; }
-    
     public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
 
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();

@@ -1,6 +1,8 @@
 @page "/article"
 @using System.Collections.ObjectModel
 @using System.Diagnostics
+@using System.Text.Json
+@using System.Text.Json.Serialization
 @using JournalisticTransparency.Web.Components.Articles
 @using JournalisticTransparency.Web.Components.Layout
 @using JournalisticTransparency.Web.Components.Logging
@@ -94,12 +96,11 @@
 
 
 @code {
+    [Inject(Key = "ParticipantId")] private string ParticipantId { get; set; } = null!;
     [Inject(Key = "SessionTimer")] private Stopwatch SessionTimer { get; set; } = null!;
     
     [Parameter] [SupplyParameterFromQuery] public bool? Debugging { get; set; }
     [Parameter] [SupplyParameterFromQuery] public int TransparencyType { get; set; } //https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/navigation?view=aspnetcore-10.0&utm_source=chatgpt.com#query-strings
-
-    private Guid _userId = Guid.NewGuid();
 
     private Dictionary<string, object> _articleContentParameters = null!;
 
@@ -150,6 +151,14 @@
 
     private void StartSurvey()
     {
-        // Hier alle data naar json en uploaden naar Azure blob
+        var options = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            Converters = { new JsonStringEnumConverter() },
+        };
+        
+        Console.WriteLine(JsonSerializer.Serialize(_trackedComponents, options));
+        
+        // Hier alle data  uploaden naar Azure blob
     }
 }

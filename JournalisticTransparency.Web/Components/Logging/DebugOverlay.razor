@@ -1,3 +1,4 @@
+@using System.Collections.ObjectModel
 @using System.Diagnostics
 @using System.Timers
 @using Humanizer
@@ -21,7 +22,7 @@
                             <Table Margin="Margin.Is0">
                                 <TableBody>
                                     <TableRow>
-                                        <TableRowCell>@GetInteractionIcon(trackedObject.Status)</TableRowCell>
+                                        <TableRowCell>@GetInteractionIcon(trackedObject.Interactions)</TableRowCell>
                                         <TableRowCell>@FormatOwnerString(trackedObject.Owner.ToString())</TableRowCell>
                                         <TableRowCell><Strong>@trackedObject.Name</Strong></TableRowCell>
                                         <TableRowCell>@trackedObject.GetType().ToString()</TableRowCell>
@@ -62,18 +63,18 @@
 
     private bool _debuggerVisible = true;
 
-    private string GetInteractionIcon(TrackedStatus status)
+    private string GetInteractionIcon(ObservableCollection<TrackedInteraction> interactions)
     {
-        switch (status)
+        switch (interactions.LastOrDefault()?.Interaction)
         {
-            case TrackedStatus.Active:
+            case Interaction.Opened:
                 return "❇️";
-            case TrackedStatus.Paused:
+            case Interaction.Closed:
                 return "⏸️";
-            case TrackedStatus.Incremented:
+            case Interaction.Clicked:
                 return "✴️";
             default:
-                throw new NotSupportedException();
+                return "⏸️";
         }
     }
 
