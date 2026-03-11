@@ -13,7 +13,15 @@ namespace JournalisticTransparency.Web.Components.Logging;
 
 public class TrackedObject<T> : ITracked where T : notnull, new()
 {
-    public object Object { get; set; } = new T();
+    protected TrackedObject()
+    {
+        Object = new T();
+        Interactions.CollectionChanged += (_, _) => OnInteractionsChanged.InvokeAsync(this);
+        
+        OnTrackedElementCreated.InvokeAsync(this);
+    }
+    
+    public object Object { get; }
 
     public required string Name { get; init; }
 

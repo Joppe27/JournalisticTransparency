@@ -7,6 +7,7 @@
 @using JournalisticTransparency.Web.Components.Articles
 @using JournalisticTransparency.Web.Components.Layout
 @using JournalisticTransparency.Web.Components.Logging
+@using JournalisticTransparency.Web.Components.Logging.Objects
 @using ObservableCollections
 @inject IJSRuntime JS
 
@@ -82,7 +83,7 @@
                 <Button Color="Color.Secondary" Clicked="@(() => _confirmSurveyModal.Close(CloseReason.UserClosing))">
                     Annuleren
                 </Button>
-                <Button Color="Color.Primary" Clicked="StartSurvey">Doorgaan</Button>
+                <Button Color="Color.Primary" Clicked="EndArticleSession">Doorgaan</Button>
             </ModalFooter>
         </ModalContent>
     </Modal>
@@ -98,8 +99,8 @@
 
 @code {
     [Inject(Key = "ParticipantId")] private string ParticipantId { get; set; } = null!;
-    [Inject(Key = "SessionTimer")] private Stopwatch SessionTimer { get; set; } = null!;
     [Inject(Key = "ApiHttpClient")] private HttpClient ApiHttpClient { get; set; } = null!;
+    [Inject(Key = "SessionTimer")] private Stopwatch SessionTimer { get; set; } = null!;
     
     [Parameter] [SupplyParameterFromQuery] public bool? Debugging { get; set; }
     [Parameter] [SupplyParameterFromQuery] public int TransparencyType { get; set; } //https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/navigation?view=aspnetcore-10.0&utm_source=chatgpt.com#query-strings
@@ -111,6 +112,7 @@
     private Type _articleContentType = null!;
 
     private readonly List<ITracked> _trackedComponents = new();
+    private TrackedStopwatch _trackedReadTime = null!;
 
     private EventCallback<ITracked> _trackedComponentsChangedCallback;
     private EventCallback<ITracked> _interactionsChangedCallback;
@@ -126,13 +128,14 @@
             _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
             _articleContentParameters = new() { [nameof(ArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
 
-            SessionTimer.Start();
-        
-            if (Debugging is false)
-                return;
-
-            _trackedComponentsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
-            _interactionsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
+            if (Debugging is true) 
+            {
+                _trackedComponentsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
+                _interactionsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
+            }
+            
+            _trackedReadTime = new(SessionTimer, _trackedComponentsChangedCallback, _interactionsChangedCallback) { Name = "globale leestijd", Owner = this };
+            _trackedReadTime.Start();
 
             _initialized = true;
         }
@@ -151,8 +154,10 @@
             _trackedComponents.Add(trackedComponent);
     }
 
-    private void StartSurvey()
+    private void EndArticleSession()
     {
+        _trackedReadTime.Stop();
+        
         var options = new JsonSerializerOptions()
         {
             WriteIndented = true,
