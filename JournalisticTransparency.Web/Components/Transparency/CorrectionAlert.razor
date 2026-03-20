@@ -1,4 +1,5 @@
 @using JournalisticTransparency.Web.Components.Logging
+@using JournalisticTransparency.Web.Components.Logging.Components
 @inherits TransparencyElement
 @inject HttpClient HttpClient
 
@@ -8,7 +9,7 @@
         <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
     </Alert>
     
-    <TrackedComponent @ref="_modalRef" T="Modal" Attributes="_trackedComponentParameters" Owner="@this" Name="aangebrachte wijzigingen"/>
+    <TrackedModal @ref="_modalRef" Attributes="_trackedModalParameters" Owner="@this" Name="aangebrachte wijzigingen"/>
 }
 else
 {
@@ -21,11 +22,11 @@ else
 
 
 @code {
-    private TrackedComponent<Modal> _modalRef = null!;
+    private TrackedModal _modalRef = null!;
     private string _oldText = null!;
     private string _newText = null!;
 
-    private Dictionary<string, object> _trackedComponentParameters = null!;
+    private Dictionary<string, object> _trackedModalParameters = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,7 +53,7 @@ else
                 </ModalFooter>
             </ModalContent>;
         
-        _trackedComponentParameters = new()
+        _trackedModalParameters = new()
         {
             { nameof(Modal.ChildContent), modalContent }
         };

@@ -4,6 +4,7 @@
 #region
 
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using ObservableCollections;
 
@@ -13,13 +14,20 @@ namespace JournalisticTransparency.Web.Components.Logging;
 
 public class TrackedObject<T> : ITracked where T : notnull, new()
 {
-    protected TrackedObject()
+    protected TrackedObject(Stopwatch stopwatch, EventCallback<ITracked> createdCallback, EventCallback<ITracked> interactionCallback)
     {
+        OnTrackedElementCreated = createdCallback;
+        OnInteractionsChanged = interactionCallback;
+        
+        SessionTimer = stopwatch;
+        
         Object = new T();
         Interactions.CollectionChanged += (_, _) => OnInteractionsChanged.InvokeAsync(this);
         
         OnTrackedElementCreated.InvokeAsync(this);
     }
+    
+    protected Stopwatch SessionTimer { get; set; } // TODO: also this
     
     public object Object { get; }
 

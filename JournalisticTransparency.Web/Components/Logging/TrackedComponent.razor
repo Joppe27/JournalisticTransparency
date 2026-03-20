@@ -9,7 +9,7 @@
 <DynamicComponent @ref="@_dynamicComponent" Type="@_dynamicType" Parameters="@Attributes"/>
 
 @code {
-    [Inject(Key = "SessionTimer")] private Stopwatch SessionTimer { get; set; } = null!;
+    [Inject(Key = "SessionTimer")] protected Stopwatch SessionTimer { get; set; } = null!;
     
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
     
@@ -47,41 +47,9 @@
         
         Object = _dynamicComponent.Instance ?? throw new NullReferenceException();
         OnTrackedElementCreated.InvokeAsync(this);
-        
-        if (Object is Modal)
-        {
-            AddCallbackToChild(nameof(Modal.Opened), new EventCallbackWrapper(EventCallback.Factory.Create(this, () => TrackInteraction(Interaction.Opened))));
-            AddCallbackToChild(nameof(Modal.Closed), new EventCallbackWrapper(EventCallback.Factory.Create(this, () => TrackInteraction(Interaction.Closed))));
-            StateHasChanged();
-        }
-
-        if (Object is AccordionToggle toggle)
-        {
-            AddCallbackToChild(nameof(AccordionToggle.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) =>
-            {
-                TrackInteraction(!toggle.AccordionItemVisible ? Interaction.Opened : Interaction.Closed);
-            })));
-            StateHasChanged();
-        }
-
-        if (Object is Anchor)
-        {
-            AddCallbackToChild(nameof(Anchor.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) => TrackInteraction(Interaction.Clicked))));
-            StateHasChanged();
-        }
     }
 
-    private async Task InvokeNestedCallback(List<IEventCallback> callbacks)
-    {
-        foreach (IEventCallback callback in callbacks)
-        {
-            await callback.InvokeAsync();
-        }
-    }
-
-    private void TrackInteraction(Interaction interaction) => Interactions.Add(new TrackedInteraction(interaction, SessionTimer.Elapsed));
-
-    private void AddCallbackToChild(string eventName, IEventCallback callback)
+    protected void AddNestedCallback(string eventName, IEventCallback callback)
     {
         Attributes ??= new();
         
@@ -110,5 +78,13 @@
         }
         
         throw new NotSupportedException();
+    }
+    
+    private async Task InvokeNestedCallback(List<IEventCallback> callbacks)
+    {
+        foreach (IEventCallback callback in callbacks)
+        {
+            await callback.InvokeAsync();
+        }
     }
 }

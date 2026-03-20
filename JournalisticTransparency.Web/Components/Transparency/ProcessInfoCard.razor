@@ -1,11 +1,12 @@
 @using JournalisticTransparency.Web.Components.Logging
+@using JournalisticTransparency.Web.Components.Logging.Components
 @inherits TransparencyElement
 
 <Card ElementId="@ElementId" Style="@Style">
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <TrackedComponent T="AccordionToggle" Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="info totstandkoming"/>
+                <TrackedAccordionToggle Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="info totstandkoming"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
@@ -41,11 +42,11 @@
     </Accordion>
 </Card>
 
-<TrackedComponent @ref="_modalRef" T="Modal" Attributes="_trackedModalParameters" Owner="@this" Name="bronnen artikel"/>
+<TrackedModal @ref="_modalRef" Attributes="_trackedModalParameters" Owner="@this" Name="bronnen artikel"/>
 
 @code {
     private bool _accordionItemVisible;
-    private TrackedComponent<Modal> _modalRef = null!;
+    private TrackedModal _modalRef = null!;
     
     private Dictionary<string, object> _trackedAccordionToggleParameters = null!;
     private Dictionary<string, object> _trackedModalParameters = null!;
