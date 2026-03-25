@@ -1,9 +1,13 @@
 // Copyright (c) Joppe27 <joppe27.be>.Licensed under the MIT License.
 // See LICENSE file in repository root for full license text.
 
+#region
+
 using JournalisticTransparency.Web.Components.Articles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
+
+#endregion
 
 namespace JournalisticTransparency.Web.Pages;
 
@@ -19,7 +23,7 @@ public static class NavigationTools
         };
 
         string uri = QueryHelpers.AddQueryString(baseUri, queryParameters);
-        
+
         navigationManager.NavigateTo(uri);
     }
 }

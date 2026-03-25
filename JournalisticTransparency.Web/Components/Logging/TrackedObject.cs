@@ -1,4 +1,4 @@
-// Copyright (c) Joppe27 <joppe27.be>. Licensed under the MIT License.
+// Copyright (c) Joppe27 <joppe27.be>.Licensed under the MIT License.
 // See LICENSE file in repository root for full license text.
 
 #region
@@ -6,7 +6,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
-using ObservableCollections;
 
 #endregion
 
@@ -18,23 +17,23 @@ public class TrackedObject<T> : ITracked where T : notnull, new()
     {
         OnTrackedElementCreated = createdCallback;
         OnInteractionsChanged = interactionCallback;
-        
+
         SessionTimer = stopwatch;
-        
+
         Object = new T();
         Interactions.CollectionChanged += (_, _) => OnInteractionsChanged.InvokeAsync(this);
-        
+
         OnTrackedElementCreated.InvokeAsync(this);
     }
-    
+
     protected Stopwatch SessionTimer { get; set; } // TODO: also this
-    
+
     public object Object { get; }
 
     public required string Name { get; init; }
 
     public required IComponent Owner { get; init; }
-    
+
     public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
 
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();

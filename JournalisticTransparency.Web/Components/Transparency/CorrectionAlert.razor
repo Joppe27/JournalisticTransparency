@@ -1,4 +1,3 @@
-@using JournalisticTransparency.Web.Components.Logging
 @using JournalisticTransparency.Web.Components.Logging.Components
 @inherits TransparencyElement
 @inject HttpClient HttpClient
@@ -6,16 +5,24 @@
 @if (Interactive)
 {
     <Alert ElementId="@ElementId" Style="@Style" Color="Color.Info" Visible>
-        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <TrackedAnchor Owner="@this" Name="veranderingen artikel" Invasive="@Invasive" Attributes="_trackedAnchorParameters"/></AlertMessage>
+        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke.
+            <TrackedAnchor Owner="@this" Name="veranderingen artikel" Invasive="@Invasive"
+                           Attributes="_trackedAnchorParameters"/>
+        </AlertMessage>
     </Alert>
-    
+
     <TrackedModal @ref="_modalRef" Attributes="_trackedModalParameters" Owner="@this" Name="aangebrachte wijzigingen"/>
 }
 else
 {
-    <Alert ElementId="@ElementId" Style="@(Style + "max-height: 250px;")" Color="Color.Info" Flex="Flex.Column.AlignItems.Start" Visible>
-        <AlertMessage Margin="Margin.Is2.FromBottom">De huidige versie van dit arikel verschilt van de oorspronkelijke. Bekijk hieronder welke veranderingen werden aangebracht.</AlertMessage>
-        <InlineDiffViewer IgnoreUnchanged="true" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
+    <Alert ElementId="@ElementId" Style="@(Style + "max-height: 250px;")" Color="Color.Info"
+           Flex="Flex.Column.AlignItems.Start" Visible>
+        <AlertMessage Margin="Margin.Is2.FromBottom">De huidige versie van dit arikel verschilt van de oorspronkelijke.
+            Bekijk hieronder welke veranderingen werden aangebracht.
+        </AlertMessage>
+        <InlineDiffViewer IgnoreUnchanged="true"
+                          Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)"
+                          OldText="@_oldText" NewText="@_newText"/>
     </Alert>
 }
 
@@ -32,7 +39,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+
         _oldText = await HttpClient.GetStringAsync("Resources/OldText.txt");
         _newText = await HttpClient.GetStringAsync("Resources/NewText.txt");
     }
@@ -43,24 +50,27 @@ else
 
         if (!firstRender)
             return;
-        
-        RenderFragment modalContent = 
+
+        RenderFragment modalContent =
             @<ModalContent Size="ModalSize.Fullscreen">
                 <ModalBody Margin="Margin.Is3.FromBottom">
-                    <InlineDiffViewer IgnoreUnchanged="false" Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)" OldText="@_oldText" NewText="@_newText"/>
+                    <InlineDiffViewer IgnoreUnchanged="false"
+                                      Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)"
+                                      OldText="@_oldText" NewText="@_newText"/>
                 </ModalBody>
                 <ModalFooter>
-                    <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten</Button>
+                    <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten
+                    </Button>
                 </ModalFooter>
             </ModalContent>;
-        
+
         _trackedModalParameters = new()
         {
             { nameof(Modal.ChildContent), modalContent }
         };
 
         RenderFragment anchorContent = @<Text>Bekijk hier welke veranderingen werden aangebracht.</Text>;
-        
+
         _trackedAnchorParameters = new()
         {
             { nameof(Anchor.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => (_modalRef.Object as Modal)!.Show()) },

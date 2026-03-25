@@ -1,4 +1,3 @@
-@using JournalisticTransparency.Web.Components.Logging
 @using JournalisticTransparency.Web.Components.Logging.Components
 @inherits TransparencyElement
 
@@ -6,34 +5,54 @@
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <TrackedAccordionToggle Invasive="@Invasive" Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="info totstandkoming"/>
+                <TrackedAccordionToggle Invasive="@Invasive" Attributes="@_trackedAccordionToggleParameters"
+                                        Owner="@this" Name="info totstandkoming"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
                     <Column Style="row-gap: 12px" Flex="Flex.Column">
                         <Div>
                             <Heading Size="HeadingSize.Is6">Motivatie voor het artikel</Heading>
-                            <Text>De aanleiding voor het schrijven van het artikel was het overlijden van James Watson. Watson was een internationaal erkende bioloog en mede-ontdekker van de dubbele helixstructuur van DNA, wat wordt gezien als een van de belangrijkste wetenschappelijke doorbraken van de 20e eeuw. De redactie wilde zijn leven belichten in een breder historisch en maatschappelijk perspectief, inclusief de positieve bijdrage aan de wetenschap en de latere controverses in zijn carrière.</Text>
+                            <Text>De aanleiding voor het schrijven van het artikel was het overlijden van James Watson.
+                                Watson was een internationaal erkende bioloog en mede-ontdekker van de dubbele
+                                helixstructuur van DNA, wat wordt gezien als een van de belangrijkste wetenschappelijke
+                                doorbraken van de 20e eeuw. De redactie wilde zijn leven belichten in een breder
+                                historisch en maatschappelijk perspectief, inclusief de positieve bijdrage aan de
+                                wetenschap en de latere controverses in zijn carrière.
+                            </Text>
                         </Div>
                         <Div>
                             <Heading Size="HeadingSize.Is6">Onderzoeksproces</Heading>
-                            <Text>De meeste bronnen die voor het maken van dit artikel werden aangewend zijn <TrackedAnchor Attributes="_trackedAnchorParameters" Invasive="@Invasive" Name="knop bronnen" Owner="@this"/>. Interviews zijn niet integraal raadpleegbaar, omdat MEDIUM geen toestemming verkreeg van de geïnterviewden om de geprekken in zijn geheel vrij te geven. De inhoud van het artikel weerspiegelt de inhoud van de interviews op een waarheidsgetrouwe basis.</Text>
+                            <Text>De meeste bronnen die voor het maken van dit artikel werden aangewend zijn
+                                <TrackedAnchor Attributes="_trackedAnchorParameters" Invasive="@Invasive"
+                                               Name="knop bronnen" Owner="@this"/>
+                                . Interviews zijn niet integraal raadpleegbaar, omdat MEDIUM geen toestemming verkreeg
+                                van de geïnterviewden om de geprekken in zijn geheel vrij te geven. De inhoud van het
+                                artikel weerspiegelt de inhoud van de interviews op een waarheidsgetrouwe basis.
+                            </Text>
                         </Div>
                         <Div>
                             <Heading Size="HeadingSize.Is6">Methodologie</Heading>
-                            <Text>Het artikel is opgebouwd volgens de standaardmethode van MEDIUM. Belangrijk hierbij zijn:</Text>
+                            <Text>Het artikel is opgebouwd volgens de standaardmethode van MEDIUM. Belangrijk hierbij
+                                zijn:
+                            </Text>
                             <UnorderedList Margin="Margin.Is0.Is1.FromTop">
                                 <UnorderedListItem>
-                                    Triangulatie: feiten zijn gecontroleerd via meerdere betrouwbare bronnen om onnauwkeurigheden te vermijden.
+                                    Triangulatie: feiten zijn gecontroleerd via meerdere betrouwbare bronnen om
+                                    onnauwkeurigheden te vermijden.
                                 </UnorderedListItem>
                                 <UnorderedListItem>
-                                    Balans in berichtgeving: de positieve wetenschappelijke bijdragen worden afgewogen tegen de kritiek op Watson’s persoonlijke uitspraken om een genuanceerd beeld te presenteren.
+                                    Balans in berichtgeving: de positieve wetenschappelijke bijdragen worden afgewogen
+                                    tegen de kritiek op Watson’s persoonlijke uitspraken om een genuanceerd beeld te
+                                    presenteren.
                                 </UnorderedListItem>
                             </UnorderedList>
                         </Div>
                         <Div>
                             <Heading Size="HeadingSize.Is6">Redactionele keuzes</Heading>
-                            <Text>De redactie koos ervoor om de discussie rond ethische en maatschappelijk relevante aspecten transparant te belichten, gezien hun belang voor hedendaagse lezers.</Text>
+                            <Text>De redactie koos ervoor om de discussie rond ethische en maatschappelijk relevante
+                                aspecten transparant te belichten, gezien hun belang voor hedendaagse lezers.
+                            </Text>
                         </Div>
                     </Column>
                 </Row>
@@ -47,7 +66,7 @@
 @code {
     private bool _accordionItemVisible;
     private TrackedModal _modalRef = null!;
-    
+
     private Dictionary<string, object> _trackedAccordionToggleParameters = null!;
     private Dictionary<string, object> _trackedModalParameters = null!;
     private Dictionary<string, object> _trackedAnchorParameters = null!;
@@ -59,14 +78,14 @@
         base.OnInitialized();
 
         RenderFragment toggleContent = @<Text>Lees meer over hoe het artikel tot stand is gekomen</Text>;
-        
+
         _trackedAccordionToggleParameters = new Dictionary<string, object>()
         {
             { nameof(AccordionToggle.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOpenStateChanged.InvokeAsync(new KeyValuePair<TransparencyElement, bool>(this, _accordionItemVisible))) },
             { nameof(AccordionToggle.ChildContent), toggleContent }
         };
 
-        RenderFragment modalContent = 
+        RenderFragment modalContent =
             @<ModalContent Size="ModalSize.Fullscreen">
                 <ModalBody Margin="Margin.Is3.FromBottom">
                     <PdfViewerContainer>
@@ -75,17 +94,18 @@
                     </PdfViewerContainer>
                 </ModalBody>
                 <ModalFooter>
-                    <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten</Button>
+                    <Button Color="Color.Primary" Clicked="@(() => (_modalRef.Object as Modal)!.Hide())">Sluiten
+                    </Button>
                 </ModalFooter>
             </ModalContent>;
-        
+
         _trackedModalParameters = new()
         {
             { nameof(Modal.ChildContent), modalContent },
         };
 
         RenderFragment anchorContent = @<Text>vrij consulteerbaar</Text>;
-        
+
         _trackedAnchorParameters = new()
         {
             { nameof(Anchor.ChildContent), anchorContent },
@@ -103,4 +123,5 @@
             _initialized = true;
         }
     }
+
 }

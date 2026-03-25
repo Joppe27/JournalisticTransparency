@@ -8,7 +8,7 @@ window.enableBeforeUnload = function () {
 window.scrollElementIntoView = async function (id) {
     await delay(300);
     const element = document.getElementById(id);
-    element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    element.scrollIntoView({behavior: "smooth", block: "nearest"});
 };
 
 function delay(ms) {

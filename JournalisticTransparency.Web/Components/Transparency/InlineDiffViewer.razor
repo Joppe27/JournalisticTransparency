@@ -1,12 +1,11 @@
 @using DiffPlex
 @using DiffPlex.DiffBuilder
 @using DiffPlex.DiffBuilder.Model
-
 <div class="inline-diff-viewer" style="display: flex; flex-direction: column">
     <div class="diff-header">
         <h5>@Header</h5>
     </div>
-    
+
     <div class="diff-content">
         @if (_diffModel != null)
         {
@@ -14,7 +13,7 @@
             {
                 if (IgnoreUnchanged && line.Type == ChangeType.Unchanged)
                     continue;
-                    
+
                 <div class="line @GetLineClass(line.Type)">
                     <span class="line-number">@(line.Position?.ToString() ?? "")</span>
                     <span class="change-type">@GetChangeSymbol(line.Type)</span>
@@ -27,7 +26,7 @@
 
 @code {
     // BUILT UPON EXISTING COMPONENT: https://github.com/mmanela/diffplex/blob/master/DiffPlex.Blazor/Components/InlineDiffViewer.razor
-    
+
     [Parameter] public string OldText { get; set; } = "";
     [Parameter] public string NewText { get; set; } = "";
     [Parameter] public string Header { get; set; } = "Diff";
@@ -71,6 +70,7 @@
             _ => " "
         };
     }
+
 }
 
 <style>

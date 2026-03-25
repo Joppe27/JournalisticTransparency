@@ -1,12 +1,14 @@
 @if (!Invasive)
 {
-    <TrackedComponent OnTrackedElementCreated="@_trackedComponentCreatedCallback" @ref="_trackedAnchor" T="Anchor" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
+    <TrackedComponent OnTrackedElementCreated="@_trackedComponentCreatedCallback" @ref="_trackedAnchor" T="Anchor"
+                      Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
 }
 
 @if (Invasive)
 {
     <Span class="flash">
-        <TrackedComponent OnTrackedElementCreated="@_trackedComponentCreatedCallback" @ref="_trackedAnchor" T="Anchor" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
+        <TrackedComponent OnTrackedElementCreated="@_trackedComponentCreatedCallback" @ref="_trackedAnchor" T="Anchor"
+                          Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
     </Span>
 }
 
@@ -29,15 +31,17 @@
 </style>
 
 @code {
-    [CascadingParameter(Name = "ComponentCreatedCallback")] public EventCallback<ITracked> OnTrackedComponentCreated { get; set; }
-    
+
+    [CascadingParameter(Name = "ComponentCreatedCallback")]
+    public EventCallback<ITracked> OnTrackedComponentCreated { get; set; }
+
     [Parameter] [EditorRequired] public bool Invasive { get; set; }
     [Parameter] [EditorRequired] public required string Name { get; init; }
     [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
 
     private TrackedComponent<Anchor> _trackedAnchor = null!;
-    
+
     private EventCallback<ITracked> _trackedComponentCreatedCallback;
 
     private bool _initialized;
@@ -48,18 +52,19 @@
 
         if (_initialized)
             return;
-        
+
         _trackedComponentCreatedCallback = EventCallback.Factory.Create<ITracked>(this, _ => InitializeTrackedComponent());
         _initialized = true;
     }
 
     private void InitializeTrackedComponent()
     {
-        _trackedAnchor.AddNestedCallback(nameof(Anchor.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) => 
+        _trackedAnchor.AddNestedCallback(nameof(Anchor.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) =>
             _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Clicked, _trackedAnchor.SessionTimer.Elapsed)))));
 
         OnTrackedComponentCreated.InvokeAsync(_trackedAnchor);
-        
+
         StateHasChanged();
     }
+
 }

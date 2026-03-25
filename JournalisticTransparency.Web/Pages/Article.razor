@@ -1,5 +1,4 @@
 @page "/article"
-@using System.Collections.ObjectModel
 @using System.Diagnostics
 @using System.Net.Http.Headers
 @using System.Text.Json
@@ -8,7 +7,6 @@
 @using JournalisticTransparency.Web.Components.Layout
 @using JournalisticTransparency.Web.Components.Logging
 @using JournalisticTransparency.Web.Components.Logging.Objects
-@using ObservableCollections
 @inject IJSRuntime JS
 
 <Div>
@@ -30,7 +28,8 @@
                         <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile">
                             <CascadingValue Name="ComponentCreatedCallback" Value="_trackedComponentsChangedCallback">
                                 <CascadingValue Name="InteractionsChangedCallback" Value="_interactionsChangedCallback">
-                                    <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
+                                    <DynamicComponent Type="_articleContentType"
+                                                      Parameters="_articleContentParameters"/>
                                 </CascadingValue>
                             </CascadingValue>
                             <Div Flex="Flex.JustifyContent.End">
@@ -50,7 +49,8 @@
                                     <Button Flex="Flex.Column" Clicked="@(() => _confirmSurveyModal.Show())"
                                             Margin="Margin.Is3.OnY">
                                         <Text TextSize="TextSize.ExtraLarge" Margin="Margin.Is3"
-                                              Style="white-space: pre">Naar de enquête</Text>
+                                              Style="white-space: pre">Naar de enquête
+                                        </Text>
                                         <Icon Name="IconName.ArrowRight" IconSize="IconSize.x3"/>
                                     </Button>
                                 </Div>
@@ -101,7 +101,7 @@
     [Inject(Key = "ParticipantId")] private string ParticipantId { get; set; } = null!;
     [Inject(Key = "ApiHttpClient")] private HttpClient ApiHttpClient { get; set; } = null!;
     [Inject(Key = "SessionTimer")] private Stopwatch SessionTimer { get; set; } = null!;
-    
+
     [Parameter] [SupplyParameterFromQuery] public bool? Debugging { get; set; }
     [Parameter] [SupplyParameterFromQuery] public int TransparencyType { get; set; } //https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/navigation?view=aspnetcore-10.0&utm_source=chatgpt.com#query-strings
 
@@ -128,23 +128,23 @@
             _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
             _articleContentParameters = new() { [nameof(ArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
 
-            if (Debugging is true) 
+            if (Debugging is true)
             {
                 _trackedComponentsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
                 _interactionsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
             }
-            
+
             _trackedReadTime = new(SessionTimer, _trackedComponentsChangedCallback, _interactionsChangedCallback) { Name = "globale leestijd", Owner = this };
             _trackedReadTime.Start();
 
             _initialized = true;
         }
     }
-    
+
     protected override Task OnInitializedAsync()
     {
         JS.InvokeVoidAsync("enableBeforeUnload");
-        
+
         return base.OnInitializedAsync();
     }
 
@@ -157,13 +157,14 @@
     private void EndArticleSession()
     {
         _trackedReadTime.Stop();
-        
+
         var options = new JsonSerializerOptions()
         {
             WriteIndented = true,
             Converters = { new JsonStringEnumConverter() },
         };
-        
+
         ApiHttpClient.PostAsync($"/api/UploadJson?participantId={ParticipantId}", JsonContent.Create(_trackedComponents, new MediaTypeHeaderValue("application/json"), options));
     }
+
 }

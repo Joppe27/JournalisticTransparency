@@ -1,6 +1,5 @@
 ﻿@page "/disclaimer"
 @using JournalisticTransparency.Web.Components.Articles
-@using Microsoft.AspNetCore.WebUtilities
 @inject NavigationManager NavigationManager
 
 <PageTitle>Info expirement</PageTitle>
@@ -56,7 +55,7 @@
     private bool _agreedConditions;
 
     private Alert _conditionsAlert = null!;
-    
+
     private readonly Random _rng = new();
 
     private void StartButton()
@@ -73,5 +72,6 @@
 
         NavigationTools.RedirectToArticle((TransparencyType)transparencyType, false, NavigationManager);
     }
+
 }
 
