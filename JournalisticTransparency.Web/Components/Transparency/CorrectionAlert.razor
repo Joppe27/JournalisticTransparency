@@ -6,7 +6,7 @@
 @if (Interactive)
 {
     <Alert ElementId="@ElementId" Style="@Style" Color="Color.Info" Visible>
-        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor></AlertMessage>
+        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke. <TrackedAnchor Owner="@this" Name="veranderingen artikel" Invasive="@Invasive" Attributes="_trackedAnchorParameters"/></AlertMessage>
     </Alert>
     
     <TrackedModal @ref="_modalRef" Attributes="_trackedModalParameters" Owner="@this" Name="aangebrachte wijzigingen"/>
@@ -27,6 +27,7 @@ else
     private string _newText = null!;
 
     private Dictionary<string, object> _trackedModalParameters = null!;
+    private Dictionary<string, object> _trackedAnchorParameters = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,6 +57,14 @@ else
         _trackedModalParameters = new()
         {
             { nameof(Modal.ChildContent), modalContent }
+        };
+
+        RenderFragment anchorContent = @<Text>Bekijk hier welke veranderingen werden aangebracht.</Text>;
+        
+        _trackedAnchorParameters = new()
+        {
+            { nameof(Anchor.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => (_modalRef.Object as Modal)!.Show()) },
+            { nameof(Anchor.ChildContent), anchorContent }
         };
     }
 

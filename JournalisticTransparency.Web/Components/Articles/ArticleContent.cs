@@ -11,4 +11,6 @@ public abstract class ArticleContent : ComponentBase
     [Parameter] public EventCallback DisplayFunctionDisabledToast { get; set; }
     
     protected abstract bool Interactive { get; } 
+    
+    protected abstract bool Invasive { get; }
 }

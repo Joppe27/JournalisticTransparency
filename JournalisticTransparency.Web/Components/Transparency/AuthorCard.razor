@@ -6,7 +6,7 @@
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <TrackedAccordionToggle Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="uitleg auteur"/>
+                <TrackedAccordionToggle Invasive="@Invasive" Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="uitleg auteur"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
@@ -16,7 +16,7 @@
                     <Column Margin="Margin.Is3.OnX">
                         <Row Style="column-gap: 12px; row-gap: 4px" Margin="Margin.Is2.FromBottom">
                             <Strong TextOverflow="TextOverflow.NoWrap">door Jan Van Genechten</Strong>
-                            <TrackedAnchor Attributes="_trackedAnchorParameters" Owner="@this" Name="mail auteur"/>
+                            <TrackedAnchor Attributes="_trackedAnchorParameters" Invasive="@false" Owner="@this" Name="mail auteur"/>
                             <Div Flex="Flex.Row.AlignContent.Center.JustifyContent.Center">
                                 <Icon Name="IconName.LocationArrow" IconSize="IconSize.Large" IconStyle="IconStyle.Regular"/>
                                 <Text Style="white-space: pre"> Brussel</Text>

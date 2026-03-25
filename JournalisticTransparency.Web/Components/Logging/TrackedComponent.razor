@@ -6,15 +6,16 @@
 @implements ITracked
 @typeparam T where T : notnull, new()
 
+
 <DynamicComponent @ref="@_dynamicComponent" Type="@_dynamicType" Parameters="@Attributes"/>
 
 @code {
-    [Inject(Key = "SessionTimer")] protected Stopwatch SessionTimer { get; set; } = null!;
+    [Inject(Key = "SessionTimer")] public Stopwatch SessionTimer { get; set; } = null!;
     
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
     
-    [CascadingParameter] public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
-    [CascadingParameter] public EventCallback<ITracked> OnInteractionsChanged { get; set; }
+    [Parameter] [EditorRequired] public required EventCallback<ITracked> OnTrackedElementCreated { get; set; }
+    [CascadingParameter(Name = "InteractionsChangedCallback")] public EventCallback<ITracked> OnInteractionsChanged { get; set; }
     
     [Parameter] [EditorRequired] public required string Name { get; init; }
     [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
@@ -49,7 +50,7 @@
         OnTrackedElementCreated.InvokeAsync(this);
     }
 
-    protected void AddNestedCallback(string eventName, IEventCallback callback)
+    public void AddNestedCallback(string eventName, IEventCallback callback)
     {
         Attributes ??= new();
         

@@ -105,6 +105,7 @@
 
 @code {
     protected override bool Interactive => true;
+    protected override bool Invasive => false;
     
     private bool _dimComponents;
     private const string DimmedStyle = "opacity: 0.20; user-select: none; pointer-events: none;";

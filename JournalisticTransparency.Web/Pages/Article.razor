@@ -28,8 +28,8 @@
                 <LayoutContent>
                     <Row Padding="Padding.Is5.OnY.Is5.FromStart.Is3.FromEnd" Height="Height.Is100">
                         <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile">
-                            <CascadingValue Value="_trackedComponentsChangedCallback">
-                                <CascadingValue Value="_interactionsChangedCallback">
+                            <CascadingValue Name="ComponentCreatedCallback" Value="_trackedComponentsChangedCallback">
+                                <CascadingValue Name="InteractionsChangedCallback" Value="_interactionsChangedCallback">
                                     <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
                                 </CascadingValue>
                             </CascadingValue>

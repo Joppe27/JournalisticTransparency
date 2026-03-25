@@ -6,7 +6,7 @@
     <Accordion>
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
-                <TrackedAccordionToggle Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="best practices"/>
+                <TrackedAccordionToggle Invasive="@Invasive" Attributes="@_trackedAccordionToggleParameters" Owner="@this" Name="best practices"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
@@ -20,7 +20,7 @@
                                 <Icon Name="IconName.LocationArrow" IconSize="IconSize.Large" IconStyle="IconStyle.Regular"/>
                                 <Text Style="white-space: pre"> Nieuwstraat 124, 1000 Brussel</Text>
                             </Div>
-                            <TrackedAnchor Attributes="_trackedAnchorParameters" Owner="@this" Name="mail ombuds"/>
+                            <TrackedAnchor Attributes="_trackedMailAnchorParameters" Invasive="@false" Owner="@this" Name="mail ombuds"/>
                         </Row>
                         <Row Style="row-gap: 8px">
                             <Text>
@@ -30,7 +30,7 @@
                                 Onze missie is het bereik vergroten van betrouwbare, apolitieke en accurate berichtgeving op basis van feiten. Dit terwijl we bouwen aan een duurzame toekomst voor onafhankelijke journalisten.
                             </Text>
                             <Text>
-                                Het fundament van onze journalistiek is de <Anchor Clicked="@(() => (_modalRef.Object as Modal)!.Show())" >Code van de Vlaamse Raad voor Journalistiek</Anchor>, een verzameling van regels en routines die feitelijkheid en onpartijdigheid waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden verslaggevers en leiden personeel op.
+                                Het fundament van onze journalistiek is de <TrackedAnchor Invasive="@Invasive" Attributes="@_trackedCodeAnchorParameters" Name="knop code" Owner="@this"/>, een verzameling van regels en routines die feitelijkheid en onpartijdigheid waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden verslaggevers en leiden personeel op.
                             </Text>
                             <Text>
                                 MEDIUM is een onafhankelijke nieuwscoöperatief zonder winstoogmerk. Onze omzet wordt voornamelijk gegenereerd door het verkopen van onze journalistiek aan andere nieuwsorganisaties en klanten (79%). MEDIUM verkrijgt ook inkomsten uit advertenties en donaties van lezers (13%), en door het aanbieden van diensten (8%).
@@ -50,8 +50,9 @@
     private TrackedModal _modalRef = null!;
 
     private Dictionary<string, object> _trackedAccordionToggleParameters = null!;
-    private Dictionary<string, object> _trackedAnchorParameters = null!;
+    private Dictionary<string, object> _trackedMailAnchorParameters = null!;
     private Dictionary<string, object> _trackedModalParameters = null!;
+    private Dictionary<string, object> _trackedCodeAnchorParameters = null!;
 
     private bool _initialized;
     
@@ -67,19 +68,19 @@
             { nameof(AccordionToggle.ChildContent), toggleContent }
         };
 
-        RenderFragment anchorContent = 
+        RenderFragment mailAnchorContent = 
             @<Div Flex="Flex.AlignItems.Center">
                 <Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular" TextColor="TextColor.Dark"/>
                 <Text Style="white-space: pre" TextColor="TextColor.Dark"> Contacteer de nieuwsombudspersoon</Text>
             </Div>;
         
-        _trackedAnchorParameters = new()
+        _trackedMailAnchorParameters = new()
         {
             { nameof(Anchor.To), "mailto:joppe.rombouts@vub.be?subject=Experiment VUB: contact ombuds&body=Typ hieronder uw bericht voor de ombudspersoon:" },
             { nameof(Anchor.Target), Target.Blank },
             { nameof(Anchor.TextDecoration), TextDecoration.None },
             { nameof(Anchor.Flex), Flex.Row.AlignContent.Center.JustifyContent.Center },
-            { nameof(Anchor.ChildContent), anchorContent }
+            { nameof(Anchor.ChildContent), mailAnchorContent }
         };
 
         RenderFragment modalContent = 
@@ -98,6 +99,14 @@
         _trackedModalParameters = new()
         {
             { nameof(Modal.ChildContent), modalContent },
+        };
+        
+        RenderFragment codeAnchorContent = @<Text>Code van de Vlaamse Raad voor Journalistiek</Text>;
+        
+        _trackedCodeAnchorParameters = new()
+        {
+            { nameof(Anchor.ChildContent), codeAnchorContent },
+            { nameof(Anchor.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => (_modalRef.Object as Modal)!.Show()) }
         };
     }
 
