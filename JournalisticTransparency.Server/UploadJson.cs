@@ -23,7 +23,7 @@ public class UploadJson
     }
 
     [Function("UploadJson")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req, [FromQuery] string? participantId)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req, [FromQuery] string? participantId, [FromQuery] int? transparencyType)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -34,7 +34,7 @@ public class UploadJson
 
         var blobServiceClient = new BlobServiceClient(Environment.GetEnvironmentVariable("BlobConnection"));
         var blobContainerClient = blobServiceClient.GetBlobContainerClient("trackingdata");
-        await blobContainerClient.UploadBlobAsync($"{DateTime.UtcNow.ToShortDateString().Replace('/', '-')}/{participantId}.json", BinaryData.FromString(json),
+        await blobContainerClient.UploadBlobAsync($"{transparencyType}/{DateTime.UtcNow.ToShortDateString().Replace('/', '-')}/{participantId}.json", BinaryData.FromString(json),
             CancellationToken.None);
 
         return new OkResult();

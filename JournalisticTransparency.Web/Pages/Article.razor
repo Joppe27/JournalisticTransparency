@@ -159,7 +159,7 @@
             Converters = { new JsonStringEnumConverter() },
         };
 
-        ApiHttpClient.PostAsync($"/api/UploadJson?participantId={ParticipantId}", JsonContent.Create(_trackedComponents, new MediaTypeHeaderValue("application/json"), options));
+        ApiHttpClient.PostAsync($"/api/UploadJson?participantId={ParticipantId}?transparencyType={TransparencyType}", JsonContent.Create(_trackedComponents, new MediaTypeHeaderValue("application/json"), options));
     }
 
 }
