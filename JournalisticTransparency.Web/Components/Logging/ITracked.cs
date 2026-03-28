@@ -16,6 +16,8 @@ public interface ITracked
     [JsonIgnore] public object Object { get; }
 
     public string ObjectType => Object.GetType().ToString();
+    
+    [JsonIgnore] public int ComponentIndex { get; } 
 
     public string Name { get; init; }
 
@@ -23,11 +25,7 @@ public interface ITracked
 
     public string OwnerType => Owner.GetType().ToString();
 
-    [JsonIgnore] public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
-
     public ObservableCollection<TrackedInteraction> Interactions { get; }
-
-    [JsonIgnore] public EventCallback<ITracked> OnInteractionsChanged { get; set; }
 }
 
 public record TrackedInteraction(Interaction Interaction, TimeSpan Time);

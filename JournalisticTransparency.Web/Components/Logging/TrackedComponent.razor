@@ -1,4 +1,5 @@
 @inherits ComponentBase
+@inject TrackingService TrackingService
 @implements ITracked
 @using System.Collections.ObjectModel
 @using System.Diagnostics
@@ -11,11 +12,8 @@
     [Inject(Key = "SessionTimer")] public Stopwatch SessionTimer { get; set; } = null!;
 
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
-
-    [Parameter] [EditorRequired] public required EventCallback<ITracked> OnTrackedElementCreated { get; set; }
-
-    [CascadingParameter(Name = "InteractionsChangedCallback")]
-    public EventCallback<ITracked> OnInteractionsChanged { get; set; }
+    
+    [CascadingParameter(Name = "ComponentIndex")] public int ComponentIndex { get; set; }
 
     [Parameter] [EditorRequired] public required string Name { get; init; }
     [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
@@ -34,7 +32,7 @@
 
         if (!_initialized)
         {
-            Interactions.CollectionChanged += (_, _) => OnInteractionsChanged.InvokeAsync(this);
+            Interactions.CollectionChanged += (_, _) => TrackingService.NotifyInteractionsChanged(this);
             _initialized = true;
         }
     }
@@ -47,7 +45,7 @@
             return;
 
         Object = _dynamicComponent.Instance ?? throw new NullReferenceException();
-        OnTrackedElementCreated.InvokeAsync(this);
+        TrackingService.NotifyTrackedElementCreated(this);
     }
 
     public void AddNestedCallback(string eventName, IEventCallback callback)

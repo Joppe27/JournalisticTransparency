@@ -8,6 +8,7 @@
 @using JournalisticTransparency.Web.Components.Logging
 @using JournalisticTransparency.Web.Components.Logging.Objects
 @inject IJSRuntime JS
+@inject TrackingService TrackingService
 
 <Div>
     <Layout>
@@ -26,12 +27,7 @@
                 <LayoutContent>
                     <Row Padding="Padding.Is5.OnY.Is5.FromStart.Is3.FromEnd" Height="Height.Is100">
                         <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile">
-                            <CascadingValue Name="ComponentCreatedCallback" Value="_trackedComponentsChangedCallback">
-                                <CascadingValue Name="InteractionsChangedCallback" Value="_interactionsChangedCallback">
-                                    <DynamicComponent Type="_articleContentType"
-                                                      Parameters="_articleContentParameters"/>
-                                </CascadingValue>
-                            </CascadingValue>
+                            <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
                             <Div Flex="Flex.JustifyContent.End">
                                 <Button Display="Display.None.OnDesktop.Block.OnMobile"
                                         Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is5.OnY">
@@ -114,9 +110,6 @@
     private readonly List<ITracked> _trackedComponents = new();
     private TrackedStopwatch _trackedReadTime = null!;
 
-    private EventCallback<ITracked> _trackedComponentsChangedCallback;
-    private EventCallback<ITracked> _interactionsChangedCallback;
-
     private bool _initialized;
 
     protected override void OnParametersSet()
@@ -130,11 +123,11 @@
 
             if (Debugging is true)
             {
-                _trackedComponentsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
-                _interactionsChangedCallback = EventCallback.Factory.Create<ITracked>(this, UpdateDebugger);
+                TrackingService.OnTrackedElementCreated += AddToDebugger;
+                TrackingService.OnInteractionsChanged += UpdateDebugger;
             }
 
-            _trackedReadTime = new(SessionTimer, _trackedComponentsChangedCallback, _interactionsChangedCallback) { Name = "globale leestijd", Owner = this };
+            _trackedReadTime = new(TrackingService, SessionTimer) { Name = "globale leestijd", Owner = this };
             _trackedReadTime.Start();
 
             _initialized = true;
@@ -148,11 +141,13 @@
         return base.OnInitializedAsync();
     }
 
-    private void UpdateDebugger(ITracked trackedComponent)
+    private void AddToDebugger(ITracked trackedComponent)
     {
         if (!_trackedComponents.Contains(trackedComponent))
             _trackedComponents.Add(trackedComponent);
     }
+
+    private void UpdateDebugger(ITracked _) => StateHasChanged();
 
     private void EndArticleSession()
     {

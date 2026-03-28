@@ -38,8 +38,7 @@
                             </Text>
                             <Text>
                                 Het fundament van onze journalistiek is de
-                                <TrackedAnchor Invasive="@Invasive" Attributes="@_trackedCodeAnchorParameters"
-                                               Name="knop code" Owner="@this"/>
+                                <Anchor Class="@(Invasive ? "flash" : "")" Clicked="@(() => (_modalRef.Object as Modal)!.Show())" >Code van de Vlaamse Raad voor Journalistiek</Anchor>
                                 , een verzameling van regels en routines die feitelijkheid en onpartijdigheid
                                 waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden
                                 verslaggevers en leiden personeel op.
@@ -67,7 +66,6 @@
     private Dictionary<string, object> _trackedAccordionToggleParameters = null!;
     private Dictionary<string, object> _trackedMailAnchorParameters = null!;
     private Dictionary<string, object> _trackedModalParameters = null!;
-    private Dictionary<string, object> _trackedCodeAnchorParameters = null!;
 
     private bool _initialized;
 
@@ -116,14 +114,6 @@
         _trackedModalParameters = new()
         {
             { nameof(Modal.ChildContent), modalContent },
-        };
-
-        RenderFragment codeAnchorContent = @<Text>Code van de Vlaamse Raad voor Journalistiek</Text>;
-
-        _trackedCodeAnchorParameters = new()
-        {
-            { nameof(Anchor.ChildContent), codeAnchorContent },
-            { nameof(Anchor.Clicked), EventCallback.Factory.Create<MouseEventArgs>(this, () => (_modalRef.Object as Modal)!.Show()) }
         };
     }
 

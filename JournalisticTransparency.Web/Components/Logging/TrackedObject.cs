@@ -13,30 +13,25 @@ namespace JournalisticTransparency.Web.Components.Logging;
 
 public class TrackedObject<T> : ITracked where T : notnull, new()
 {
-    protected TrackedObject(Stopwatch stopwatch, EventCallback<ITracked> createdCallback, EventCallback<ITracked> interactionCallback)
+    protected TrackedObject(TrackingService trackingService, Stopwatch sessionTimer)
     {
-        OnTrackedElementCreated = createdCallback;
-        OnInteractionsChanged = interactionCallback;
-
-        SessionTimer = stopwatch;
-
+        SessionTimer = sessionTimer;
+        
         Object = new T();
-        Interactions.CollectionChanged += (_, _) => OnInteractionsChanged.InvokeAsync(this);
+        Interactions.CollectionChanged += (_, _) => trackingService.NotifyInteractionsChanged(this);
 
-        OnTrackedElementCreated.InvokeAsync(this);
+        trackingService.NotifyTrackedElementCreated(this);
     }
-
-    protected Stopwatch SessionTimer { get; set; } // TODO: also this
+    
+    protected Stopwatch SessionTimer { get; }
 
     public object Object { get; }
+
+    public int ComponentIndex { get; init; }
 
     public required string Name { get; init; }
 
     public required IComponent Owner { get; init; }
 
-    public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
-
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
-
-    public EventCallback<ITracked> OnInteractionsChanged { get; set; }
 }

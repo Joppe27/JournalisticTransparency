@@ -14,8 +14,8 @@ public class TrackedStopwatch : TrackedObject<Stopwatch>
 {
     private readonly Stopwatch _stopwatch;
 
-    public TrackedStopwatch(Stopwatch stopwatch, EventCallback<ITracked> createdCallback, EventCallback<ITracked> interactionCallback)
-        : base(stopwatch, createdCallback, interactionCallback) // TODO: check if bad
+    public TrackedStopwatch(TrackingService trackingService, Stopwatch sessionTimer)
+        : base(trackingService, sessionTimer)
     {
         _stopwatch = (Object as Stopwatch)!;
     }

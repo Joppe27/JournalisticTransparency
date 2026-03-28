@@ -1,6 +1,8 @@
+@inject TrackingService TrackingService
+
 @if (!Invasive)
 {
-    <TrackedComponent OnTrackedElementCreated="@_trackedComponentCreatedCallback" @ref="_trackedAccordionToggle"
+    <TrackedComponent @ref="_trackedAccordionToggle"
                       T="AccordionToggle" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
 }
 
@@ -8,25 +10,19 @@
 {
     <Tooltip Text="Klik hier voor meer info!" AlwaysActive="@true" Placement="TooltipPlacement.Right" Inline="@true"
              AppendTo="parent">
-        <TrackedComponent OnTrackedElementCreated="@_trackedComponentCreatedCallback" @ref="_trackedAccordionToggle"
+        <TrackedComponent @ref="_trackedAccordionToggle"
                           T="AccordionToggle" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
     </Tooltip>
 }
 
 
 @code {
-
-    [CascadingParameter(Name = "ComponentCreatedCallback")]
-    public EventCallback<ITracked> OnTrackedComponentCreated { get; set; }
-
     [Parameter] [EditorRequired] public bool Invasive { get; set; }
     [Parameter] [EditorRequired] public required string Name { get; init; }
     [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
 
     private TrackedComponent<AccordionToggle> _trackedAccordionToggle = null!;
-
-    private EventCallback<ITracked> _trackedComponentCreatedCallback;
 
     private bool _initialized;
 
@@ -37,17 +33,18 @@
         if (_initialized)
             return;
 
-        _trackedComponentCreatedCallback = EventCallback.Factory.Create<ITracked>(this, _ => InitializeTrackedComponent());
+        TrackingService.OnTrackedElementCreated += InitializeTrackedComponent;
         _initialized = true;
     }
 
-    private void InitializeTrackedComponent()
+    private void InitializeTrackedComponent(ITracked trackedElement)
     {
+        if (trackedElement != _trackedAccordionToggle)
+            return;
+        
         var toggle = (_trackedAccordionToggle.Object as AccordionToggle)!;
 
         _trackedAccordionToggle.AddNestedCallback(nameof(AccordionToggle.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) => { _trackedAccordionToggle.Interactions.Add(new TrackedInteraction(!toggle.AccordionItemVisible ? Interaction.Opened : Interaction.Closed, _trackedAccordionToggle.SessionTimer.Elapsed)); })));
-
-        OnTrackedComponentCreated.InvokeAsync(_trackedAccordionToggle);
 
         StateHasChanged();
     }
