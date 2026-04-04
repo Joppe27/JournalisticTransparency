@@ -75,6 +75,21 @@
     line-height: 25px !important;
 }
 
+@keyframes blink {
+     0%, 50%, 100% {
+         opacity: 1;
+         box-shadow: 0px 0px 8px 0px rgb(17, 94, 163);
+     }
+     25%, 75% {
+         opacity: 0.5;
+         box-shadow: 0px 0px 0px 0px rgb(17, 94, 163);
+     }
+ }
+
+.flash {
+    animation: blink 3s infinite;
+}
+
 :focus,
 :focus-visible {
     outline: none;
