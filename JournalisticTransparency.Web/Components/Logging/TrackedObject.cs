@@ -1,11 +1,11 @@
-// Copyright (c) Joppe27 <joppe27.be>. Licensed under the MIT License.
+// Copyright (c) Joppe27 <joppe27.be>.Licensed under the MIT License.
 // See LICENSE file in repository root for full license text.
 
 #region
 
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
-using ObservableCollections;
 
 #endregion
 
@@ -13,17 +13,25 @@ namespace JournalisticTransparency.Web.Components.Logging;
 
 public class TrackedObject<T> : ITracked where T : notnull, new()
 {
-    public object Object { get; set; } = new T();
+    protected TrackedObject(TrackingService trackingService, Stopwatch sessionTimer)
+    {
+        SessionTimer = sessionTimer;
+        
+        Object = new T();
+        Interactions.CollectionChanged += (_, _) => trackingService.NotifyInteractionsChanged(this);
+
+        trackingService.NotifyTrackedElementCreated(this);
+    }
+    
+    protected Stopwatch SessionTimer { get; }
+
+    public object Object { get; }
+
+    public int ComponentIndex { get; init; }
 
     public required string Name { get; init; }
 
     public required IComponent Owner { get; init; }
-    
-    public TrackedStatus Status { get; set; }
-    
-    public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
 
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
-
-    public EventCallback<ITracked> OnInteractionsChanged { get; set; }
 }

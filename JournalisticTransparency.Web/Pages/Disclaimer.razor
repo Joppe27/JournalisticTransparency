@@ -1,4 +1,5 @@
 ﻿@page "/disclaimer"
+@using JournalisticTransparency.Web.Components.Articles
 @inject NavigationManager NavigationManager
 
 <PageTitle>Info expirement</PageTitle>
@@ -55,6 +56,8 @@
 
     private Alert _conditionsAlert = null!;
 
+    private readonly Random _rng = new();
+
     private void StartButton()
     {
         if (!_agreedConditions)
@@ -65,7 +68,9 @@
 
         _isLoading = true;
 
-        NavigationManager.NavigateTo("/article");
+        var transparencyType = _rng.Next(0, 4);
+
+        NavigationTools.RedirectToArticle((TransparencyType)transparencyType, false, NavigationManager);
     }
 
 }

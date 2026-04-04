@@ -1,19 +1,20 @@
-@using System.Collections.ObjectModel
-@using System.Collections.Specialized
-@using ObservableCollections
-@using System.Diagnostics
 @inherits ComponentBase
+@inject TrackingService TrackingService
 @implements ITracked
+@using System.Collections.ObjectModel
+@using System.Diagnostics
 @typeparam T where T : notnull, new()
-@inject Stopwatch SessionTimer
+
 
 <DynamicComponent @ref="@_dynamicComponent" Type="@_dynamicType" Parameters="@Attributes"/>
 
 @code {
+    [Inject(Key = "SessionTimer")] public Stopwatch SessionTimer { get; set; } = null!;
+
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
-    [CascadingParameter] public EventCallback<ITracked> OnTrackedElementCreated { get; set; }
-    [CascadingParameter] public EventCallback<ITracked> OnInteractionsChanged { get; set; }
     
+    [CascadingParameter(Name = "ComponentIndex")] public int ComponentIndex { get; set; }
+
     [Parameter] [EditorRequired] public required string Name { get; init; }
     [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
 
@@ -21,7 +22,6 @@
     public object Object { get; private set; } = null!;
     private readonly Type _dynamicType = typeof(T);
 
-    public TrackedStatus Status => DetermineStatus();
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
 
     private bool _initialized;
@@ -32,7 +32,7 @@
 
         if (!_initialized)
         {
-            Interactions.CollectionChanged += (_, _) => OnInteractionsChanged.InvokeAsync(this);
+            Interactions.CollectionChanged += (_, _) => TrackingService.NotifyInteractionsChanged(this);
             _initialized = true;
         }
     }
@@ -43,47 +43,15 @@
 
         if (!firstRender)
             return;
-        
+
         Object = _dynamicComponent.Instance ?? throw new NullReferenceException();
-        OnTrackedElementCreated.InvokeAsync(this);
-        
-        if (Object is Modal)
-        {
-            AddCallbackToChild(nameof(Modal.Opened), new EventCallbackWrapper(EventCallback.Factory.Create(this, () => TrackInteraction(Interaction.Opened))));
-            AddCallbackToChild(nameof(Modal.Closed), new EventCallbackWrapper(EventCallback.Factory.Create(this, () => TrackInteraction(Interaction.Closed))));
-            StateHasChanged();
-        }
-
-        if (Object is AccordionToggle toggle)
-        {
-            AddCallbackToChild(nameof(AccordionToggle.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) =>
-            {
-                TrackInteraction(!toggle.AccordionItemVisible ? Interaction.Opened : Interaction.Closed);
-            })));
-            StateHasChanged();
-        }
-
-        if (Object is Anchor)
-        {
-            AddCallbackToChild(nameof(Anchor.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) => TrackInteraction(Interaction.Clicked))));
-            StateHasChanged();
-        }
+        TrackingService.NotifyTrackedElementCreated(this);
     }
 
-    private async Task InvokeNestedCallback(List<IEventCallback> callbacks)
-    {
-        foreach (IEventCallback callback in callbacks)
-        {
-            await callback.InvokeAsync();
-        }
-    }
-
-    private void TrackInteraction(Interaction interaction) => Interactions.Add(new TrackedInteraction(interaction, SessionTimer.Elapsed));
-
-    private void AddCallbackToChild(string eventName, IEventCallback callback)
+    public void AddNestedCallback(string eventName, IEventCallback callback)
     {
         Attributes ??= new();
-        
+
         Attributes.TryGetValue(eventName, out var value);
 
         if (value is null)
@@ -107,22 +75,16 @@
                 return;
             }
         }
-        
+
         throw new NotSupportedException();
     }
 
-    private TrackedStatus DetermineStatus()
+    private async Task InvokeNestedCallback(List<IEventCallback> callbacks)
     {
-        switch (Interactions.LastOrDefault()?.Interaction)
+        foreach (IEventCallback callback in callbacks)
         {
-            case Interaction.Opened:
-                return TrackedStatus.Active;
-            case Interaction.Closed:
-                return TrackedStatus.Paused;
-            case Interaction.Clicked:
-                return TrackedStatus.Incremented;
-            default:
-                return TrackedStatus.Paused;
+            await callback.InvokeAsync();
         }
     }
+
 }

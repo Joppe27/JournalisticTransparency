@@ -1,14 +1,15 @@
-@using System.Diagnostics
-@using System.Timers
-@using Humanizer
-@using JournalisticTransparency.Web.Components.Logging
+@using System.Collections.ObjectModel
 <Div Position="Position.Absolute.Top.Is0.End.Is0" Border="Border.Is3.Danger.OnAll" Background="Background.White"
      Style="z-index: 9999" Width="Width.Max100" Height="Height.Max100">
-    <Button Color="Color.Danger" Clicked="@(() => _debuggerVisible = !_debuggerVisible)" Style="z-index: 10; opacity: 0.5"
+    <Button Color="Color.Danger" Clicked="@(() => _debuggerVisible = !_debuggerVisible)"
+            Style="z-index: 10; opacity: 0.5"
             Position="Position.Absolute.Top.Is0.End.Is0" Margin="Margin.Is1.FromTop.Is4.FromEnd">
         <Icon Name="IconName.EyeSlash" IconSize="IconSize.x2"/>
     </Button>
     <Div Display="@(_debuggerVisible ? Display.Always : Display.None)" Overflow="Overflow.Scroll">
+        <Div Margin="Margin.Is3.OnX.Is1.OnY">
+            <Text>Showing data for participant @ParticipantId:</Text>
+        </Div>
         <Accordion>
             @foreach (ITracked trackedObject in DebuggerEntries.OrderBy(entry => FormatOwnerString(entry.Owner.ToString())))
             {
@@ -18,7 +19,7 @@
                             <Table Margin="Margin.Is0">
                                 <TableBody>
                                     <TableRow>
-                                        <TableRowCell>@GetInteractionIcon(trackedObject.Status)</TableRowCell>
+                                        <TableRowCell>@GetInteractionIcon(trackedObject.Interactions)</TableRowCell>
                                         <TableRowCell>@FormatOwnerString(trackedObject.Owner.ToString())</TableRowCell>
                                         <TableRowCell><Strong>@trackedObject.Name</Strong></TableRowCell>
                                         <TableRowCell>@trackedObject.GetType().ToString()</TableRowCell>
@@ -53,22 +54,24 @@
 </Div>
 
 @code {
+    [Inject(Key = "ParticipantId")] private string ParticipantId { get; set; } = null!;
+
     [Parameter] public List<ITracked> DebuggerEntries { get; set; } = null!;
 
     private bool _debuggerVisible = true;
 
-    private string GetInteractionIcon(TrackedStatus status)
+    private string GetInteractionIcon(ObservableCollection<TrackedInteraction> interactions)
     {
-        switch (status)
+        switch (interactions.LastOrDefault()?.Interaction)
         {
-            case TrackedStatus.Active:
+            case Interaction.Opened:
                 return "❇️";
-            case TrackedStatus.Paused:
+            case Interaction.Closed:
                 return "⏸️";
-            case TrackedStatus.Incremented:
+            case Interaction.Clicked:
                 return "✴️";
             default:
-                throw new NotSupportedException();
+                return "⏸️";
         }
     }
 

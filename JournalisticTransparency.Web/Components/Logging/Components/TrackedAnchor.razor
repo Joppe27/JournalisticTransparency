@@ -1,0 +1,50 @@
+@inject TrackingService TrackingService
+
+@if (!Invasive)
+{
+    <TrackedComponent @ref="_trackedAnchor" T="Anchor"
+                      Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
+}
+
+@if (Invasive)
+{
+    <Span Class="flash">
+        <TrackedComponent @ref="_trackedAnchor" T="Anchor"
+                          Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
+    </Span>
+}
+
+@code {
+
+    [Parameter] [EditorRequired] public bool Invasive { get; set; }
+    [Parameter] [EditorRequired] public required string Name { get; init; }
+    [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
+    [Parameter] public Dictionary<string, object>? Attributes { get; set; }
+
+    private TrackedComponent<Anchor> _trackedAnchor = null!;
+
+    private bool _initialized;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (_initialized)
+            return;
+
+        TrackingService.OnTrackedElementCreated += InitializeTrackedComponent;
+        _initialized = true;
+    }
+
+    private void InitializeTrackedComponent(ITracked trackedElement)
+    {
+        if (trackedElement != _trackedAnchor)
+            return;
+        
+        _trackedAnchor.AddNestedCallback(nameof(Anchor.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) =>
+            _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Clicked, _trackedAnchor.SessionTimer.Elapsed)))));
+
+        StateHasChanged();
+    }
+
+}

@@ -1,15 +1,20 @@
 // Copyright (c) Joppe27 <joppe27.be>.Licensed under the MIT License.
 // See LICENSE file in repository root for full license text.
 
-using JournalisticTransparency.Web.Components.Logging;
+#region
+
 using Microsoft.AspNetCore.Components;
+
+#endregion
 
 namespace JournalisticTransparency.Web.Components.Transparency;
 
 public class TransparencyElement : ComponentBase
 {
     [Parameter] public string Style { get; set; } = "";
+    [Parameter] public string ElementId { get; set; } = "";
     [Parameter] public bool Interactive { get; set; }
+    [Parameter] public bool Invasive { get; set; }
     [Parameter] public EventCallback DisplayFunctionDisabledToast { get; set; }
     [Parameter] public EventCallback<KeyValuePair<TransparencyElement, bool>> OnOpenStateChanged { get; set; }
 }

@@ -1,5 +1,3 @@
-@using System.Diagnostics
-@using JournalisticTransparency.Web.Components.Logging
 @using JournalisticTransparency.Web.Components.Transparency
 @inherits ArticleContent
 
@@ -15,7 +13,8 @@
         <FigureCaption>James Watson. Moskou, 17 juni 2015.</FigureCaption>
     </Column>
 </Row>
-<AuthorCard DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())" Interactive="@Interactive"/>
+<AuthorCard DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())"
+            Interactive="@Interactive"/>
 <CorrectionAlert Interactive="@Interactive"/>
 <Paragraph>
     Op een mistige zaterdagochtend in 1953, zit een tengere 24-jarige te prutsen met wat vormen die hij uit karton heeft
@@ -102,9 +101,11 @@
     bekleedde verschillende leidinggevende functies.
 </Paragraph>
 <ProcessInfoCard Interactive="@Interactive"/>
-<BestPracticesCard Interactive="@Interactive" DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())"/>
+<BestPracticesCard Interactive="@Interactive"
+                   DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())"/>
 
 
 @code {
     protected override bool Interactive => false;
+    protected override bool Invasive => false;
 }

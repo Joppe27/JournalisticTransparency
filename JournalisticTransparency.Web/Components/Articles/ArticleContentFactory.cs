@@ -18,7 +18,7 @@ public static class ArticleContentFactory
             case TransparencyType.ForcedInteractive:
                 return new ForcedTransparencyContent();
             case TransparencyType.Incorporated:
-                return new IncorporatedTransparencyContent();
+                throw new NotImplementedException();
             default:
                 throw new NotSupportedException();
         }
@@ -37,7 +37,7 @@ public static class ArticleContentFactory
             case TransparencyType.ForcedInteractive:
                 return typeof(ForcedTransparencyContent);
             case TransparencyType.Incorporated:
-                return typeof(IncorporatedTransparencyContent);
+                throw new NotImplementedException();
             default:
                 throw new NotSupportedException();
         }
