@@ -1,14 +1,18 @@
 @page "/article"
 @using System.Diagnostics
+@using System.Globalization
 @using System.Net.Http.Headers
 @using System.Text.Json
 @using System.Text.Json.Serialization
+@using Azure.Storage.Blobs
 @using JournalisticTransparency.Web.Components.Articles
 @using JournalisticTransparency.Web.Components.Layout
 @using JournalisticTransparency.Web.Components.Logging
 @using JournalisticTransparency.Web.Components.Logging.Objects
+@using Microsoft.AspNetCore.WebUtilities
 @inject IJSRuntime JS
 @inject TrackingService TrackingService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Artikel experiment</PageTitle>
 
@@ -81,9 +85,18 @@
                 <Button Color="Color.Secondary" Clicked="@(() => _confirmSurveyModal.Close(CloseReason.UserClosing))">
                     Annuleren
                 </Button>
-                <Button Color="Color.Primary" Clicked="EndArticleSession">Doorgaan</Button>
+                <Button Color="Color.Primary" Clicked="EndArticleSession" Loading="_loading">Doorgaan</Button>
             </ModalFooter>
         </ModalContent>
+        
+        <Toaster>
+            <Toast @bind-Visible="@_errorToastVisible" Autohide="false">
+                <ToastBody Padding="Padding.Is0" Flex="Flex.AlignItems.Center" Gap="Gap.Is2">
+                    <Strong>Fout tijdens uploaden gegevens: @_errorToastMessage</Strong>
+                    <CloseButton/>
+                </ToastBody>
+            </Toast>
+        </Toaster>
     </Modal>
 
     @if (Debugging is true)
@@ -107,12 +120,16 @@
 
     private Modal _confirmSurveyModal = null!;
     private bool _toastVisible;
+    private bool _errorToastVisible;
+    private string _errorToastMessage = "";
     private Type _articleContentType = null!;
 
     private readonly List<ITracked> _trackedComponents = new();
     private TrackedStopwatch _trackedReadTime = null!;
 
     private bool _initialized;
+
+    private bool _loading;
 
     protected override void OnParametersSet()
     {
@@ -151,9 +168,11 @@
 
     private void UpdateDebugger(ITracked _) => StateHasChanged();
 
-    private void EndArticleSession()
+    private async Task EndArticleSession()
     {
         _trackedReadTime.Stop();
+
+        _loading = true;
 
         var options = new JsonSerializerOptions()
         {
@@ -161,7 +180,36 @@
             Converters = { new JsonStringEnumConverter() },
         };
 
-        ApiHttpClient.PostAsync($"/api/UploadJson?participantId={ParticipantId}?transparencyType={TransparencyType}", JsonContent.Create(_trackedComponents, new MediaTypeHeaderValue("application/json"), options));
-    }
+        var httpResponse = await ApiHttpClient.GetAsync("GetSAS");
 
+        httpResponse.EnsureSuccessStatusCode();
+
+        var blobContainerString = await httpResponse.Content.ReadFromJsonAsync<string>() ?? throw new InvalidOperationException();
+        var blobContainerUri = new Uri(blobContainerString);
+        
+        var blobContainerClient = new BlobContainerClient(blobContainerUri);
+
+        try
+        {
+            await blobContainerClient.UploadBlobAsync($"{TransparencyType}/{ParticipantId}.json", BinaryData.FromObjectAsJson(_trackedComponents, options),
+                CancellationToken.None);
+        }
+        catch (Exception e)
+        {
+            _loading = false;
+            _errorToastMessage = e.Message;
+            _errorToastVisible = true;
+            return;
+        }
+
+        const string qualtricsBaseUrl = "";
+        var querys = new Dictionary<string, string?>()
+        {
+            { "participantId", ParticipantId },
+        };
+
+        var qualtricsUrl = QueryHelpers.AddQueryString(qualtricsBaseUrl, querys);
+
+        // NavigationManager.NavigateTo(qualtricsUrl);
+    }
 }

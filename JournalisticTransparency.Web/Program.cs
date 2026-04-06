@@ -24,7 +24,7 @@ builder.Services
     .AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) })
     .AddScoped<TrackingService>()
     .AddKeyedScoped<HttpClient>("ApiHttpClient",
-        (_, _) => new HttpClient() { BaseAddress = debugging ? new Uri("http://localhost:7018") : new Uri(builder.HostEnvironment.BaseAddress) })
+        (_, _) => new HttpClient() { BaseAddress = debugging ? new Uri("http://localhost:7018/api/") : new Uri(builder.HostEnvironment.BaseAddress + "api/") })
     .AddKeyedScoped<Stopwatch>("SessionTimer", (_, _) =>
     {
         var stopwatch = new Stopwatch();
