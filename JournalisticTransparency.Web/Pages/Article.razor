@@ -48,11 +48,9 @@
                                 <MostReadCard DisplayToast="@(() => _toastVisible = true)"/>
                                 <Div Flex="Flex.Grow.Is1"></Div>
                                 <Div Flex="Flex.JustifyContent.Center">
-                                    <Button Flex="Flex.Column" Clicked="@(() => _confirmSurveyModal.Show())"
-                                            Margin="Margin.Is3.OnY">
-                                        <Text TextSize="TextSize.ExtraLarge" Margin="Margin.Is3"
-                                              Style="white-space: pre">Naar de enquête
-                                        </Text>
+                                    <Button Flex="Flex.Column.Grow.Is1" Clicked="@(() => _confirmSurveyModal.Show())"
+                                            Margin="Margin.Is3.OnY.Is0.OnX" Padding="Padding.Is0.OnAll">
+                                        <Text TextSize="TextSize.ExtraLarge" Style="white-space: pre" Margin="Margin.Is3.OnY">Naar de enquête</Text>
                                         <Icon Name="IconName.ArrowRight" IconSize="IconSize.x3"/>
                                     </Button>
                                 </Div>
