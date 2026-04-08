@@ -153,7 +153,7 @@
 
     protected override Task OnInitializedAsync()
     {
-        JS.InvokeVoidAsync("enableBeforeUnload");
+        JS.InvokeVoidAsync("unload.enableBeforeUnload");
 
         return base.OnInitializedAsync();
     }
@@ -178,17 +178,17 @@
             Converters = { new JsonStringEnumConverter() },
         };
 
-        var httpResponse = await ApiHttpClient.GetAsync("GetSAS");
-
-        httpResponse.EnsureSuccessStatusCode();
-
-        var blobContainerString = await httpResponse.Content.ReadFromJsonAsync<string>() ?? throw new InvalidOperationException();
-        var blobContainerUri = new Uri(blobContainerString);
-        
-        var blobContainerClient = new BlobContainerClient(blobContainerUri);
-
         try
         {
+            var httpResponse = await ApiHttpClient.GetAsync("GetSAS");
+
+            httpResponse.EnsureSuccessStatusCode();
+
+            var blobContainerString = await httpResponse.Content.ReadFromJsonAsync<string>() ?? throw new InvalidOperationException();
+            var blobContainerUri = new Uri(blobContainerString);
+        
+            var blobContainerClient = new BlobContainerClient(blobContainerUri);
+            
             await blobContainerClient.UploadBlobAsync($"{TransparencyType}/{ParticipantId}.json", BinaryData.FromObjectAsJson(_trackedComponents, options),
                 CancellationToken.None);
         }
@@ -200,14 +200,16 @@
             return;
         }
 
-        const string qualtricsBaseUrl = "";
+        await JS.InvokeVoidAsync("unload.disableBeforeUnload");
+
+        const string qualtricsBaseUrl = "https://vub.fra1.qualtrics.com/jfe/form/SV_8vt1Gi1ivxvfcua";
         var querys = new Dictionary<string, string?>()
         {
-            { "participantId", ParticipantId },
+            { "ParticipantID", ParticipantId },
         };
 
         var qualtricsUrl = QueryHelpers.AddQueryString(qualtricsBaseUrl, querys);
 
-        // NavigationManager.NavigateTo(qualtricsUrl);
+        NavigationManager.NavigateTo(qualtricsUrl);
     }
 }

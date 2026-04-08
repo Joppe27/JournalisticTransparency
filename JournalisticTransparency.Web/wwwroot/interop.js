@@ -1,9 +1,15 @@
-window.enableBeforeUnload = function () {
-    window.onbeforeunload = function (e) {
-        e.preventDefault();
-        return '';
-    };
-};
+window.unload = {
+    enableBeforeUnload: function () {
+        window.onbeforeunload = function (e) {
+            e.preventDefault();
+            return '';
+        };
+    },
+    
+    disableBeforeUnload: function () {
+        window.onbeforeunload = null;
+    },
+}
 
 window.scrollElementIntoView = async function (id) {
     await delay(300);
