@@ -33,6 +33,7 @@
                 <LayoutContent>
                     <Row Padding="Padding.Is5.OnY.Is5.FromStart.Is3.FromEnd" Height="Height.Is100">
                         <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile">
+                            <ArticleHeader/>
                             <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
                             <Div Flex="Flex.JustifyContent.End">
                                 <Button Display="Display.None.OnDesktop.Block.OnMobile"
@@ -63,7 +64,7 @@
     </Layout>
 
     <Toaster>
-        <Toast @bind-Visible="@_toastVisible">
+        <Toast @bind-Visible="@_toastVisible" Margin="Margin.Is5">
             <ToastBody Padding="Padding.Is0" Flex="Flex.AlignItems.Center" Gap="Gap.Is2">
                 <Strong>Die functie is uitgeschakeld tijdens het experiment.</Strong>
                 <CloseButton/>

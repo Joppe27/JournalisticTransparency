@@ -31,7 +31,7 @@
     [Parameter] public string NewText { get; set; } = "";
     [Parameter] public string Header { get; set; } = "Diff";
     [Parameter] public bool IgnoreWhiteSpace { get; set; } = true;
-    [Parameter] public bool IgnoreUnchanged { get; set; } = false;
+    [Parameter] public bool IgnoreUnchanged { get; set; }
 
     private DiffPaneModel? _diffModel;
 
@@ -45,7 +45,7 @@
         if (!string.IsNullOrEmpty(OldText) || !string.IsNullOrEmpty(NewText))
         {
             var differ = new InlineDiffBuilder(new Differ());
-            _diffModel = differ.BuildDiffModel(OldText ?? "", NewText ?? "", IgnoreWhiteSpace);
+            _diffModel = differ.BuildDiffModel(OldText, NewText, IgnoreWhiteSpace);
         }
     }
 

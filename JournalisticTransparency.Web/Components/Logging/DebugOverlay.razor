@@ -11,7 +11,7 @@
             <Text>Showing data for participant @ParticipantId:</Text>
         </Div>
         <Accordion>
-            @foreach (ITracked trackedObject in DebuggerEntries.OrderBy(entry => FormatOwnerString(entry.Owner.ToString())))
+            @foreach (ITracked trackedObject in DebuggerEntries.OrderBy(entry => FormatOwnerString(entry.Owner.ToString()!)))
             {
                 <AccordionItem>
                     <AccordionHeader>
@@ -20,7 +20,7 @@
                                 <TableBody>
                                     <TableRow>
                                         <TableRowCell>@GetInteractionIcon(trackedObject.Interactions)</TableRowCell>
-                                        <TableRowCell>@FormatOwnerString(trackedObject.Owner.ToString())</TableRowCell>
+                                        <TableRowCell>@FormatOwnerString(trackedObject.Owner.ToString()!)</TableRowCell>
                                         <TableRowCell><Strong>@trackedObject.Name</Strong></TableRowCell>
                                         <TableRowCell>@trackedObject.GetType().ToString()</TableRowCell>
                                     </TableRow>

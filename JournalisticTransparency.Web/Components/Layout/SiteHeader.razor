@@ -25,9 +25,11 @@
                 <Icon Name="IconName.Cloud" IconSize="IconSize.Large"/>
                 <Strong Style="white-space: pre"> 7°C</Strong>
             </Column>
-            <Column Flex="Flex.AlignContent.End" ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
-                <Icon Name="IconName.Car" IconSize="IconSize.Large"/>
-                <Strong Style="white-space: pre"> 74 km</Strong>
+            <Column Display="Display.Block.OnDesktop.None.OnMobile" ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
+                <Div Flex="Flex.AlignContent.End">
+                    <Icon Name="IconName.Car" IconSize="IconSize.Large"/>
+                    <Strong Style="white-space: pre"> 74 km</Strong>
+                </Div>
             </Column>
             <Button Clicked="@(() => DisplayToast.InvokeAsync())">
                 <Icon Name="IconName.Search" IconSize="IconSize.Large"/>
