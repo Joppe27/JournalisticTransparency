@@ -20,7 +20,7 @@
                 style = component.Readable ? "" : UnreadableStyle;
         }
         <Div Position="Position.Relative">
-            <Text Style="z-index: 10" Background="Background.White" Visibility="@(component.Readable ? Visibility.Invisible : Visibility.Visible)" Position="Position.Absolute.Top.Is50.Start.Is50.Translate.Middle">Bekijk eerst bovenstaande inhoud om verder te lezen.</Text>
+            <Text Style="z-index: 10" Background="Background.White" Visibility="@(component.Readable ? Visibility.Invisible : Visibility.Visible)" Position="Position.Absolute.Top.Is50.Start.Is50.Translate.Middle">Bekijk eerst bovenstaande inhoud om verder te lezen. Dat kan door er op te klikken.</Text>
             <Div Style="@style">
                 @component.Content
             </Div>

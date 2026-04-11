@@ -5,7 +5,7 @@
 @if (Interactive)
 {
     <Alert ElementId="@ElementId" Style="@Style" Color="Color.Info" Visible>
-        <AlertMessage>De huidige versie van dit arikel verschilt van de oorspronkelijke.
+        <AlertMessage>De huidige versie van dit artikel verschilt van de oorspronkelijke.
             <Anchor Class="@(Interactive ? "flash" : "")" Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor>
         </AlertMessage>
     </Alert>
