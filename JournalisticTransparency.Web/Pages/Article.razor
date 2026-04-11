@@ -139,11 +139,10 @@
             _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
             _articleContentParameters = new() { [nameof(ArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
 
+            TrackingService.OnTrackedElementCreated += AddToList;
+            
             if (Debugging is true)
-            {
-                TrackingService.OnTrackedElementCreated += AddToDebugger;
                 TrackingService.OnInteractionsChanged += UpdateDebugger;
-            }
 
             _trackedReadTime = new(TrackingService, SessionTimer) { Name = "globale leestijd", Owner = this };
             _trackedReadTime.Start();
@@ -159,7 +158,7 @@
         return base.OnInitializedAsync();
     }
 
-    private void AddToDebugger(ITracked trackedComponent)
+    private void AddToList(ITracked trackedComponent)
     {
         if (!_trackedComponents.Contains(trackedComponent))
             _trackedComponents.Add(trackedComponent);
