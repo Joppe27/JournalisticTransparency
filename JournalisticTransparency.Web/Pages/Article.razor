@@ -16,95 +16,90 @@
 
 <PageTitle>Artikel experiment</PageTitle>
 
-<Div>
-    <Layout>
-        <SiteHeader DisplayToast="@(() => _toastVisible = true)"/>
-        <Layout Sider Width="Width.Is75.OnDesktop.Is100.OnMobile" Margin="Margin.IsAuto.OnX">
-            <LayoutSider Display="Display.Block.OnDesktop.None.OnMobile" Background="Background.White">
-                <LayoutSiderContent Display="Display.Flex.Column" Height="Height.Is100"
-                                    Padding="Padding.Is3.FromStart.Is5.OnY.Is5.FromEnd"
-                                    Style="border-right: 1px solid rgb(224,224,224)">
-                    <SiteSectionCard DisplayToast="@(() => _toastVisible = true)"/>
-                    <Div Flex="Flex.Grow.Is1"></Div>
-                    <ShareCard DisplayFunctionDisabledToast="@(() => _toastVisible = true)"/>
-                </LayoutSiderContent>
-            </LayoutSider>
-            <Layout Style="scrollbar-width: thin">
-                <LayoutContent>
-                    <Row Padding="Padding.Is5.OnY.Is5.FromStart.Is3.FromEnd" Height="Height.Is100">
-                        <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile">
-                            <ArticleHeader/>
-                            <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
-                            <Div Flex="Flex.JustifyContent.End">
-                                <Button Display="Display.None.OnDesktop.Block.OnMobile"
-                                        Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is5.OnY">
-                                    <Text Style="white-space: pre">Naar de enquête</Text>
-                                    <Icon Name="IconName.ArrowRight" IconSize="IconSize.Large"/>
+<Layout>
+    <SiteHeader DisplayToast="@(() => _toastVisible = true)"/>
+    <Layout Sider Width="Width.Is75.OnDesktop.Is100.OnMobile" Margin="Margin.IsAuto.OnX">
+        <LayoutSider Display="Display.Block.OnDesktop.None.OnMobile" Background="Background.White">
+            <LayoutSiderContent Display="Display.Flex.Column" Height="Height.Is100"
+                                Padding="Padding.Is3.FromStart.Is5.OnY.Is5.FromEnd"
+                                Style="border-right: 1px solid rgb(224,224,224)">
+                <SiteSectionCard DisplayToast="@(() => _toastVisible = true)"/>
+                <Div Flex="Flex.Grow.Is1"></Div>
+                <ShareCard DisplayFunctionDisabledToast="@(() => _toastVisible = true)"/>
+            </LayoutSiderContent>
+        </LayoutSider>
+        <Layout Style="scrollbar-width: thin">
+            <LayoutContent>
+                <Row Padding="Padding.Is5.OnY.Is3.OnX" Height="Height.Is100">
+                    <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile" Padding="Padding.Is5.OnX">
+                        <ArticleHeader/>
+                        <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
+                        <Div Flex="Flex.JustifyContent.End">
+                            <Button Display="Display.None.OnDesktop.Block.OnMobile"
+                                    Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is5.FromTop">
+                                <Text Style="white-space: pre">Naar de enquête</Text>
+                                <Icon Name="IconName.ArrowRight" IconSize="IconSize.Large"/>
+                            </Button>
+                        </Div>
+                    </Column>
+                    <Column Display="Display.Block.OnDesktop.None.OnMobile" ColumnSize="ColumnSize.Is3"
+                            Padding="Padding.Is3.FromEnd.Is0.FromStart">
+                        <Div Flex="Flex.Column" Height="Height.Is100">
+                            <MostReadCard DisplayToast="@(() => _toastVisible = true)"/>
+                            <Div Flex="Flex.Grow.Is1"></Div>
+                            <Div Flex="Flex.JustifyContent.Center">
+                                <Button Flex="Flex.Column.Grow.Is1" Width="Width.Is100" style="overflow: hidden;" Clicked="@(() => _confirmSurveyModal.Show())">
+                                    <Text TextSize="TextSize.Large" Style="white-space: pre" Margin="Margin.Is3.OnY">Naar de enquête</Text>
+                                    <Icon Name="IconName.ArrowRight" IconSize="IconSize.x3"/>
                                 </Button>
                             </Div>
-                        </Column>
-                        <Column Display="Display.Block.OnDesktop.None.OnMobile" ColumnSize="ColumnSize.Is3"
-                                Padding="Padding.Is0.FromEnd">
-                            <Div Flex="Flex.Column" Height="Height.Is100">
-                                <MostReadCard DisplayToast="@(() => _toastVisible = true)"/>
-                                <Div Flex="Flex.Grow.Is1"></Div>
-                                <Div Flex="Flex.JustifyContent.Center">
-                                    <Button Flex="Flex.Column.Grow.Is1" Clicked="@(() => _confirmSurveyModal.Show())"
-                                            Margin="Margin.Is3.OnY.Is0.OnX" Padding="Padding.Is0.OnAll">
-                                        <Text TextSize="TextSize.ExtraLarge" Style="white-space: pre" Margin="Margin.Is3.OnY">Naar de enquête</Text>
-                                        <Icon Name="IconName.ArrowRight" IconSize="IconSize.x3"/>
-                                    </Button>
-                                </Div>
-                            </Div>
-                        </Column>
-                    </Row>
-                </LayoutContent>
-            </Layout>
+                        </Div>
+                    </Column>
+                </Row>
+            </LayoutContent>
         </Layout>
     </Layout>
+</Layout>
 
+<Toaster>
+    <Toast @bind-Visible="@_toastVisible" Margin="Margin.Is5">
+        <ToastBody Padding="Padding.Is0" Flex="Flex.AlignItems.Center" Gap="Gap.Is2">
+            <Strong>Die functie is uitgeschakeld tijdens het experiment.</Strong>
+            <CloseButton/>
+        </ToastBody>
+    </Toast>
+</Toaster>
+
+<Modal @ref="_confirmSurveyModal">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Doorgaan naar de enquête?</ModalTitle>
+        </ModalHeader>
+        <ModalBody>
+            <Text>U kunt het artikel hierna niet meer lezen. Dit kan niet ongedaan gemaakt worden.</Text>
+        </ModalBody>
+        <ModalFooter Margin="Margin.Is3.FromTop">
+            <Button Color="Color.Secondary" Clicked="@(() => _confirmSurveyModal.Close(CloseReason.UserClosing))">
+                Annuleren
+            </Button>
+            <Button Color="Color.Primary" Clicked="EndArticleSession" Loading="_loading">Doorgaan</Button>
+        </ModalFooter>
+    </ModalContent>
+    
     <Toaster>
-        <Toast @bind-Visible="@_toastVisible" Margin="Margin.Is5">
+        <Toast @bind-Visible="@_errorToastVisible" Autohide="false">
             <ToastBody Padding="Padding.Is0" Flex="Flex.AlignItems.Center" Gap="Gap.Is2">
-                <Strong>Die functie is uitgeschakeld tijdens het experiment.</Strong>
+                <Strong>Fout tijdens uploaden gegevens: @_errorToastMessage</Strong>
                 <CloseButton/>
             </ToastBody>
         </Toast>
     </Toaster>
+</Modal>
 
-    <Modal @ref="_confirmSurveyModal">
-        <ModalContent Centered>
-            <ModalHeader>
-                <ModalTitle>Doorgaan naar de enquête?</ModalTitle>
-            </ModalHeader>
-            <ModalBody>
-                <Text>U kunt het artikel hierna niet meer lezen. Dit kan niet ongedaan gemaakt worden.</Text>
-            </ModalBody>
-            <ModalFooter Margin="Margin.Is3.FromTop">
-                <Button Color="Color.Secondary" Clicked="@(() => _confirmSurveyModal.Close(CloseReason.UserClosing))">
-                    Annuleren
-                </Button>
-                <Button Color="Color.Primary" Clicked="EndArticleSession" Loading="_loading">Doorgaan</Button>
-            </ModalFooter>
-        </ModalContent>
-        
-        <Toaster>
-            <Toast @bind-Visible="@_errorToastVisible" Autohide="false">
-                <ToastBody Padding="Padding.Is0" Flex="Flex.AlignItems.Center" Gap="Gap.Is2">
-                    <Strong>Fout tijdens uploaden gegevens: @_errorToastMessage</Strong>
-                    <CloseButton/>
-                </ToastBody>
-            </Toast>
-        </Toaster>
-    </Modal>
-
-    @if (Debugging is true)
-    {
-        <DebugOverlay DebuggerEntries="@_trackedComponents"/>
-    }
-</Div>
-
-
+@if (Debugging is true)
+{
+    <DebugOverlay DebuggerEntries="@_trackedComponents"/>
+}
 
 
 @code {
