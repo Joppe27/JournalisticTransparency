@@ -9,21 +9,23 @@
                                         Owner="@this" Name="best practices"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
-                <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Flex="Flex.NoWrap" Overflow="Overflow.Hidden">
+                <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Style="column-gap: 12px">
                     <Column ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
                         <Image Source="Resources/logo.png" Style="border-radius: 16px" Display="Display.Block"
                                Width="Width.Px(70)"/>
                     </Column>
-                    <Column Margin="Margin.Is3.OnX">
-                        <Row Style="column-gap: 12px; row-gap: 4px" Margin="Margin.Is2.FromBottom">
+                    <Column Margin="Margin.Is3.FromStart" Padding="Padding.Is0">
+                        <Row Style="row-gap: 4px" Margin="Margin.Is2.FromBottom" Flex="Flex.Column">
                             <Strong TextOverflow="TextOverflow.NoWrap">DNZ Nieuws</Strong>
-                            <Div Flex="Flex.Row.AlignContent.Center.JustifyContent.Center">
+                            <Div Flex="Flex.Row.AlignContent.Center">
                                 <Icon Name="IconName.LocationArrow" IconSize="IconSize.Large"
                                       IconStyle="IconStyle.Regular"/>
                                 <Text Style="white-space: pre"> Nieuwstraat 124, 1000 Brussel</Text>
                             </Div>
-                            <TrackedAnchor Attributes="_trackedMailAnchorParameters" Invasive="@false" Owner="@this"
-                                           Name="mail ombuds"/>
+                            <Div Flex="Flex.Row.AlignContent.Center">
+                                <TrackedAnchor Attributes="_trackedMailAnchorParameters" Invasive="@false" Owner="@this"
+                                               Name="mail ombuds"/>
+                            </Div>
                         </Row>
                         <Row Style="row-gap: 8px">
                             <Text>
@@ -85,7 +87,7 @@
             @<Div Flex="Flex.AlignItems.Center">
                 <Icon Name="IconName.Mail" IconSize="IconSize.Large" IconStyle="IconStyle.Regular"
                       TextColor="TextColor.Dark"/>
-                <Text Style="white-space: pre" TextColor="TextColor.Dark"> Contacteer de nieuwsombudspersoon</Text>
+                <Text Style="white-space: pre" TextColor="TextColor.Dark"> Contacteer de ombudspersoon</Text>
             </Div>;
 
         _trackedMailAnchorParameters = new()
