@@ -6,7 +6,7 @@
 {
     <Alert ElementId="@ElementId" Style="@Style" Color="Color.Info" Visible>
         <AlertMessage>De huidige versie van dit artikel verschilt van de oorspronkelijke.
-            <Anchor Class="@(Interactive ? "flash" : "")" Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor>
+            <Anchor Class="@(Invasive ? "flash" : "")" Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor>
         </AlertMessage>
     </Alert>
 
