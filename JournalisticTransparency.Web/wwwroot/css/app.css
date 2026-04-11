@@ -75,6 +75,11 @@
     line-height: 25px !important;
 }
 
+.b-layout-root {
+    min-height: 100vh;
+    height: auto !important;
+}
+
 @keyframes blink {
      0%, 50%, 100% {
          opacity: 1;
