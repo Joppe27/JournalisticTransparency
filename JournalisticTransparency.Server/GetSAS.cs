@@ -3,7 +3,6 @@
 
 #region
 
-using System.Globalization;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +29,7 @@ public class GetSAS
         var blobServiceClient = new BlobServiceClient(Environment.GetEnvironmentVariable("BlobConnection"));
         var blobContainerClient = blobServiceClient.GetBlobContainerClient("trackingdata");
         var sas = blobContainerClient.GenerateSasUri(BlobContainerSasPermissions.Create, DateTimeOffset.Now.AddSeconds(30));
-        
+
         return new OkObjectResult(sas);
     }
 }

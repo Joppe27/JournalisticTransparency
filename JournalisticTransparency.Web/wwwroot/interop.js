@@ -5,7 +5,7 @@ window.unload = {
             return '';
         };
     },
-    
+
     disableBeforeUnload: function () {
         window.onbeforeunload = null;
     },
@@ -17,33 +17,32 @@ window.scrollElementIntoView = async function (id) {
     element.scrollIntoView({behavior: "smooth", block: "nearest"});
 };
 
-function delay (ms) {
+function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 window.visibility = {
     handler: null,
     dotnetComponent: null,
-    
+
     addVisibilityRestoredListener: function (dotNet) {
         this.dotnetComponent = dotNet;
-        
+
         this.handler = () => {
             if (document.visibilityState === "visible") {
                 this.dotnetComponent.invokeMethodAsync("AddClosedInteraction");
             }
         };
-        
+
         document.addEventListener("visibilitychange", this.handler);
     },
 
-    removeVisibilityRestoredListener: function ()
-    {
+    removeVisibilityRestoredListener: function () {
         if (this.handler) {
             document.removeEventListener("visibilitychange", this.handler);
             this.handler = null;
         }
-        
+
         this.dotnetComponent = null;
     }
 }

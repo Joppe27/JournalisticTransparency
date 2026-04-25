@@ -16,13 +16,13 @@ public class TrackedObject<T> : ITracked where T : notnull, new()
     protected TrackedObject(TrackingService trackingService, Stopwatch sessionTimer)
     {
         SessionTimer = sessionTimer;
-        
+
         Object = new T();
         Interactions.CollectionChanged += (_, _) => trackingService.NotifyInteractionsChanged(this);
 
         trackingService.NotifyTrackedElementCreated(this);
     }
-    
+
     protected Stopwatch SessionTimer { get; }
 
     public object Object { get; }

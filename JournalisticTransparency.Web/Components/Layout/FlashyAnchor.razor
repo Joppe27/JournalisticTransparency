@@ -7,11 +7,11 @@
 {
     <Span class="flash">
         <Anchor Clicked="@(() =>
-        {
-            Clicked?.Invoke();
-            _clicked = true;
-            StateHasChanged();
-        })" Attributes="@Attributes">@ChildContent</Anchor>
+                         {
+                             Clicked?.Invoke();
+                             _clicked = true;
+                             StateHasChanged();
+                         })" Attributes="@Attributes">@ChildContent</Anchor>
     </Span>
 }
 
@@ -19,8 +19,10 @@
 
     [Parameter] [EditorRequired] public bool Invasive { get; set; }
     [Parameter] public Action? Clicked { get; set; }
-    
-    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? Attributes { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? Attributes { get; set; }
+
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private bool _clicked;

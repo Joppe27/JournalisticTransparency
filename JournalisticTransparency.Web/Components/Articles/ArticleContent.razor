@@ -137,7 +137,7 @@
         _dimComponents = false;
         StateHasChanged();
     }
-    
+
     private void AdvanceArticle(ITracked component)
     {
         int interactedComponentIndex = component.ComponentIndex;
@@ -623,7 +623,7 @@
             },
             new ArticleComponent()
             {
-                TransparencyElements = 
+                TransparencyElements =
                 [
                     @<BestPracticesCard ElementId="bestPracticesCard" @ref="_bestPracticesCard"
                                         Style="@CheckTransparencyElementOpen(_bestPracticesCard)"
@@ -635,4 +635,5 @@
             },
         ]);
     }
+
 }

@@ -1,7 +1,8 @@
 <LayoutHeader Position="Position.Sticky" Width="Width.Is100" Style="border-bottom: 1px solid rgb(224,224,224)">
     <Row Width="Width.Is75.OnDesktop.Is100.OnMobile" Margin="Margin.IsAuto.OnX">
-        <Column Flex="Flex.JustifyContent.Start.Grow.Is1.OnDesktop.Grow.Is0.OnMobile.AlignItems.Center" Padding="Padding.Is3.OnX.OnDesktop.Is0.OnMobile">
-            <Div Display="Display.Block.OnDesktop.None.OnMobile" Margin="Margin.Is2.OnY" >
+        <Column Flex="Flex.JustifyContent.Start.Grow.Is1.OnDesktop.Grow.Is0.OnMobile.AlignItems.Center"
+                Padding="Padding.Is3.OnX.OnDesktop.Is0.OnMobile">
+            <Div Display="Display.Block.OnDesktop.None.OnMobile" Margin="Margin.Is2.OnY">
                 <Div Flex="Flex.Row" Gap="Gap.Is2">
                     <Button Background="Background.Primary" Clicked="@(() => DisplayToast.InvokeAsync())">
                         <Icon Style="color: white" Name="IconName.User" IconSize="IconSize.Large"
@@ -11,7 +12,7 @@
                     <Button Clicked="@(() => DisplayToast.InvokeAsync())">
                         <Icon Name="IconName.List" IconSize="IconSize.Large"/>
                         <Text Style="white-space: pre"> Thema's</Text>
-                    </Button> 
+                    </Button>
                 </Div>
             </Div>
         </Column>
@@ -27,7 +28,8 @@
                 <Icon Name="IconName.Cloud" IconSize="IconSize.Large"/>
                 <Strong Style="white-space: pre"> 7°C</Strong>
             </Column>
-            <Column Display="Display.Block.OnDesktop.None.OnMobile" ColumnSize="ColumnSize.IsAuto" Padding="Padding.Is0">
+            <Column Display="Display.Block.OnDesktop.None.OnMobile" ColumnSize="ColumnSize.IsAuto"
+                    Padding="Padding.Is0">
                 <Div Flex="Flex.AlignContent.End">
                     <Icon Name="IconName.Car" IconSize="IconSize.Large"/>
                     <Strong Style="white-space: pre"> 74 km</Strong>

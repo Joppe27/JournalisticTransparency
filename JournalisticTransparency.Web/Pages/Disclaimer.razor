@@ -1,5 +1,4 @@
 ﻿@page "/disclaimer"
-@using JournalisticTransparency.Web.Components.Articles
 @using JournalisticTransparency.Web.Utils
 @inject NavigationManager NavigationManager
 
@@ -17,75 +16,112 @@
         </Div>
         <Divider/>
     </LayoutHeader>
-    <LayoutContent Margin="Margin.Is5.OnY" Padding="Padding.Is5.OnX" Flex="Flex.AlignSelf.Center" Width="Width.Is66.OnDesktop.Is100.OnMobile">
+    <LayoutContent Margin="Margin.Is5.OnY" Padding="Padding.Is5.OnX" Flex="Flex.AlignSelf.Center"
+                   Width="Width.Is66.OnDesktop.Is100.OnMobile">
         <Heading>
             Instructies
         </Heading>
         <Lead>
-            U krijgt zometeen een online nieuwsartikel van een fictief medium te zien. <Strong>Lees het artikel</Strong> zoals u dat dagelijks zou doen. U mag op alle links en knoppen klikken, als u dat wil. Het kan dat u op een link of knop *moet* klikken om verder te kunnen. U kiest dan zelf hoeveel u daarvan leest.<br/><br/>
-            Nadat u het artikel gelezen heeft, moet u een korte bevraging beantwoorden om het experiment te voltooien. <Strong>Klik nadat u het artikel gelezen hebt op de knop "naar de enquête".</Strong> Pas als u de bevraging heeft ingevuld, is uw deelname voltooid. Alvast bedankt voor uw medewerking!<br/><br/>
-            
+            U krijgt zometeen een online nieuwsartikel van een fictief medium te zien. <Strong>Lees het artikel</Strong>
+            zoals u dat dagelijks zou doen. U mag op alle links en knoppen klikken, als u dat wil. Het kan dat u op een
+            link of knop *moet* klikken om verder te kunnen. U kiest dan zelf hoeveel u daarvan leest.<br/><br/>
+            Nadat u het artikel gelezen heeft, moet u een korte bevraging beantwoorden om het experiment te voltooien.
+            <Strong>Klik nadat u het artikel gelezen hebt op de knop "naar de enquête".</Strong> Pas als u de bevraging
+            heeft ingevuld, is uw deelname voltooid. Alvast bedankt voor uw medewerking!<br/><br/>
+
             Geschatte totale duurtijd: 10-15 minuten.
-        </Lead><br/><br/>
+        </Lead>
+        <br/><br/>
         <Card Margin="Margin.Is3.OnY" Padding="Padding.Is3.OnAll">
             <Text>
                 Masterstudent: Joppe Rombouts (joppe.rombouts@vub.be)<br/>
                 Promotor: Astrid Vandendaele (astrid.vandendaele@vub.be)<br/>
                 Faculteit: Letteren en Wijsbegeerte<br/>
-                Doel van het onderzoek: onderzoek naar de relatie van het gebruik van transparantie-elementen tot vertrouwen in media-inhoud
+                Doel van het onderzoek: onderzoek naar de relatie van het gebruik van transparantie-elementen tot
+                vertrouwen in media-inhoud
             </Text>
         </Card>
         <Card>
             <Accordion>
-            <AccordionItem>
-                <AccordionHeader>
-                    <AccordionToggle>
-                        Geïnformeerde toestemming
-                    </AccordionToggle>
-                </AccordionHeader>
-                <AccordionBody>
-                    <Paragraph Style="font-size: 14px">
-                        Joppe Rombouts, student MA Journalistiek, en Vrije Universiteit Brussel, Pleinlaan 2, 1050 Brussel, ondernemingsnummer 449.012.406 zijn gezamenlijk verantwoordelijk voor deze studie en de bijhorende verwerking van persoonsgegevens.
-                    </Paragraph>
-                    <Paragraph>
-                        Deelname aan deze studie houdt geen risico's in. Aan de deelname zijn geen persoonlijke voordelen verbonden.
-                    </Paragraph>
-                    <Paragraph>
-                        We behandelen de verzamelde gegevens vertrouwelijk en respecteren de privacywetgeving, waaronder de Algemene Verordening Gegevensbescherming (GDPR).
-                    </Paragraph>
-                    <Paragraph>
-                        Voor dit onderzoek verzamelen we de volgende persoonsgegevens: leeftijd, gender, opleidingsniveau, gebruiksdata website.<br/>
-                        We verwerken uw gegevens alleen voor wetenschappelijk onderzoek.<br/>
-                        We bewaren uw gegevens gedurende 1 jaar na afloop van het onderzoek.<br/>
-                        Uw gegevens kunnen worden hergebruikt voor wetenschappelijk onderzoek in het algemeen belang, in de EU en in de landen met een gelijkwaardige bescherming, erkend door de Europese Commissie, op voorwaarde dat er beschermingsmaatregelen worden genomen.
-                    </Paragraph>
-                    <Paragraph>
-                        Zonder uw uitdrukkelijke toestemming, zullen wij u niet citeren in publicaties.
-                    </Paragraph>
-                    <Paragraph>
-                        De opslag van uw gegevens biedt een hoge mate van bescherming, in overeenstemming met de richtlijnen van de VUB (VUB Charter van de onderzoeker, ICT-veiligheidsbeleid).<br/>
-                        Uw gegevens zijn volledig anoniem. Dat betekent dat het niet mogelijk is om u te identificeren aan de hand van de gegevens. 
-                    </Paragraph>
-                    <Paragraph>
-                        U hebt het recht uw gegevens in te zien, te verbeteren, te wissen, informatie over de verwerking te vragen, een kopie van uw gegevens te vragen, de manier waarop we met uw gegevens omgaan te beperken en ons te vragen uw gegevens aan derden over te dragen.<br/>
-                        U hebt steeds het recht de toestemming om uw gegevens te verwerken in te trekken, zonder dat u daarvoor een reden moet geven. In dit geval kunnen we de resultaten verkregen aan de hand van de verwerking van uw gegevens vóór de intrekking van uw toestemming niettemin blijven gebruiken.<br/>
-                        De uitoefening van uw rechten kan beperkt worden als dit ons onderzoek ernstig zou bemoeilijken. 
-                    </Paragraph>
-                    <Paragraph>
-                        Als u vragen hebt, of als u uw rechten wil uitoefenen, kunt u contact opnemen met Joppe Rombouts of met de functionaris voor gegevensbescherming van de VUB (dpo@vub.be).
-                    </Paragraph>
-                    <Paragraph>
-                        Als u een klacht wil indienen over de manier waarop wij met uw gegevens omgaan, kunt u contact opnemen met de onderzoekers, de promotor of de functionaris voor gegevensbescherming (zie contactgegevens hierboven). U kunt ook een klacht indienen bij de Gegevensbeschermingsautoriteit.
-                    </Paragraph>
-                </AccordionBody>
-            </AccordionItem>
-        </Accordion>
-        </Card><br/><br/>
+                <AccordionItem>
+                    <AccordionHeader>
+                        <AccordionToggle>
+                            Geïnformeerde toestemming
+                        </AccordionToggle>
+                    </AccordionHeader>
+                    <AccordionBody>
+                        <Paragraph Style="font-size: 14px">
+                            Joppe Rombouts, student MA Journalistiek, en Vrije Universiteit Brussel, Pleinlaan 2, 1050
+                            Brussel, ondernemingsnummer 449.012.406 zijn gezamenlijk verantwoordelijk voor deze studie
+                            en de bijhorende verwerking van persoonsgegevens.
+                        </Paragraph>
+                        <Paragraph>
+                            Deelname aan deze studie houdt geen risico's in. Aan de deelname zijn geen persoonlijke
+                            voordelen verbonden.
+                        </Paragraph>
+                        <Paragraph>
+                            We behandelen de verzamelde gegevens vertrouwelijk en respecteren de privacywetgeving,
+                            waaronder de Algemene Verordening Gegevensbescherming (GDPR).
+                        </Paragraph>
+                        <Paragraph>
+                            Voor dit onderzoek verzamelen we de volgende persoonsgegevens: leeftijd, gender,
+                            opleidingsniveau, gebruiksdata website.<br/>
+                            We verwerken uw gegevens alleen voor wetenschappelijk onderzoek.<br/>
+                            We bewaren uw gegevens gedurende 1 jaar na afloop van het onderzoek.<br/>
+                            Uw gegevens kunnen worden hergebruikt voor wetenschappelijk onderzoek in het algemeen
+                            belang, in de EU en in de landen met een gelijkwaardige bescherming, erkend door de Europese
+                            Commissie, op voorwaarde dat er beschermingsmaatregelen worden genomen.
+                        </Paragraph>
+                        <Paragraph>
+                            Zonder uw uitdrukkelijke toestemming, zullen wij u niet citeren in publicaties.
+                        </Paragraph>
+                        <Paragraph>
+                            De opslag van uw gegevens biedt een hoge mate van bescherming, in overeenstemming met de
+                            richtlijnen van de VUB (VUB Charter van de onderzoeker, ICT-veiligheidsbeleid).<br/>
+                            Uw gegevens zijn volledig anoniem. Dat betekent dat het niet mogelijk is om u te
+                            identificeren aan de hand van de gegevens.
+                        </Paragraph>
+                        <Paragraph>
+                            U hebt het recht uw gegevens in te zien, te verbeteren, te wissen, informatie over de
+                            verwerking te vragen, een kopie van uw gegevens te vragen, de manier waarop we met uw
+                            gegevens omgaan te beperken en ons te vragen uw gegevens aan derden over te dragen.<br/>
+                            U hebt steeds het recht de toestemming om uw gegevens te verwerken in te trekken, zonder dat
+                            u daarvoor een reden moet geven. In dit geval kunnen we de resultaten verkregen aan de hand
+                            van de verwerking van uw gegevens vóór de intrekking van uw toestemming niettemin blijven
+                            gebruiken.<br/>
+                            De uitoefening van uw rechten kan beperkt worden als dit ons onderzoek ernstig zou
+                            bemoeilijken.
+                        </Paragraph>
+                        <Paragraph>
+                            Als u vragen hebt, of als u uw rechten wil uitoefenen, kunt u contact opnemen met Joppe
+                            Rombouts of met de functionaris voor gegevensbescherming van de VUB (dpo@vub.be).
+                        </Paragraph>
+                        <Paragraph>
+                            Als u een klacht wil indienen over de manier waarop wij met uw gegevens omgaan, kunt u
+                            contact opnemen met de onderzoekers, de promotor of de functionaris voor gegevensbescherming
+                            (zie contactgegevens hierboven). U kunt ook een klacht indienen bij de
+                            Gegevensbeschermingsautoriteit.
+                        </Paragraph>
+                    </AccordionBody>
+                </AccordionItem>
+            </Accordion>
+        </Card>
+        <br/><br/>
         <ListGroup Margin="Margin.Is3.OnY">
             <ListGroupItem><Strong TextColor="TextColor.Danger">Ik heb de instructies gelezen.</Strong></ListGroupItem>
-            <ListGroupItem>Ik heb alle nodige <Anchor To="mailto:joppe.rombouts@vub.be?subject=Experiment journalistiek vertrouwen: vraag geïnformeerde toestemming">vragen kunnen stellen</Anchor> en ga akkoord met deelname aan het onderzoek.</ListGroupItem>
-            <ListGroupItem>Ik begrijp dat mijn deelname aan het onderzoek vrijwillig is en dat ik mijn deelname op elk moment kan stopzetten, zonder dat ik daarvoor een reden moet geven.</ListGroupItem>
-            <ListGroupItem>Ik ga akkoord met het verzamelen en verwerken van de volgende gegevens voor het onderzoek: leeftijd, gender, opleidingsniveau, gebruiksdata website.</ListGroupItem>
+            <ListGroupItem>Ik heb alle nodige
+                <Anchor
+                    To="mailto:joppe.rombouts@vub.be?subject=Experiment journalistiek vertrouwen: vraag geïnformeerde toestemming">
+                    vragen kunnen stellen
+                </Anchor>
+                en ga akkoord met deelname aan het onderzoek.
+            </ListGroupItem>
+            <ListGroupItem>Ik begrijp dat mijn deelname aan het onderzoek vrijwillig is en dat ik mijn deelname op elk
+                moment kan stopzetten, zonder dat ik daarvoor een reden moet geven.
+            </ListGroupItem>
+            <ListGroupItem>Ik ga akkoord met het verzamelen en verwerken van de volgende gegevens voor het onderzoek:
+                leeftijd, gender, opleidingsniveau, gebruiksdata website.
+            </ListGroupItem>
         </ListGroup>
         <Alert Color="Color.Info" @ref="_conditionsAlert">
             <AlertMessage>
@@ -104,7 +140,8 @@
         <Divider/>
         <Div Flex="Flex.AlignItems.Center" Margin="Margin.Is5.OnX.Is3.OnY">
             <Text Style="display: block">
-                Broncode website: <Anchor To="https://github.com/Joppe27/JournalisticTransparency" Target="Target.Blank">Github</Anchor>
+                Broncode website:
+                <Anchor To="https://github.com/Joppe27/JournalisticTransparency" Target="Target.Blank">Github</Anchor>
             </Text>
         </Div>
     </LayoutFooter>
@@ -129,7 +166,7 @@
         _isLoading = true;
 
         var chance = _rng.Next(0, 4);
-        
+
         if (chance <= 1)
             NavigationTools.RedirectToArticle(TransparencyType.Interactive, false, NavigationManager);
         if (chance == 2)

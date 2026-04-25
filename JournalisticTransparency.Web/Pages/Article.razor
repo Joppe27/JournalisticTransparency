@@ -1,7 +1,5 @@
 @page "/article"
 @using System.Diagnostics
-@using System.Globalization
-@using System.Net.Http.Headers
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using Azure.Storage.Blobs
@@ -31,13 +29,16 @@
         <Layout Style="scrollbar-width: thin">
             <LayoutContent>
                 <Row Padding="Padding.Is5.OnY.Is3.OnX" Height="Height.Is100">
-                    <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile" Padding="Padding.Is5.OnX" Style="margin-bottom: 32px">
+                    <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile" Padding="Padding.Is5.OnX"
+                            Style="margin-bottom: 32px">
                         <ArticleHeader/>
-                        <ArticleContent Interactive="@_interactive" Invasive="@_invasive" Forced="@_forced" DisplayFunctionDisabledToast="@(() => _toastVisible = true)" EnableFinishButton="@(() =>
-                                                                                                                                                              {
-                                                                                                                                                                  _finishButtonDisabled = false;
-                                                                                                                                                                  StateHasChanged();
-                                                                                                                                                              })">
+                        <ArticleContent Interactive="@_interactive" Invasive="@_invasive" Forced="@_forced"
+                                        DisplayFunctionDisabledToast="@(() => _toastVisible = true)"
+                                        EnableFinishButton="@(() =>
+                                                            {
+                                                                _finishButtonDisabled = false;
+                                                                StateHasChanged();
+                                                            })">
                         </ArticleContent>
                         <Div Flex="Flex.JustifyContent.End">
                             <Button Display="Display.None.OnDesktop.Block.OnMobile" Disabled="@_finishButtonDisabled"
@@ -53,8 +54,11 @@
                             <MostReadCard DisplayToast="@(() => _toastVisible = true)"/>
                             <Div Flex="Flex.Grow.Is1"></Div>
                             <Div Flex="Flex.JustifyContent.Center">
-                                <Button Flex="Flex.Column.Grow.Is1" Disabled="@_finishButtonDisabled" Width="Width.Is100" style="overflow: hidden;" Clicked="@(() => _confirmSurveyModal.Show())">
-                                    <Text TextSize="TextSize.Large" Margin="Margin.Is3.OnY">@(_finishButtonDisabled ? "Lees eerst alle inhoud om naar enquête te gaan" : "Naar de enquête")</Text>
+                                <Button Flex="Flex.Column.Grow.Is1" Disabled="@_finishButtonDisabled"
+                                        Width="Width.Is100" style="overflow: hidden;"
+                                        Clicked="@(() => _confirmSurveyModal.Show())">
+                                    <Text TextSize="TextSize.Large"
+                                          Margin="Margin.Is3.OnY">@(_finishButtonDisabled ? "Lees eerst alle inhoud om naar enquête te gaan" : "Naar de enquête")</Text>
                                     <Icon Name="IconName.ArrowRight" IconSize="IconSize.x3"/>
                                 </Button>
                             </Div>
@@ -91,7 +95,7 @@
             <Button Color="Color.Primary" Clicked="EndArticleSession" Loading="_loading">Doorgaan</Button>
         </ModalFooter>
     </ModalContent>
-    
+
     <Toaster>
         <Toast @bind-Visible="@_errorToastVisible" Autohide="false">
             <ToastBody Padding="Padding.Is0" Flex="Flex.AlignItems.Center" Gap="Gap.Is2">
@@ -127,11 +131,11 @@
     private bool _interactive;
     private bool _invasive;
     private bool _forced;
-    
+
     private bool _initialized;
 
     private bool _finishButtonDisabled;
-    
+
     private bool _loading;
 
     protected override void OnParametersSet()
@@ -144,7 +148,7 @@
             _interactive = transparencyType != TransparencyType.Classic;
             _invasive = transparencyType == TransparencyType.InvasiveInteractive || transparencyType == TransparencyType.ForcedInteractive;
             _forced = transparencyType == TransparencyType.ForcedInteractive;
-            
+
             TrackingService.OnTrackedElementCreated += AddToList;
 
             _trackedReadTime = new(TrackingService, SessionTimer) { Name = "globale leestijd", Owner = this };
@@ -158,7 +162,7 @@
                 TrackingService.OnTrackedElementCreated += UpdateDebugger;
                 TrackingService.OnInteractionsChanged += UpdateDebugger;
             }
-            
+
             _initialized = true;
         }
     }
@@ -198,9 +202,9 @@
 
             var blobContainerString = await httpResponse.Content.ReadFromJsonAsync<string>() ?? throw new InvalidOperationException();
             var blobContainerUri = new Uri(blobContainerString);
-        
+
             var blobContainerClient = new BlobContainerClient(blobContainerUri);
-            
+
             await blobContainerClient.UploadBlobAsync($"{AssignedTransparencyType}/{ParticipantId}.json", BinaryData.FromObjectAsJson(_trackedComponents, options),
                 CancellationToken.None);
         }
@@ -224,4 +228,5 @@
 
         NavigationManager.NavigateTo(qualtricsUrl);
     }
+
 }

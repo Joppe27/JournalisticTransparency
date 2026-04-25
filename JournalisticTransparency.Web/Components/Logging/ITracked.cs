@@ -16,8 +16,8 @@ public interface ITracked
     [JsonIgnore] public object Object { get; }
 
     public string ObjectType => Object.GetType().ToString();
-    
-    [JsonIgnore] public int ComponentIndex { get; } 
+
+    [JsonIgnore] public int ComponentIndex { get; }
 
     public string Name { get; set; }
 

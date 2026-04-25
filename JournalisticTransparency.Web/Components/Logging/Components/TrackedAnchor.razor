@@ -34,7 +34,7 @@
     {
         if (trackedElement != _trackedAnchor)
             return;
-        
+
         _trackedAnchor.Attributes!.Add(nameof(Anchor.Clicked), () =>
         {
             _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Opened, _trackedAnchor.SessionTimer.Elapsed));
@@ -56,4 +56,5 @@
         await JS.InvokeVoidAsync("visibility.removeVisibilityRestoredListener");
         _componentReference.Dispose();
     }
+
 }
