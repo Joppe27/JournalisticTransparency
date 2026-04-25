@@ -6,7 +6,7 @@
 {
     <Alert ElementId="@ElementId" Style="@Style" Color="Color.Info" Visible>
         <AlertMessage>De huidige versie van dit artikel verschilt van de oorspronkelijke.
-            <Anchor Class="@(Invasive ? "flash" : "")" Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Bekijk hier welke veranderingen werden aangebracht.</Anchor>
+            <Anchor Class="@(Invasive && !_clicked ? "flash" : "")" Clicked="@(() => { (_modalRef.Object as Modal)!.Show(); _clicked = true; })">Bekijk hier welke veranderingen werden aangebracht.</Anchor>
         </AlertMessage>
     </Alert>
 
@@ -32,6 +32,8 @@ else
     private string _oldText = null!;
     private string _newText = null!;
 
+    private bool _clicked;
+    
     private Dictionary<string, object> _trackedModalParameters = null!;
 
     protected override async Task OnInitializedAsync()
@@ -52,7 +54,7 @@ else
         RenderFragment modalContent =
             @<ModalContent Size="ModalSize.Fullscreen">
                 <ModalBody Margin="Margin.Is3.FromBottom">
-                    <InlineDiffViewer IgnoreUnchanged="false"
+                    <InlineDiffViewer IgnoreUnchanged="true"
                                       Header="Veranderingen (rood = oorspronkelijke versie, groen = huidige versie)"
                                       OldText="@_oldText" NewText="@_newText"/>
                 </ModalBody>

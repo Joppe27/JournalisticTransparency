@@ -1,10 +1,10 @@
 @page "/debug"
-@using JournalisticTransparency.Web.Components.Articles
+@using JournalisticTransparency.Web.Utils
 @inject NavigationManager NavigationManager
 <Div Margin="Margin.Is5">
     <h1>Debug-menu</h1>
     <Column Flex="Flex.Column" Gap="Gap.Is3" Padding="Padding.Is0" Width="Width.Is33.OnDesktop.Is100.OnMobile">
-        <Button Clicked="@(() => NavigationTools.RedirectToArticle(TransparencyType.Classic, true, NavigationManager))">
+        <Button Disabled="@true" Clicked="@(() => NavigationTools.RedirectToArticle(TransparencyType.Classic, true, NavigationManager))">
             Versie "zichtbare transparantie" openen
         </Button>
         <Button

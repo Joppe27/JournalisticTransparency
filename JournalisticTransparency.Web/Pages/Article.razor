@@ -31,13 +31,18 @@
         <Layout Style="scrollbar-width: thin">
             <LayoutContent>
                 <Row Padding="Padding.Is5.OnY.Is3.OnX" Height="Height.Is100">
-                    <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile" Padding="Padding.Is5.OnX">
+                    <Column ColumnSize="ColumnSize.Is9.OnDesktop.IsFull.OnMobile" Padding="Padding.Is5.OnX" Style="margin-bottom: 32px">
                         <ArticleHeader/>
-                        <DynamicComponent Type="_articleContentType" Parameters="_articleContentParameters"/>
+                        <ArticleContent Interactive="@_interactive" Invasive="@_invasive" Forced="@_forced" DisplayFunctionDisabledToast="@(() => _toastVisible = true)" EnableFinishButton="@(() =>
+                                                                                                                                                              {
+                                                                                                                                                                  _finishButtonDisabled = false;
+                                                                                                                                                                  StateHasChanged();
+                                                                                                                                                              })">
+                        </ArticleContent>
                         <Div Flex="Flex.JustifyContent.End">
-                            <Button Display="Display.None.OnDesktop.Block.OnMobile"
+                            <Button Display="Display.None.OnDesktop.Block.OnMobile" Disabled="@_finishButtonDisabled"
                                     Clicked="@(() => _confirmSurveyModal.Show())" Margin="Margin.Is5.FromTop">
-                                <Text Style="white-space: pre">Naar de enquête</Text>
+                                <Text>@(_finishButtonDisabled ? "Lees eerst alle inhoud om naar enquête te gaan" : "Naar de enquête")</Text>
                                 <Icon Name="IconName.ArrowRight" IconSize="IconSize.Large"/>
                             </Button>
                         </Div>
@@ -48,8 +53,8 @@
                             <MostReadCard DisplayToast="@(() => _toastVisible = true)"/>
                             <Div Flex="Flex.Grow.Is1"></Div>
                             <Div Flex="Flex.JustifyContent.Center">
-                                <Button Flex="Flex.Column.Grow.Is1" Width="Width.Is100" style="overflow: hidden;" Clicked="@(() => _confirmSurveyModal.Show())">
-                                    <Text TextSize="TextSize.Large" Style="white-space: pre" Margin="Margin.Is3.OnY">Naar de enquête</Text>
+                                <Button Flex="Flex.Column.Grow.Is1" Disabled="@_finishButtonDisabled" Width="Width.Is100" style="overflow: hidden;" Clicked="@(() => _confirmSurveyModal.Show())">
+                                    <Text TextSize="TextSize.Large" Margin="Margin.Is3.OnY">@(_finishButtonDisabled ? "Lees eerst alle inhoud om naar enquête te gaan" : "Naar de enquête")</Text>
                                     <Icon Name="IconName.ArrowRight" IconSize="IconSize.x3"/>
                                 </Button>
                             </Div>
@@ -109,21 +114,24 @@
     [Inject(Key = "SessionTimer")] private Stopwatch SessionTimer { get; set; } = null!;
 
     [Parameter] [SupplyParameterFromQuery] public bool? Debugging { get; set; }
-    [Parameter] [SupplyParameterFromQuery] public int TransparencyType { get; set; } //https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/navigation?view=aspnetcore-10.0&utm_source=chatgpt.com#query-strings
-
-    private Dictionary<string, object> _articleContentParameters = null!;
+    [Parameter] [SupplyParameterFromQuery] public int AssignedTransparencyType { get; set; }
 
     private Modal _confirmSurveyModal = null!;
     private bool _toastVisible;
     private bool _errorToastVisible;
     private string _errorToastMessage = "";
-    private Type _articleContentType = null!;
 
     private readonly List<ITracked> _trackedComponents = new();
     private TrackedStopwatch _trackedReadTime = null!;
 
+    private bool _interactive;
+    private bool _invasive;
+    private bool _forced;
+    
     private bool _initialized;
 
+    private bool _finishButtonDisabled;
+    
     private bool _loading;
 
     protected override void OnParametersSet()
@@ -132,17 +140,25 @@
 
         if (!_initialized)
         {
-            _articleContentType = ArticleContentFactory.GetComponentType((TransparencyType)TransparencyType);
-            _articleContentParameters = new() { [nameof(ArticleContent.DisplayFunctionDisabledToast)] = EventCallback.Factory.Create(this, () => _toastVisible = true) };
-
-            TrackingService.OnTrackedElementCreated += AddToList;
+            var transparencyType = (TransparencyType)AssignedTransparencyType;
+            _interactive = transparencyType != TransparencyType.Classic;
+            _invasive = transparencyType == TransparencyType.InvasiveInteractive || transparencyType == TransparencyType.ForcedInteractive;
+            _forced = transparencyType == TransparencyType.ForcedInteractive;
             
-            if (Debugging is true)
-                TrackingService.OnInteractionsChanged += UpdateDebugger;
+            TrackingService.OnTrackedElementCreated += AddToList;
 
             _trackedReadTime = new(TrackingService, SessionTimer) { Name = "globale leestijd", Owner = this };
             _trackedReadTime.Start();
 
+            if ((TransparencyType)AssignedTransparencyType == TransparencyType.ForcedInteractive)
+                _finishButtonDisabled = true;
+
+            if (Debugging is true)
+            {
+                TrackingService.OnTrackedElementCreated += UpdateDebugger;
+                TrackingService.OnInteractionsChanged += UpdateDebugger;
+            }
+            
             _initialized = true;
         }
     }
@@ -185,7 +201,7 @@
         
             var blobContainerClient = new BlobContainerClient(blobContainerUri);
             
-            await blobContainerClient.UploadBlobAsync($"{TransparencyType}/{ParticipantId}.json", BinaryData.FromObjectAsJson(_trackedComponents, options),
+            await blobContainerClient.UploadBlobAsync($"{AssignedTransparencyType}/{ParticipantId}.json", BinaryData.FromObjectAsJson(_trackedComponents, options),
                 CancellationToken.None);
         }
         catch (Exception e)

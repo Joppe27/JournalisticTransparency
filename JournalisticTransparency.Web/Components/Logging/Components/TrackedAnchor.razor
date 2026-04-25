@@ -1,20 +1,9 @@
 @inject TrackingService TrackingService
 @inject IJSRuntime JS
+@using JournalisticTransparency.Web.Components.Layout
 @implements IAsyncDisposable
 
-@if (!Invasive)
-{
-    <TrackedComponent @ref="_trackedAnchor" T="Anchor"
-                      Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
-}
-
-@if (Invasive)
-{
-    <Span Class="flash">
-        <TrackedComponent @ref="_trackedAnchor" T="Anchor"
-                          Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
-    </Span>
-}
+<TrackedComponent @ref="_trackedAnchor" T="FlashyAnchor" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
 
 @code {
 
@@ -23,7 +12,7 @@
     [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
 
-    private TrackedComponent<Anchor> _trackedAnchor = null!;
+    private TrackedComponent<FlashyAnchor> _trackedAnchor = null!;
 
     private DotNetObjectReference<TrackedAnchor> _componentReference = null!;
 
@@ -46,11 +35,11 @@
         if (trackedElement != _trackedAnchor)
             return;
         
-        _trackedAnchor.AddNestedCallback(nameof(Anchor.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) =>
+        _trackedAnchor.Attributes!.Add(nameof(Anchor.Clicked), () =>
         {
             _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Opened, _trackedAnchor.SessionTimer.Elapsed));
             JS.InvokeVoidAsync("visibility.addVisibilityRestoredListener", _componentReference); // This will also get called when switching back to the article without closing the new tab, therefore subsequent switching back and forth is not tracked
-        })));
+        });
 
         StateHasChanged();
     }

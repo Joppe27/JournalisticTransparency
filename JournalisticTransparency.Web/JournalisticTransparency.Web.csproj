@@ -69,4 +69,16 @@
         <_ContentIncludedByDefault Remove="Layout\NavMenu.razor"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Components\Articles\ArticleContent.cs" />
+      <Compile Remove="Components\Articles\ArticleContentFactory.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Components\Articles\ClassicTransparencyContent.razor" />
+      <Content Remove="Components\Articles\ForcedTransparencyContent.razor" />
+      <Content Remove="Components\Articles\InteractiveTransparencyContent.razor" />
+      <Content Remove="Components\Articles\InvasiveInteractiveTransparencyContent.razor" />
+    </ItemGroup>
+
 </Project>

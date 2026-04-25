@@ -1,5 +1,6 @@
 ﻿@page "/disclaimer"
 @using JournalisticTransparency.Web.Components.Articles
+@using JournalisticTransparency.Web.Utils
 @inject NavigationManager NavigationManager
 
 <PageTitle>Info experiment</PageTitle>
@@ -21,7 +22,7 @@
             Instructies
         </Heading>
         <Lead>
-            U krijgt zometeen een online nieuwsartikel van een fictief medium te zien. <Strong>Lees het artikel</Strong> zoals u dat dagelijks zou doen. U mag op alle links en knoppen klikken, als u dat wilt. Het kan dat u op een link of knop *moet* klikken om verder te kunnen. U kiest dan zelf hoeveel u daarvan leest.<br/><br/>
+            U krijgt zometeen een online nieuwsartikel van een fictief medium te zien. <Strong>Lees het artikel</Strong> zoals u dat dagelijks zou doen. U mag op alle links en knoppen klikken, als u dat wil. Het kan dat u op een link of knop *moet* klikken om verder te kunnen. U kiest dan zelf hoeveel u daarvan leest.<br/><br/>
             Nadat u het artikel gelezen heeft, moet u een korte bevraging beantwoorden om het experiment te voltooien. <Strong>Klik nadat u het artikel gelezen hebt op de knop "naar de enquête".</Strong> Pas als u de bevraging heeft ingevuld, is uw deelname voltooid. Alvast bedankt voor uw medewerking!<br/><br/>
             
             Geschatte totale duurtijd: 10-15 minuten.
@@ -71,10 +72,10 @@
                         De uitoefening van uw rechten kan beperkt worden als dit ons onderzoek ernstig zou bemoeilijken. 
                     </Paragraph>
                     <Paragraph>
-                        Als u vragen hebt, of als u uw rechten wilt uitoefenen, kunt u contact opnemen met Joppe Rombouts of met de functionaris voor gegevensbescherming van de VUB (dpo@vub.be).
+                        Als u vragen hebt, of als u uw rechten wil uitoefenen, kunt u contact opnemen met Joppe Rombouts of met de functionaris voor gegevensbescherming van de VUB (dpo@vub.be).
                     </Paragraph>
                     <Paragraph>
-                        Als u een klacht wilt indienen over de manier waarop wij met uw gegevens omgaan, kunt u contact opnemen met de onderzoekers, de promotor of de functionaris voor gegevensbescherming (zie contactgegevens hierboven). U kunt ook een klacht indienen bij de Gegevensbeschermingsautoriteit.
+                        Als u een klacht wil indienen over de manier waarop wij met uw gegevens omgaan, kunt u contact opnemen met de onderzoekers, de promotor of de functionaris voor gegevensbescherming (zie contactgegevens hierboven). U kunt ook een klacht indienen bij de Gegevensbeschermingsautoriteit.
                     </Paragraph>
                 </AccordionBody>
             </AccordionItem>
@@ -127,9 +128,14 @@
 
         _isLoading = true;
 
-        var transparencyType = _rng.Next(0, 4);
-
-        NavigationTools.RedirectToArticle((TransparencyType)transparencyType, false, NavigationManager);
+        var chance = _rng.Next(0, 4);
+        
+        if (chance <= 1)
+            NavigationTools.RedirectToArticle(TransparencyType.Interactive, false, NavigationManager);
+        if (chance == 2)
+            NavigationTools.RedirectToArticle(TransparencyType.InvasiveInteractive, false, NavigationManager);
+        if (chance == 3)
+            NavigationTools.RedirectToArticle(TransparencyType.ForcedInteractive, false, NavigationManager);
     }
 
 }

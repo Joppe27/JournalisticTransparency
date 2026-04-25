@@ -29,9 +29,9 @@ public class TrackedObject<T> : ITracked where T : notnull, new()
 
     public int ComponentIndex { get; init; }
 
-    public required string Name { get; init; }
+    public required string Name { get; set; }
 
-    public required IComponent Owner { get; init; }
+    public required IComponent Owner { get; set; }
 
     public ObservableCollection<TrackedInteraction> Interactions { get; } = new();
 }

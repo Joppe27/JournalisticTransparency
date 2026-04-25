@@ -19,9 +19,9 @@ public interface ITracked
     
     [JsonIgnore] public int ComponentIndex { get; } 
 
-    public string Name { get; init; }
+    public string Name { get; set; }
 
-    [JsonIgnore] public IComponent Owner { get; init; }
+    [JsonIgnore] public IComponent Owner { get; set; }
 
     public string OwnerType => Owner.GetType().ToString();
 
