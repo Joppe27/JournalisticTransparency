@@ -1,20 +1,7 @@
 @inject TrackingService TrackingService
-@inject IJSRuntime JS
-@implements IAsyncDisposable
+@using JournalisticTransparency.Web.Components.Layout
 
-@if (!Invasive)
-{
-    <TrackedComponent @ref="_trackedAnchor" T="Anchor"
-                      Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
-}
-
-@if (Invasive)
-{
-    <Span Class="flash">
-        <TrackedComponent @ref="_trackedAnchor" T="Anchor"
-                          Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
-    </Span>
-}
+<TrackedComponent @ref="_trackedAnchor" T="FlashyAnchor" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
 
 @code {
 
@@ -23,9 +10,7 @@
     [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
 
-    private TrackedComponent<Anchor> _trackedAnchor = null!;
-
-    private DotNetObjectReference<TrackedAnchor> _componentReference = null!;
+    private TrackedComponent<FlashyAnchor> _trackedAnchor = null!;
 
     private bool _initialized;
 
@@ -36,7 +21,6 @@
         if (_initialized)
             return;
 
-        _componentReference = DotNetObjectReference.Create(this);
         TrackingService.OnTrackedElementCreated += InitializeTrackedComponent;
         _initialized = true;
     }
@@ -45,26 +29,12 @@
     {
         if (trackedElement != _trackedAnchor)
             return;
-        
-        _trackedAnchor.AddNestedCallback(nameof(Anchor.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) =>
+
+        _trackedAnchor.Attributes!.Add(nameof(Anchor.Clicked), () =>
         {
-            _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Opened, _trackedAnchor.SessionTimer.Elapsed));
-            JS.InvokeVoidAsync("visibility.addVisibilityRestoredListener", _componentReference); // This will also get called when switching back to the article without closing the new tab, therefore subsequent switching back and forth is not tracked
-        })));
+            _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Clicked, _trackedAnchor.SessionTimer.Elapsed));
+        });
 
         StateHasChanged();
-    }
-
-    [JSInvokable]
-    public void AddClosedInteraction()
-    {
-        _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Closed, _trackedAnchor.SessionTimer.Elapsed));
-        JS.InvokeVoidAsync("visibility.removeVisibilityRestoredListener");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await JS.InvokeVoidAsync("visibility.removeVisibilityRestoredListener");
-        _componentReference.Dispose();
     }
 }

@@ -1,0 +1,30 @@
+@if (_clicked || !Invasive)
+{
+    <Anchor Clicked="@(() => Clicked?.Invoke())" To="@Attributes?.GetValueOrDefault(nameof(Anchor.To))?.ToString()" Attributes="@Attributes">@ChildContent</Anchor>
+}
+
+@if (!_clicked && Invasive)
+{
+    <Span class="flash">
+        <Anchor Clicked="@(() =>
+                         {
+                             Clicked?.Invoke();
+                             _clicked = true;
+                             StateHasChanged();
+                         })" To="@Attributes?.GetValueOrDefault(nameof(Anchor.To))?.ToString()" Attributes="@Attributes">@ChildContent</Anchor>
+    </Span>
+}
+
+@code {
+
+    [Parameter] [EditorRequired] public bool Invasive { get; set; }
+    [Parameter] public Action? Clicked { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? Attributes { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private bool _clicked;
+    
+}

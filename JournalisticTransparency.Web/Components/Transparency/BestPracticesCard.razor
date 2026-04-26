@@ -6,7 +6,7 @@
         <AccordionItem @bind-Visible="@_accordionItemVisible">
             <AccordionHeader>
                 <TrackedAccordionToggle Invasive="@Invasive" Attributes="@_trackedAccordionToggleParameters"
-                                        Owner="@this" Name="best practices"/>
+                                        Owner="@this" Name="best practices" TooltipLocation="TooltipPlacement.Bottom"/>
             </AccordionHeader>
             <AccordionBody Margin="Margin.Is0">
                 <Row Margin="Margin.Is5.OnX.Is5.FromBottom.Is2.FromTop" Style="column-gap: 12px">
@@ -40,7 +40,11 @@
                             </Text>
                             <Text>
                                 Het fundament van onze journalistiek is de
-                                <Anchor Class="@(Invasive ? "flash" : "")" Clicked="@(() => (_modalRef.Object as Modal)!.Show())" >Code van de Vlaamse Raad voor Journalistiek</Anchor>, 
+                                <Anchor Class="@(Invasive ? "flash" : "")"
+                                        Clicked="@(() => (_modalRef.Object as Modal)!.Show())">Code van de Vlaamse Raad
+                                    voor Journalistiek
+                                </Anchor>
+                                ,
                                 een verzameling van regels en routines die feitelijkheid en onpartijdigheid
                                 waarborgen. Ervaren redacteurs controleren content voor en na publicatie, begeleiden
                                 verslaggevers en leiden personeel op.
@@ -48,7 +52,8 @@
                             <Text>
                                 DNZ Nieuws is een onafhankelijke nieuwscoöperatief zonder winstoogmerk. Onze omzet wordt
                                 voornamelijk gegenereerd door het verkopen van onze journalistiek aan andere
-                                nieuwsorganisaties en klanten (79%). DNZ Nieuws verkrijgt ook inkomsten uit advertenties en
+                                nieuwsorganisaties en klanten (79%). DNZ Nieuws verkrijgt ook inkomsten uit advertenties
+                                en
                                 donaties van lezers (13%), en door het aanbieden van diensten (8%).
                             </Text>
                         </Row>

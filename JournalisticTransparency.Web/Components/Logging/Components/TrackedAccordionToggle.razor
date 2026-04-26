@@ -1,19 +1,15 @@
 @inject TrackingService TrackingService
 
-@if (!Invasive)
-{
+<Div>
     <TrackedComponent @ref="_trackedAccordionToggle"
                       T="AccordionToggle" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
-}
-
-@if (Invasive)
-{
-    <Tooltip Text="Klik hier voor meer info!" AlwaysActive="@true" Placement="TooltipPlacement.Right" Inline="@true"
-             AppendTo="parent">
-        <TrackedComponent @ref="_trackedAccordionToggle"
-                          T="AccordionToggle" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
-    </Tooltip>
-}
+    @if (!_clicked && Invasive)
+    {
+        <Tooltip Text="@($"<span class='flash'>{_tooltipText}</span>")" AlwaysActive="@true"
+                 Position="@_tooltipPosition"
+                 AppendTo="parent" Placement="@TooltipLocation"/>
+    }
+</Div>
 
 
 @code {
@@ -22,7 +18,14 @@
     [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
 
+    [Parameter] [EditorRequired] public required TooltipPlacement TooltipLocation { get; set; }
+
     private TrackedComponent<AccordionToggle> _trackedAccordionToggle = null!;
+
+    private string _tooltipText = "";
+    private IFluentPosition _tooltipPosition = null!;
+
+    private bool _clicked;
 
     private bool _initialized;
 
@@ -33,6 +36,21 @@
         if (_initialized)
             return;
 
+        switch (TooltipLocation)
+        {
+            case TooltipPlacement.Bottom:
+                _tooltipText = "Klik hierboven voor meer info!";
+                _tooltipPosition = Position.Absolute.Top.Is100.Start.Is50.Translate.Middle;
+                break;
+            case TooltipPlacement.Top:
+                _tooltipText = "Klik hieronder voor meer info!";
+                _tooltipPosition = Position.Absolute.Top.Is0.Start.Is50.Translate.Middle;
+                break;
+            default:
+                _tooltipText = "Klik hier voor meer info!";
+                break;
+        }
+
         TrackingService.OnTrackedElementCreated += InitializeTrackedComponent;
         _initialized = true;
     }
@@ -41,10 +59,16 @@
     {
         if (trackedElement != _trackedAccordionToggle)
             return;
-        
+
         var toggle = (_trackedAccordionToggle.Object as AccordionToggle)!;
 
-        _trackedAccordionToggle.AddNestedCallback(nameof(AccordionToggle.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) => { _trackedAccordionToggle.Interactions.Add(new TrackedInteraction(!toggle.AccordionItemVisible ? Interaction.Opened : Interaction.Closed, _trackedAccordionToggle.SessionTimer.Elapsed)); })));
+        _trackedAccordionToggle.AddNestedCallback(nameof(AccordionToggle.Clicked), new EventCallbackWrapper<MouseEventArgs>(EventCallback.Factory.Create(this, (MouseEventArgs _) =>
+        {
+            _trackedAccordionToggle.Interactions.Add(new TrackedInteraction(!toggle.AccordionItemVisible ? Interaction.Opened : Interaction.Closed, _trackedAccordionToggle.SessionTimer.Elapsed));
+
+            _clicked = true;
+            StateHasChanged();
+        })));
 
         StateHasChanged();
     }

@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0"/>
         <PackageReference Include="Blazorise.FluentUI2" Version="1.8.1"/>
         <PackageReference Include="Blazorise.Icons.FluentUI" Version="1.8.1"/>
         <PackageReference Include="Blazorise.PdfViewer" Version="1.8.1"/>
@@ -67,6 +67,18 @@
         <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map"/>
         <_ContentIncludedByDefault Remove="Layout\MainLayout.razor"/>
         <_ContentIncludedByDefault Remove="Layout\NavMenu.razor"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="Components\Articles\ArticleContent.cs"/>
+        <Compile Remove="Components\Articles\ArticleContentFactory.cs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Remove="Components\Articles\ClassicTransparencyContent.razor"/>
+        <Content Remove="Components\Articles\ForcedTransparencyContent.razor"/>
+        <Content Remove="Components\Articles\InteractiveTransparencyContent.razor"/>
+        <Content Remove="Components\Articles\InvasiveInteractiveTransparencyContent.razor"/>
     </ItemGroup>
 
 </Project>

@@ -12,11 +12,13 @@
     [Inject(Key = "SessionTimer")] public Stopwatch SessionTimer { get; set; } = null!;
 
     [Parameter] public Dictionary<string, object>? Attributes { get; set; }
-    
-    [CascadingParameter(Name = "ComponentIndex")] public int ComponentIndex { get; set; }
 
-    [Parameter] [EditorRequired] public required string Name { get; init; }
-    [Parameter] [EditorRequired] public required IComponent Owner { get; init; }
+    [CascadingParameter(Name = "ComponentIndex")]
+    public int ComponentIndex { get; set; }
+
+    [Parameter] [EditorRequired] public string Name { get; set; }
+    [Parameter] [EditorRequired] public IComponent Owner { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private DynamicComponent _dynamicComponent = null!;
     public object Object { get; private set; } = null!;
@@ -32,6 +34,12 @@
 
         if (!_initialized)
         {
+            if (ChildContent is not null)
+            {
+                Attributes ??= new Dictionary<string, object>();
+                Attributes.Add("ChildContent", ChildContent);
+            }
+
             Interactions.CollectionChanged += (_, _) => TrackingService.NotifyInteractionsChanged(this);
             _initialized = true;
         }

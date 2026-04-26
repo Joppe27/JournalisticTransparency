@@ -1,4 +1,5 @@
-<Div Position="Position.Fixed.Top.Is0.End.Is0" Border="@(_instructionsVisible ? Border.Is3.Info.OnAll : Border.Is0)" Background="@(_instructionsVisible ? Background.White : Background.Transparent)"
+<Div Position="Position.Fixed.Top.Is0.End.Is0" Border="@(_instructionsVisible ? Border.Is3.Info.OnAll : Border.Is0)"
+     Background="@(_instructionsVisible ? Background.White : Background.Transparent)"
      Style="z-index: 9999" Width="Width.Px(270)" Height="Height.Max100" Flex="Flex.Column">
     <Button Color="Color.Info" Clicked="@(() => _instructionsVisible = !_instructionsVisible)"
             Style="z-index: 10; opacity: 0.8;"
@@ -11,7 +12,8 @@
             <UnorderedList>
                 <UnorderedListItem>Lees het artikel.</UnorderedListItem>
                 <UnorderedListItem>U mag op alles klikken.</UnorderedListItem>
-                <UnorderedListItem>Als u klaar bent met lezen, klik dan op "naar de enquête" onderaan.</UnorderedListItem>
+                <UnorderedListItem>Als u klaar bent met lezen, klik dan op "naar de enquête" onderaan.
+                </UnorderedListItem>
             </UnorderedList>
         </Div>
     </Div>

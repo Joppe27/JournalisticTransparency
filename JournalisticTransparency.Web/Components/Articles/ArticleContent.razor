@@ -1,0 +1,582 @@
+@using JournalisticTransparency.Web.Components.Layout
+@using JournalisticTransparency.Web.Components.Logging
+@using JournalisticTransparency.Web.Components.Logging.Components
+@using JournalisticTransparency.Web.Components.Transparency
+@inject IJSRuntime JS
+@inject TrackingService TrackingService
+
+@for (int j = 0; j < _articleComponents.Count; j++)
+{
+    int i = j;
+    var component = _articleComponents[i];
+
+    string style;
+
+    if (_dimComponents && i >= 2 && i < _articleComponents.Count - 2)
+        style = DimmedStyle;
+    else
+        style = component.Readable ? "" : UnreadableStyle;
+
+    <CascadingValue Name="ComponentIndex" Value="i">
+        <Div Position="Position.Relative">
+            <Text Style="z-index: 10" Background="Background.White"
+                  Visibility="@(component.Readable ? Visibility.Invisible : Visibility.Visible)"
+                  Position="Position.Absolute.Top.Is50.Start.Is50.Translate.Middle">Bekijk eerst bovenstaande inhoud om
+                verder te lezen. Dat kan door er op te klikken.
+            </Text>
+            <Div Style="@style">
+                @if (component.Content is not null)
+                {
+                    @component.Content
+                }
+
+                @if (component.TransparencyElements is not null)
+                {
+                    @foreach (RenderFragment transparencyElement in component.TransparencyElements)
+                    {
+                        @transparencyElement
+                    }
+                }
+            </Div>
+        </Div>
+    </CascadingValue>
+}
+
+
+@code {
+    [Parameter] [EditorRequired] public bool Interactive { get; set; }
+    [Parameter] [EditorRequired] public bool Invasive { get; set; }
+    [Parameter] [EditorRequired] public bool Forced { get; set; }
+
+    [Parameter] [EditorRequired] public EventCallback DisplayFunctionDisabledToast { get; set; }
+    [Parameter] [EditorRequired] public EventCallback EnableFinishButton { get; set; }
+
+    private bool _dimComponents;
+    private const string DimmedStyle = "opacity: 0.20; user-select: none; pointer-events: none;";
+
+    private const string UnreadableStyle = DimmedStyle;
+
+    private AuthorCard _authorCard = null!;
+    private CorrectionAlert _correctionAlert = null!;
+    private ProcessInfoCard _processInfoCard = null!;
+    private BestPracticesCard _bestPracticesCard = null!;
+
+    private TrackedModal _modalRef0 = null!;
+    private TrackedModal _modalRef1 = null!;
+    private TrackedModal _modalRef2 = null!;
+    private TrackedModal _modalRef3 = null!;
+    private TrackedModal _modalRef4 = null!;
+    private TrackedModal _modalRef5 = null!;
+    private TrackedModal _modalRef6 = null!;
+    private TrackedModal _modalRef7 = null!;
+
+    private readonly List<ArticleComponent> _articleComponents = new();
+
+    private readonly Dictionary<TransparencyElement, bool> _transparencyElementOpenStates = new();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        AddArticleComponents();
+
+        if (Forced)
+        {
+            foreach (var component in _articleComponents)
+                component.Readable = false;
+
+            _articleComponents[0].Readable = true;
+        }
+        else
+        {
+            foreach (var component in _articleComponents)
+                component.Readable = true;
+        }
+
+        TrackingService.OnInteractionsChanged += AdvanceArticle;
+    }
+
+    private string CheckTransparencyElementOpen(TransparencyElement? transparencyElement)
+    {
+        if (transparencyElement is null)
+            return string.Empty;
+
+        _transparencyElementOpenStates.TryGetValue(transparencyElement, out bool transparencyElementOpen);
+
+        if (transparencyElementOpen || !_dimComponents)
+            return string.Empty;
+
+        return DimmedStyle;
+    }
+
+    private void HandleOpenStateChanged(KeyValuePair<TransparencyElement, bool> callerOpenState)
+    {
+        bool callerOpen = callerOpenState.Value;
+
+        _transparencyElementOpenStates[callerOpenState.Key] = callerOpen;
+
+        if (callerOpen)
+        {
+            JS.InvokeVoidAsync("scrollElementIntoView", callerOpenState.Key.ElementId);
+            DimComponents();
+        }
+        else
+        {
+            UndimComponents();
+        }
+    }
+
+    private void DimComponents()
+    {
+        _dimComponents = true;
+        StateHasChanged();
+    }
+
+    private void UndimComponents()
+    {
+        _dimComponents = false;
+        StateHasChanged();
+    }
+
+    private void AdvanceArticle(ITracked component)
+    {
+        int interactedComponentIndex = component.ComponentIndex;
+
+        if (interactedComponentIndex == _articleComponents.Count - 1)
+        {
+            EnableFinishButton.InvokeAsync();
+            return;
+        }
+
+        for (int i = interactedComponentIndex + 1; i < _articleComponents.Count; i++)
+        {
+            _articleComponents[i].Readable = true;
+
+            bool containsTransparencyElement = _articleComponents[i].TransparencyElements is not null;
+
+            if (containsTransparencyElement)
+                break;
+        }
+
+        StateHasChanged();
+    }
+
+    private void AddArticleComponents()
+    {
+        _articleComponents.AddRange(
+        [
+            new ArticleComponent()
+            {
+                TransparencyElements =
+                [
+                    @<AuthorCard ElementId="authorCard" @ref="_authorCard"
+                                 Style="@CheckTransparencyElementOpen(_authorCard)"
+                                 Invasive="@Invasive" OnOpenStateChanged="@(kvp => HandleOpenStateChanged(kvp))"
+                                 DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())"
+                                 Interactive="@Interactive"/>
+                ],
+            },
+            new ArticleComponent()
+            {
+                TransparencyElements =
+                [
+                    @<CorrectionAlert @ref="_correctionAlert"
+                                      Style="@CheckTransparencyElementOpen(_correctionAlert)"
+                                      OnOpenStateChanged="@(kvp => HandleOpenStateChanged(kvp))"
+                                      Interactive="@Interactive"
+                                      Invasive="@Invasive"/>
+                ],
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Op een mistige zaterdagochtend in 1953, zit een tengere 24-jarige te prutsen met wat
+                              vormen die hij uit karton
+                              heeft
+                              geknipt. Ze staan voor de delen van een DNA-molecule, en de jonge James Watson probeert
+                              uit te vissen hoe ze in
+                              elkaar passen op een manier waarop het DNA correct functioneert. Zo probeert hij te
+                              verklaren hoe DNA zijn rol
+                              vervult als drager van erfelijke informatie.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Uiteindelijk realiseert hij zich dat de stukjes samen de “sporten” vormen van een lange,
+                              gedraaide ladder. Een
+                              vorm
+                              die we tegenwoordig kennen als de dubbele helix.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              De ontdekking van de structuur van desoxyribonucleïnezuur, of DNA, werd een doorbraak die
+                              de weg vrijmaakte voor
+                              een
+                              revolutie in de geneeskunde, de biologie en andere vakgebieden zoals misdaadbestrijding,
+                              genealogie, en
+                              bio-ethiek.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Watson overleed afgelopen november. De wetenschapper, die geboren werd in Chicago, was 97
+                              jaar. Zijn loopbaan werd
+                              gekenmerkt door grote wetenschappelijke prestaties, waaronder het in kaart brengen van de
+                              menselijke
+                              chromosomen.
+                              Toch is zijn nalatenschap ook omstreden door racistische uitspraken, waarvoor hij
+                              veelvuldig bekritiseerd werd.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content =
+                    @<Paragraph Class="article-Paragraph">
+                        Het blootleggen van de dubbele helix “is
+                        een van de drie belangrijkste ontdekkingen in de geschiedenis van de biologie”,
+                        zegt Bruce Stillman, huidig voorzitter van het invloedrijke onderzoeksinstituut Cold Spring
+                        Harbor
+                        Laboratory. De andere twee zijn volgens hem Charles Darwins evolutietheorie en Gregor Mendels
+                        basiswetten van de
+                        genetica.
+                    </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content =
+                    @<Paragraph Class="article-Paragraph">
+                        Watson mocht samen met zijn collega Francis Crick en met wetenschapper Maurice Wilkins een
+                        Nobelprijs in
+                        ontvangst
+                        nemen.
+                        <FlashyAnchor Invasive="@Invasive"
+                                      Clicked="@(() => (_modalRef1.Object as Modal)!.Show())">Hun werk werd mede
+                            mogelijk gemaakt door röntgenonderzoek van Rosalind Franklin en haar postdoctoraal student
+                            Raymond Gosling.
+                        </FlashyAnchor>
+                        Watson kreeg later
+                        <FlashyAnchor Invasive="@Invasive"
+                                      Clicked="@(() => (_modalRef2.Object as Modal)!.Show())">forse kritiek over
+                            de neerbuigende manier waarop hij Franklin beschreef in zijn boek The Double Helix.
+                        </FlashyAnchor>
+                        Vandaag wordt Franklin dan ook gezien als een voorbeeld van de miskenning van vrouwelijke
+                        wetenschappers. Crick en Wilkins overleden in 2004; Franklin stierf al in 1958.
+                    </Paragraph>,
+                TransparencyElements =
+                [
+                    @<TrackedModal @ref="@_modalRef1" Name="medewerkers DNA" Owner="@this">
+                        <ModalContent Centered>
+                            <ModalHeader>
+                                <ModalTitle>Externe bron</ModalTitle>
+                            </ModalHeader>
+                            <ModalBody Margin="Margin.Is3.FromBottom">
+                                <Text>U navigeert nu naar een externe bron in een nieuw tabblad. Lees zo veel of weinig
+                                    als u zelf wil, en ga daarna door met het experiment door <Strong>het tabblad te
+                                        sluiten.</Strong></Text>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button Type="ButtonType.Link" Color="Color.Primary"
+                                        To="https://www.nature.com/articles/d41586-023-01313-5"
+                                        Target="Target.Blank">Bron
+                                    openen
+                                </Button>
+                                <Button Color="Color.Secondary" Clicked="@(() => (_modalRef1.Object as Modal)!.Hide())">
+                                    Sluiten
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </TrackedModal>,
+                    @<TrackedModal @ref="@_modalRef2" Name="kritiek neerbuigendheid" Owner="@this">
+                        <ModalContent Centered>
+                            <ModalHeader>
+                                <ModalTitle>Externe bron</ModalTitle>
+                            </ModalHeader>
+                            <ModalBody Margin="Margin.Is3.FromBottom">
+                                <Text>U navigeert nu naar een externe bron in een nieuw tabblad. Lees zo veel of weinig
+                                    als u zelf wil, en ga daarna door met het experiment door <Strong>het tabblad te
+                                        sluiten.</Strong></Text>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button Type="ButtonType.Link" Color="Color.Primary"
+                                        To="https://www.nature.com/articles/d41586-025-03380-2"
+                                        Target="Target.Blank">Bron
+                                    openen
+                                </Button>
+                                <Button Color="Color.Secondary" Clicked="@(() => (_modalRef2.Object as Modal)!.Hide())">
+                                    Sluiten
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </TrackedModal>
+                ],
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Hun ontdekking toonde aan hoe erfelijke informatie wordt opgeslagen en hoe een cel haar
+                              DNA dupliceert voordat
+                              ze
+                              zich deelt, zodat elke dochtercel een eigen kopie meekrijgt. Die duplicatie begint wanneer
+                              de twee DNA-strengen
+                              zich
+                              losritsen van elkaar.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              <FlashyAnchor Invasive="@Invasive"
+                                            Clicked="@(() => (_modalRef3.Object as Modal)!.Show())">“Francis
+                                  Crick en ik deden de ontdekking van de eeuw, dat was volstrekt duidelijk,”
+                              </FlashyAnchor>
+                              zei Watson ooit. “We konden
+                              onmogelijk voorspellen wat voor een gigantische impact de dubbele helix op de wetenschap
+                              en de samenleving zou
+                              hebben.”
+                          </Paragraph>,
+                TransparencyElements =
+                [
+                    @<TrackedModal @ref="@_modalRef3" Name="quote impact Watson" Owner="@this">
+                        <ModalContent Centered>
+                            <ModalHeader>
+                                <ModalTitle>Externe bron</ModalTitle>
+                            </ModalHeader>
+                            <ModalBody Margin="Margin.Is3.FromBottom">
+                                <Text>U navigeert nu naar een externe bron in een nieuw tabblad. Lees zo veel of weinig
+                                    als u zelf wil, en ga daarna door met het experiment door <Strong>het tabblad te
+                                        sluiten.</Strong></Text>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button Type="ButtonType.Link" Color="Color.Primary"
+                                        To="https://wellcomecollection.org/works/jak7455g/items"
+                                        Target="Target.Blank">Bron
+                                    openen
+                                </Button>
+                                <Button Color="Color.Secondary" Clicked="@(() => (_modalRef3.Object as Modal)!.Hide())">
+                                    Sluiten
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </TrackedModal>
+                ],
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Voor onderzoekers vormde de ontdekking de opstap naar latere doorbraken, zoals het
+                              veranderen van genetische
+                              eigenschappen van organismen, gentherapie, het identificeren van menselijke resten of
+                              verdachten op basis van
+                              DNA-sporen, en het reconstrueren van familiestambomen.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Daaruit zijn talloze ethische vragen voortgekomen, onder meer of het wenselijk is om
+                              chromosomen aan te passen
+                              als
+                              die veranderingen daardoor worden doorgegeven aan volgende generaties.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Watsons initiële motivatie om aan genetisch onderzoek te doen werd ingegeven door zijn
+                              gezin: zijn zoon Rufus
+                              was in
+                              het ziekenhuis opgenomen met een mogelijke diagnose schizofrenie, en Watson meende dat
+                              inzichten in DNA cruciaal
+                              zouden worden om die ziekte te begrijpen, misschien net op tijd om zijn zoon te helpen.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Na de dubbele helix deed Watson geen ontdekkingen meer van vergelijkbare omvang. In de
+                              jaren erna schreef hij
+                              wel
+                              invloedrijke studieboeken en zijn memoires, een bestseller. Hij begeleidde ook jong talent
+                              en gebruikte zijn
+                              aanzien
+                              en netwerk om invloed uit te oefenen op het Amerikaans wetenschapsbeleid.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Na zijn ontdekking werkte Watson twee jaar aan het California Institute of Technology. In
+                              1955 begon hij te
+                              werken
+                              voor Harvard. Daar bouwde hij het hele programma voor moleculaire biologie mee op. In 1968
+                              werd Watson
+                              directielid
+                              van het Cold Spring Harbor Laboratory, in 1994 voorzitter en tien jaar later werd hij het
+                              hoofd van het
+                              instituut.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Van 1988 tot 1992 leidde hij het landelijke initiatief in de VS om het volledige
+                              menselijke DNA in kaart te
+                              brengen.
+                              Hij zorgde voor grote investeringen in het onderzoek naar de ethische aspecten van het
+                              project door die
+                              investeringen gewoonweg publiekelijk aan te kondigen op een persconferentie. Later zei hij
+                              dat dat “waarschijnlijk het slimste was dat hij het afgelopen decennium had gedaan.”
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Na de dubbele helix deed Watson geen ontdekkingen meer van vergelijkbare omvang. In de
+                              jaren erna schreef hij
+                              wel
+                              invloedrijke studieboeken en zijn memoires, een bestseller. Hij begeleidde ook jong talent
+                              en gebruikte zijn
+                              aanzien
+                              en netwerk om invloed uit te oefenen op het Amerikaans wetenschapsbeleid.
+                          </Paragraph>,
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              In 2007 kwam Watson echter in negatief daglicht toen het Britse tijdschrift Sunday Times
+                              Magazine
+                              <FlashyAnchor Invasive="@Invasive"
+                                            Clicked="@(() => (_modalRef5.Object as Modal)!.Show())">een uitspraak
+                                  van hem publiceerde
+                              </FlashyAnchor>
+                              .
+                              Watson verklaarde toen dat hij “somber is over wat ons te wachten staat met Afrika, omdat
+                              al ons
+                              sociale beleid ervan uitgaat dat ze even intelligent zijn als wij, terwijl alle testen
+                              zeggen van niet.” Hij
+                              hoopt
+                              naar eigen zeggen dat iedereen gelijk is, maar beweerde dat mensen die “met zwarte
+                              werknemers te maken hebben,
+                              kunnen constateren dat dat niet zo is”.
+                          </Paragraph>,
+                TransparencyElements =
+                [
+                    @<TrackedModal @ref="@_modalRef5" Name="quote Afrika Watson" Owner="@this">
+                        <ModalContent Centered>
+                            <ModalHeader>
+                                <ModalTitle>Externe bron</ModalTitle>
+                            </ModalHeader>
+                            <ModalBody Margin="Margin.Is3.FromBottom">
+                                <Text>U navigeert nu naar een externe bron in een nieuw tabblad. Lees zo veel of weinig
+                                    als u zelf wil, en ga daarna door met het experiment door <Strong>het tabblad te
+                                        sluiten.</Strong></Text>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button Type="ButtonType.Link" Color="Color.Primary"
+                                        To="https://archive.ph/wZygb"
+                                        Target="Target.Blank">Bron
+                                    openen
+                                </Button>
+                                <Button Color="Color.Secondary" Clicked="@(() => (_modalRef5.Object as Modal)!.Hide())">
+                                    Sluiten
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </TrackedModal>
+                ],
+            },
+            new ArticleComponent()
+            {
+                Content = @<Paragraph Class="article-Paragraph">
+                              Na zijn excuses werd hij, onder aanzwellende internationale verontwaardiging,
+                              <FlashyAnchor Invasive="@Invasive"
+                                            Clicked="@(() => (_modalRef6.Object as Modal)!.Show())">geschorst als
+                                  hoofd van Cold Spring Harbor Laboratory
+                              </FlashyAnchor>
+                              . Een week later
+                              <FlashyAnchor Invasive="@Invasive"
+                                            Clicked="@(() => (_modalRef7.Object as Modal)!.Show())">ging hij met
+                                  pensioen
+                              </FlashyAnchor>
+                              .
+                              Hij werkte toen bijna veertig jaar voor het instituut en
+                              bekleedde verschillende leidinggevende functies.
+                          </Paragraph>,
+                TransparencyElements =
+                [
+                    @<TrackedModal @ref="@_modalRef6" Name="schorsing racisme" Owner="@this">
+                        <ModalContent Centered>
+                            <ModalHeader>
+                                <ModalTitle>Externe bron</ModalTitle>
+                            </ModalHeader>
+                            <ModalBody Margin="Margin.Is3.FromBottom">
+                                <Text>U navigeert nu naar een externe bron in een nieuw tabblad. Lees zo veel of weinig
+                                    als u zelf wil, en ga daarna door met het experiment door <Strong>het tabblad te
+                                        sluiten.</Strong></Text>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button Type="ButtonType.Link" Color="Color.Primary"
+                                        To="https://www.cshl.edu/statement-by-cold-spring-harbor-laboratory-board-of-trustees-and-president-bruce-stillman-phd-regarding-dr-watsons-comments-in-the-sunday-times-on-october-14-20073/"
+                                        Target="Target.Blank">Bron
+                                    openen
+                                </Button>
+                                <Button Color="Color.Secondary" Clicked="@(() => (_modalRef6.Object as Modal)!.Hide())">
+                                    Sluiten
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </TrackedModal>,
+                    @<TrackedModal @ref="@_modalRef7" Name="pensioen" Owner="@this">
+                        <ModalContent Centered>
+                            <ModalHeader>
+                                <ModalTitle>Externe bron</ModalTitle>
+                            </ModalHeader>
+                            <ModalBody Margin="Margin.Is3.FromBottom">
+                                <Text>U navigeert nu naar een externe bron in een nieuw tabblad. Lees zo veel of weinig
+                                    als u zelf wil, en ga daarna door met het experiment door <Strong>het tabblad te
+                                        sluiten.</Strong></Text>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button Type="ButtonType.Link" Color="Color.Primary"
+                                        To="https://www.cshl.edu/dr-james-d-watson-retires-as-chancellor-of-cold-spring-harbor-laboratory/"
+                                        Target="Target.Blank">Bron
+                                    openen
+                                </Button>
+                                <Button Color="Color.Secondary" Clicked="@(() => (_modalRef7.Object as Modal)!.Hide())">
+                                    Sluiten
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </TrackedModal>
+                ],
+            },
+            new ArticleComponent()
+            {
+                TransparencyElements =
+                [
+                    @<ProcessInfoCard ElementId="processInfoCard" @ref="_processInfoCard"
+                                      Style="@CheckTransparencyElementOpen(_processInfoCard)" Invasive="@Invasive"
+                                      OnOpenStateChanged="@(kvp => HandleOpenStateChanged(kvp))"
+                                      Interactive="@Interactive"/>
+                ],
+            },
+            new ArticleComponent()
+            {
+                TransparencyElements =
+                [
+                    @<BestPracticesCard ElementId="bestPracticesCard" @ref="_bestPracticesCard"
+                                        Style="@CheckTransparencyElementOpen(_bestPracticesCard)"
+                                        Invasive="@Invasive"
+                                        OnOpenStateChanged="@(kvp => HandleOpenStateChanged(kvp))"
+                                        Interactive="@Interactive"
+                                        DisplayFunctionDisabledToast="@(() => DisplayFunctionDisabledToast.InvokeAsync())"/>
+                ],
+            },
+        ]);
+    }
+
+}

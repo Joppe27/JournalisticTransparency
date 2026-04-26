@@ -16,12 +16,12 @@ public interface ITracked
     [JsonIgnore] public object Object { get; }
 
     public string ObjectType => Object.GetType().ToString();
-    
-    [JsonIgnore] public int ComponentIndex { get; } 
 
-    public string Name { get; init; }
+    [JsonIgnore] public int ComponentIndex { get; }
 
-    [JsonIgnore] public IComponent Owner { get; init; }
+    public string Name { get; set; }
+
+    [JsonIgnore] public IComponent Owner { get; set; }
 
     public string OwnerType => Owner.GetType().ToString();
 

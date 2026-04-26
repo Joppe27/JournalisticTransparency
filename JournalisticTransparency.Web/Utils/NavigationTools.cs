@@ -3,13 +3,13 @@
 
 #region
 
-using JournalisticTransparency.Web.Components.Articles;
+using JournalisticTransparency.Web.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
 #endregion
 
-namespace JournalisticTransparency.Web.Pages;
+namespace JournalisticTransparency.Web.Utils;
 
 public static class NavigationTools
 {
@@ -18,7 +18,7 @@ public static class NavigationTools
         const string baseUri = "/article";
         Dictionary<string, string?> queryParameters = new()
         {
-            { "transparencytype", ((int)transparencyType).ToString() },
+            { "assignedtransparencytype", ((int)transparencyType).ToString() },
             { "debugging", showDebugInfo ? "true" : "false" }
         };
 
