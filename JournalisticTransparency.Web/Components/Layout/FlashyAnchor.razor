@@ -1,6 +1,6 @@
 @if (_clicked || !Invasive)
 {
-    <Anchor Clicked="@(() => Clicked?.Invoke())" Attributes="@Attributes">@ChildContent</Anchor>
+    <Anchor Clicked="@(() => Clicked?.Invoke())" To="@Attributes?.GetValueOrDefault(nameof(Anchor.To))?.ToString()" Attributes="@Attributes">@ChildContent</Anchor>
 }
 
 @if (!_clicked && Invasive)
@@ -11,7 +11,7 @@
                              Clicked?.Invoke();
                              _clicked = true;
                              StateHasChanged();
-                         })" Attributes="@Attributes">@ChildContent</Anchor>
+                         })" To="@Attributes?.GetValueOrDefault(nameof(Anchor.To))?.ToString()" Attributes="@Attributes">@ChildContent</Anchor>
     </Span>
 }
 
@@ -26,4 +26,5 @@
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private bool _clicked;
+    
 }

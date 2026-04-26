@@ -1,7 +1,5 @@
 @inject TrackingService TrackingService
-@inject IJSRuntime JS
 @using JournalisticTransparency.Web.Components.Layout
-@implements IAsyncDisposable
 
 <TrackedComponent @ref="_trackedAnchor" T="FlashyAnchor" Attributes="@Attributes" Name="@Name" Owner="@Owner"/>
 
@@ -14,8 +12,6 @@
 
     private TrackedComponent<FlashyAnchor> _trackedAnchor = null!;
 
-    private DotNetObjectReference<TrackedAnchor> _componentReference = null!;
-
     private bool _initialized;
 
     protected override void OnParametersSet()
@@ -25,7 +21,6 @@
         if (_initialized)
             return;
 
-        _componentReference = DotNetObjectReference.Create(this);
         TrackingService.OnTrackedElementCreated += InitializeTrackedComponent;
         _initialized = true;
     }
@@ -37,24 +32,9 @@
 
         _trackedAnchor.Attributes!.Add(nameof(Anchor.Clicked), () =>
         {
-            _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Opened, _trackedAnchor.SessionTimer.Elapsed));
-            JS.InvokeVoidAsync("visibility.addVisibilityRestoredListener", _componentReference); // This will also get called when switching back to the article without closing the new tab, therefore subsequent switching back and forth is not tracked
+            _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Clicked, _trackedAnchor.SessionTimer.Elapsed));
         });
 
         StateHasChanged();
     }
-
-    [JSInvokable]
-    public void AddClosedInteraction()
-    {
-        _trackedAnchor.Interactions.Add(new TrackedInteraction(Interaction.Closed, _trackedAnchor.SessionTimer.Elapsed));
-        JS.InvokeVoidAsync("visibility.removeVisibilityRestoredListener");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await JS.InvokeVoidAsync("visibility.removeVisibilityRestoredListener");
-        _componentReference.Dispose();
-    }
-
 }
